@@ -91,3 +91,8 @@ common_site_config.json
 
 # ─── Docker ───
 docker-compose.override.yml
+
+# AI Tools
+.aider*
+.copilot/
+.cursor/

@@ -23,6 +23,7 @@ class ARKANSettings(Document):
 @frappe.whitelist()
 def get_arkan_settings():
     """Return ARKAN settings as dict for boot/JS consumption."""
+    frappe.only_for(["System Manager"])
     try:
         doc = frappe.get_single("ARKAN Settings")
         return {
