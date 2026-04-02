@@ -77,3 +77,9 @@ app_color = "#1E40AF"
 app_logo_url = "/assets/arkan_theme/images/arkan_theme-logo.svg"
 
 after_install = "arkan_theme.install.after_install"
+
+# Website Route Rules
+# --------------------------------------------------------
+website_route_rules = [
+    {"from_route": "/arkan-theme/<path:app_path>", "to_route": "arkan-theme/<app_path>"},
+]
