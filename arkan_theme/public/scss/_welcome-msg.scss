@@ -1,0 +1,15 @@
+// ARKAN Welcome Message
+.arkan-welcome-banner {
+    @include arkan-glass(0.5);
+    border-radius: $arkan-radius-xl;
+    padding: 24px 32px;
+    margin-bottom: 24px;
+    border: 1px solid rgba($arkan-cyan, 0.1);
+    .arkan-welcome-title {
+        @include arkan-gradient-text;
+        font-family: $arkan-font-heading;
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+    .arkan-welcome-subtitle { color: $arkan-text-secondary; font-family: $arkan-font-mono; font-size: 0.85rem; }
+}

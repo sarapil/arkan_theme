@@ -1,0 +1,6 @@
+// ARKAN Reports
+.report-wrapper {
+    background: $arkan-panel-dark;
+    border-radius: $arkan-radius-lg;
+    .dt-header .dt-cell__content { color: $arkan-text-secondary; font-family: $arkan-font-mono; }
+}

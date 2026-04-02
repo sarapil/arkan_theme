@@ -1,0 +1,39 @@
+// ARKAN Darkmode — Dark is default, this file contains LIGHT mode overrides
+[data-theme="light"] {
+    --arkan-bg-deep: #F8FAFC;
+    --arkan-bg-panel: #FFFFFF;
+    --arkan-bg-surface: #F1F5F9;
+    --arkan-border: #E2E8F0;
+    --arkan-text: #1E293B;
+    --arkan-text-secondary: #64748B;
+    --arkan-text-muted: #94A3B8;
+
+    body { background: #F8FAFC !important; color: #1E293B; }
+    .navbar { background: rgba(255,255,255,0.9) !important; border-bottom-color: #E2E8F0 !important; }
+    .page-head { background: #FFFFFF !important; }
+    .layout-side-section { background: #FFFFFF; border-right-color: #E2E8F0; }
+    .widget, .frappe-card { background: #FFFFFF; border-color: #E2E8F0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .form-control, .frappe-control input { background: #FFFFFF !important; border-color: #E2E8F0 !important; color: #1E293B !important; }
+    .modal-content { background: #FFFFFF; border-color: #E2E8F0; }
+
+    // Light mode desk sidebar
+    .body-sidebar-container .body-sidebar {
+        background: #FFFFFF !important;
+        border-right-color: #E2E8F0 !important;
+        .sidebar-item-label { color: #475569; }
+        .active-sidebar {
+            .sidebar-item-icon { color: #0284C7; }
+            .sidebar-item-label { color: #0284C7; }
+        }
+    }
+    // Light mode page-head
+    .page-head {
+        .page-title .title-text { color: #1E293B; }
+        .page-actions {
+            .btn-primary-dark, .btn-primary { background: #0284C7; color: #FFFFFF; border-color: #0284C7; }
+        }
+        &::before { display: none !important; }
+    }
+    // Light mode main section
+    .main-section { background: #F8FAFC; }
+}

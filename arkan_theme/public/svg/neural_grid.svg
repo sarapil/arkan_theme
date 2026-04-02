@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" fill="none" opacity="0.15">
+  <defs><linearGradient id="ng" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#00F0FF"/><stop offset="50%" stop-color="#8B5CF6"/><stop offset="100%" stop-color="#00F0FF"/></linearGradient></defs>
+  <!-- Grid lines -->
+  <line x1="0" y1="100" x2="800" y2="100" stroke="url(#ng)" stroke-width="0.5" opacity="0.3"/>
+  <line x1="100" y1="0" x2="100" y2="200" stroke="#00F0FF" stroke-width="0.3" opacity="0.2"/>
+  <line x1="200" y1="0" x2="200" y2="200" stroke="#8B5CF6" stroke-width="0.3" opacity="0.2"/>
+  <line x1="400" y1="0" x2="400" y2="200" stroke="#00F0FF" stroke-width="0.3" opacity="0.2"/>
+  <line x1="600" y1="0" x2="600" y2="200" stroke="#8B5CF6" stroke-width="0.3" opacity="0.2"/>
+  <line x1="700" y1="0" x2="700" y2="200" stroke="#00F0FF" stroke-width="0.3" opacity="0.2"/>
+  <!-- Nodes -->
+  <circle cx="100" cy="50" r="3" fill="#00F0FF"><animate attributeName="r" values="3;5;3" dur="4s" repeatCount="indefinite"/></circle>
+  <circle cx="250" cy="120" r="4" fill="#8B5CF6"><animate attributeName="r" values="4;6;4" dur="3s" repeatCount="indefinite"/></circle>
+  <circle cx="400" cy="80" r="3" fill="#00F0FF"><animate attributeName="r" values="3;5;3" dur="5s" repeatCount="indefinite"/></circle>
+  <circle cx="550" cy="150" r="4" fill="#8B5CF6"><animate attributeName="r" values="4;6;4" dur="4s" repeatCount="indefinite"/></circle>
+  <circle cx="700" cy="60" r="3" fill="#00F0FF"><animate attributeName="r" values="3;5;3" dur="3.5s" repeatCount="indefinite"/></circle>
+  <!-- Connections -->
+  <line x1="100" y1="50" x2="250" y2="120" stroke="#00F0FF" stroke-width="0.5" opacity="0.3"/>
+  <line x1="250" y1="120" x2="400" y2="80" stroke="#8B5CF6" stroke-width="0.5" opacity="0.3"/>
+  <line x1="400" y1="80" x2="550" y2="150" stroke="#00F0FF" stroke-width="0.5" opacity="0.3"/>
+  <line x1="550" y1="150" x2="700" y2="60" stroke="#8B5CF6" stroke-width="0.5" opacity="0.3"/>
+</svg>

@@ -1,0 +1,26 @@
+// ARKAN Typography
+h1, h2, h3, h4, h5, h6,
+.page-title .title-text,
+.widget-group-title {
+    font-family: var(--arkan-font-heading);
+    color: $arkan-text-primary;
+    letter-spacing: -0.01em;
+}
+
+code, pre, .frappe-code, .like-disabled-input[data-fieldtype="Code"] {
+    font-family: var(--arkan-font-mono);
+    background: rgba($arkan-surface, 0.8);
+    color: $arkan-cyan;
+    border: 1px solid $arkan-border;
+    border-radius: $arkan-radius-sm;
+}
+
+a { color: $arkan-cyan; transition: color $arkan-transition-fast; }
+a:hover { color: lighten($arkan-cyan, 15%); }
+
+.indicator-pill {
+    font-family: var(--arkan-font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}

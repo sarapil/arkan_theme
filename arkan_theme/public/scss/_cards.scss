@@ -1,0 +1,24 @@
+// ARKAN Cards — Glassmorphic
+.widget, .frappe-card, .form-group .frappe-control[data-fieldtype="Section Break"] {
+    @include arkan-glass-card;
+    transition: all $arkan-transition-normal;
+    &:hover { border-color: rgba($arkan-cyan, 0.15); }
+}
+
+.number-widget-box {
+    @include arkan-glass(0.5);
+    border-radius: $arkan-radius-lg;
+    .number-widget-title { color: $arkan-text-secondary; font-family: $arkan-font-mono; text-transform: uppercase; font-size: 11px; }
+    .number-widget-value { @include arkan-gradient-text; font-family: $arkan-font-heading; font-weight: 700; }
+}
+
+.shortcut-widget-box {
+    @include arkan-glass(0.4);
+    border-radius: $arkan-radius-md;
+    border: 1px solid $arkan-border;
+    &:hover {
+        border-color: rgba($arkan-cyan, 0.3);
+        transform: translateY(-2px);
+        @include arkan-neon-glow($arkan-cyan, 10px);
+    }
+}

@@ -1,0 +1,888 @@
+// ARKAN Layout — Dark-first base styles
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+body {
+    background: $arkan-deep-black !important;
+    color: $arkan-text-primary;
+    font-family: $arkan-font-body;
+    display: flex !important;
+    flex-direction: row !important;
+    position: relative !important;
+    min-height: 100vh;
+    overflow-x: hidden !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+// ═══ Layout Fixes (override arrowz_theme.css remnants & Frappe flex issues) ═══
+// These MUST live in SCSS so they survive recompilation.
+body:not([data-path="login"]) {
+    padding-top: 0 !important;  // arrowz_theme.css used to set 56px for .navbar
+}
+
+.main-section {
+    flex: 1 1 0% !important;
+    min-width: 0 !important;
+}
+
+// Override Frappe core margin-left:240px on .layout-main-section
+.layout-main-section {
+    margin-left: unset !important;
+}
+
+.body-sidebar-container {
+    flex-shrink: 0 !important;
+    z-index: 1020 !important;
+    .body-sidebar {
+        min-height: 100vh !important;
+    }
+}
+
+// ═══ Web-page Navbar (login, portal, website) ═══
+.navbar {
+    background: rgba($arkan-deep-black, 0.85) !important;
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba($arkan-cyan, 0.1) !important;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+}
+.navbar .navbar-brand img { filter: brightness(1.2); }
+
+// Page container — no gap above it
+.page-container {
+    background: $arkan-deep-black;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+.layout-main { background: transparent; }
+
+// Main section — critical scroll fix
+// Frappe sets overflow:scroll then overflow-y:visible which creates a browser auto-promotion
+// conflict. We must explicitly set overflow to auto for reliable scrolling.
+.main-section {
+    background: $arkan-deep-black;
+    scrollbar-gutter: auto !important;
+    overflow: auto !important;
+    overflow-x: hidden !important;
+
+    // The empty <header> element between ARKAN topbar and #body causes a gap.
+    // It only holds an announcement widget on mobile — hide it on desk to close the gap.
+    > header {
+        display: none !important;
+        height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    // Ensure #body has no top spacing
+    > #body {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+    }
+}
+
+// ═══ ARKAN Topbar (branded navigation bar at top of .main-section) ═══
+// Replaces the old 2px decorative gradient line with a proper visible topbar.
+// Contains ARKAN logo/brand, search shortcut, and user avatar.
+.arkan-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    height: var(--arkan-topbar-height, 40px);
+    min-height: var(--arkan-topbar-height, 40px);
+    background: linear-gradient(135deg, rgba($arkan-deep-black, 0.95) 0%, rgba(#111827, 0.98) 100%);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid $arkan-border;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+
+    // Gradient accent line at the bottom
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, $arkan-cyan, $arkan-purple, $arkan-cyan);
+        opacity: 0.6;
+    }
+}
+
+.arkan-topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.arkan-topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.arkan-topbar-logo {
+    height: 24px;
+    width: auto;
+    filter: brightness(1.1);
+}
+
+.arkan-topbar-brand-text {
+    font-family: $arkan-font-heading;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, $arkan-cyan, $arkan-purple);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.arkan-topbar-center {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    max-width: 640px;
+    margin: 0 auto;
+    gap: 12px;
+}
+
+// ── Frappe desktop search module inside ARKAN topbar ──
+.arkan-topbar .arkan-search-bar {
+    flex: 1;
+    position: relative;
+    max-width: 400px;
+    min-width: 140px;
+
+    .desktop-navbar-modal-search {
+        background: rgba(#fff, 0.06);
+        border: 1px solid $arkan-border;
+        border-radius: 8px;
+        height: 30px;
+        padding: 0 12px;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        transition: all 200ms ease;
+        cursor: pointer;
+
+        &:hover {
+            border-color: rgba($arkan-cyan, 0.3);
+            background: rgba(#fff, 0.08);
+        }
+    }
+
+    .desktop-search-icon {
+        color: $arkan-text-muted;
+        font-size: 12px;
+        font-family: $arkan-font-body;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+
+        .icon {
+            width: 14px;
+            height: 14px;
+            stroke-width: 1.5px;
+        }
+    }
+
+    .desktop-keyboard-shortcut {
+        margin-left: auto;
+        flex-shrink: 0;
+        font-size: 10px;
+        font-family: $arkan-font-mono;
+        color: $arkan-text-muted;
+        background: rgba(#fff, 0.06);
+        border: 1px solid $arkan-border;
+        border-radius: 4px;
+        padding: 1px 6px;
+        line-height: 16px;
+    }
+}
+
+// Light-mode search bar in topbar
+[data-theme="light"] .arkan-topbar .arkan-search-bar {
+    .desktop-navbar-modal-search {
+        background: rgba(#000, 0.04);
+        border-color: #e2e8f0;
+
+        &:hover {
+            border-color: #cbd5e1;
+            background: rgba(#000, 0.06);
+        }
+    }
+    .desktop-search-icon { color: #94a3b8; }
+    .desktop-keyboard-shortcut {
+        background: rgba(#000, 0.04);
+        border-color: #e2e8f0;
+        color: #94a3b8;
+    }
+}
+
+.arkan-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+// ── Communication channel icon group (next to search in center) ──
+.arkan-topbar-comm-group {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px 4px;
+    border-radius: 8px;
+    background: rgba(#fff, 0.03);
+    border: 1px solid rgba($arkan-border, 0.4);
+}
+
+.arkan-topbar-comm-btn {
+    background: none;
+    border: none;
+    color: $arkan-text-muted;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 6px;
+    transition: all 150ms ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    svg {
+        width: 15px;
+        height: 15px;
+    }
+
+    &:hover {
+        color: $arkan-cyan;
+        background: rgba($arkan-cyan, 0.1);
+    }
+
+    // Channel-specific hover colors
+    &[data-channel="chat"]:hover {
+        color: $arkan-cyan;
+        background: rgba($arkan-cyan, 0.1);
+    }
+    &[data-channel="messages"]:hover {
+        color: #fbbf24;
+        background: rgba(#fbbf24, 0.1);
+    }
+}
+
+// Light mode comm buttons
+[data-theme="light"] .arkan-topbar-comm-group {
+    background: rgba(#000, 0.02);
+    border-color: #e2e8f0;
+}
+[data-theme="light"] .arkan-topbar-comm-btn {
+    color: #94a3b8;
+    &:hover { color: #0284c7; background: rgba(#0284c7, 0.08); }
+    &[data-channel="messages"]:hover { color: #d97706; background: rgba(#d97706, 0.08); }
+}
+
+.arkan-topbar-btn {
+    background: none;
+    border: none;
+    color: $arkan-text-muted;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+    transition: all 150ms ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    &:hover {
+        color: $arkan-cyan;
+        background: rgba($arkan-cyan, 0.1);
+    }
+
+    // Avatar inside the button
+    .avatar {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+// Notification badge (red pill on bell icon)
+.arkan-topbar-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    font-size: 10px;
+    font-weight: 700;
+    font-family: $arkan-font-mono;
+    line-height: 16px;
+    text-align: center;
+    color: #fff;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ff4757 100%);
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(255, 71, 87, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: arkan-badge-pulse 2s ease-in-out infinite;
+}
+
+@keyframes arkan-badge-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.arkan-topbar-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, $arkan-cyan, $arkan-purple);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: $arkan-font-heading;
+}
+
+// ── Sidebar brand ──
+.arkan-sidebar-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 4px 2px;
+    cursor: pointer;
+}
+
+.arkan-sidebar-brand-letter {
+    font-family: $arkan-font-heading;
+    font-weight: 700;
+    font-size: 11px;
+    background: linear-gradient(135deg, $arkan-cyan, $arkan-purple);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 1px;
+}
+
+// ── Adjust .page-head to sit below the ARKAN topbar ──
+// When the ARKAN topbar is present, the page-head sticks at top = topbar height.
+// (The actual .page-head styling is in the Page Head section further down.)
+
+// ── Light-mode overrides ──
+[data-theme="light"] .arkan-topbar {
+    background: linear-gradient(135deg, rgba(#ffffff, 0.95) 0%, rgba(#f8fafc, 0.98) 100%);
+    border-bottom-color: #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+[data-theme="light"] .arkan-topbar-btn {
+    color: #64748b;
+    &:hover { color: #0284c7; background: rgba(2, 132, 199, 0.08); }
+}
+[data-theme="light"] .arkan-topbar::after {
+    opacity: 0.3;
+}
+
+// ═══ Desk Sidebar (Frappe v16 left navigation panel) ═══
+// The desk sidebar (.body-sidebar-container) is the primary navigation on desktop.
+// It is prepended to <body> by Frappe JS and sits in the body flex-row next to .main-section.
+.body-sidebar-container {
+    .body-sidebar {
+        background: $arkan-panel-dark !important;
+        border-right: 1px solid $arkan-border !important;
+        // Allow the glow line (position:absolute child) to position relative to
+        // the sidebar. This is overridden by Frappe's higher-specificity rule:
+        // .body-sidebar-container.expanded .body-sidebar { position: absolute; }
+        position: relative;
+
+        // Sidebar item icons & labels
+        .sidebar-item-icon {
+            color: $arkan-text-muted;
+            transition: color $arkan-transition-fast;
+        }
+        .sidebar-item-label {
+            color: $arkan-text-secondary;
+            font-family: $arkan-font-body;
+        }
+        // Active state
+        .active-sidebar {
+            .sidebar-item-icon { color: $arkan-cyan; filter: drop-shadow(0 0 4px rgba($arkan-cyan, 0.5)); }
+            .sidebar-item-label { color: $arkan-cyan; }
+        }
+        // Hover
+        .sidebar-item:not(.active-sidebar):hover {
+            .sidebar-item-icon { color: $arkan-text-primary; }
+            .sidebar-item-label { color: $arkan-text-primary; }
+        }
+        // Collapse link at bottom
+        .collapse-sidebar-link {
+            color: $arkan-text-muted;
+            &:hover { color: $arkan-cyan; }
+        }
+        // User avatar dropdown
+        .dropdown-navbar-user {
+            .avatar-name-email {
+                .d-block { color: $arkan-text-primary; }
+                .text-secondary { color: $arkan-text-muted !important; }
+            }
+        }
+    }
+}
+
+// Sidebar overlay (when expanded on mobile-ish viewports)
+.body-sidebar-container .overlay {
+    background: rgba($arkan-deep-black, 0.6) !important;
+    backdrop-filter: blur(4px);
+}
+
+// Sidebar expanded state
+.body-sidebar-container.expanded {
+    .body-sidebar {
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
+    }
+}
+
+// ═══ Content-area Sidebar (list filters, form sidebar) ═══
+.layout-side-section {
+    background: $arkan-panel-dark;
+    border-right: 1px solid $arkan-border;
+    .desk-sidebar .sidebar-menu a {
+        color: $arkan-text-secondary;
+        &:hover, &.selected { color: $arkan-cyan; background: rgba($arkan-cyan, 0.05); }
+    }
+}
+
+// ── List page layout fix ──
+// Frappe defaults: main-wrapper = flex: 1 0 80%; sidebar = min-width 277px.
+// On wide screens the sidebar gets ~20% (300-400px) while its content is narrow,
+// creating a large visual gap. Fix: let the main wrapper grow to fill space and
+// constrain the sidebar to its natural/needed width on list and report pages.
+[data-page-route^="List/"],
+[data-page-route^="Report/"],
+[data-page-route^="Tree/"] {
+    .layout-main {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+    }
+    .layout-main-section-wrapper {
+        flex: 1 1 auto !important;
+        width: auto !important;
+        min-width: 0 !important;
+    }
+    .layout-side-section {
+        flex: 0 0 auto !important;
+        width: auto !important;
+        min-width: 200px !important;
+        max-width: 280px !important;
+    }
+}
+
+// ── Form page layout fix ──
+body[data-route^="Form"] {
+    .layout-main {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+    }
+    .layout-main-section-wrapper {
+        flex: 1 1 0% !important;
+        min-width: 0 !important;
+        width: auto !important;
+    }
+    .layout-side-section {
+        flex: 0 0 var(--form-sidebar-width, 277px) !important;
+        min-width: var(--form-sidebar-width, 277px) !important;
+        max-width: var(--form-sidebar-width, 277px) !important;
+        width: var(--form-sidebar-width, 277px) !important;
+    }
+}
+
+// ── Workspace layout ──
+[data-page-route="Workspaces"] {
+    .layout-main-section-wrapper {
+        flex: 1 1 auto !important;
+        width: auto !important;
+    }
+}
+
+// ═══ Page Head (desk topbar — per-page sticky bar with title, breadcrumbs, actions) ═══
+// In Frappe v16, .page-head IS the topbar for each desk page.
+// It sits inside .main-section > #body > .page-container and is position:sticky.
+// Offset below the ARKAN topbar so both can be sticky simultaneously.
+.page-head {
+    background: $arkan-panel-dark !important;
+    border-bottom: 1px solid $arkan-border;
+    border-top: none !important;
+    top: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+
+    // No ::before gradient — the ARKAN topbar already has the accent gradient line.
+    // Adding one here creates a visible double-line gap.
+    &::before {
+        display: none !important;
+    }
+
+    .page-title .title-text {
+        color: $arkan-text-primary;
+        font-family: $arkan-font-heading;
+        font-weight: 600;
+    }
+
+    // Breadcrumbs
+    .breadcrumb-container {
+        .breadcrumb a { color: $arkan-text-muted; &:hover { color: $arkan-cyan; } }
+        .breadcrumb-item + .breadcrumb-item::before { color: $arkan-text-muted; }
+        .breadcrumb .breadcrumb-item.active { color: $arkan-text-secondary; }
+    }
+
+    // Action buttons in page head
+    .page-actions {
+        .btn-primary-dark, .btn-primary {
+            background: rgba($arkan-cyan, 0.15);
+            color: $arkan-cyan;
+            border: 1px solid rgba($arkan-cyan, 0.3);
+            &:hover {
+                background: rgba($arkan-cyan, 0.25);
+                box-shadow: 0 0 12px rgba($arkan-cyan, 0.2);
+            }
+        }
+        .btn-default, .btn-secondary-dark, .btn-secondary {
+            background: $arkan-surface;
+            color: $arkan-text-secondary;
+            border: 1px solid $arkan-border;
+            &:hover { color: $arkan-text-primary; background: lighten($arkan-surface, 4%); }
+        }
+    }
+
+    // "Like" and menu icons
+    .like-active-item .like-action { color: $arkan-rose; }
+    .menu-btn-group .btn { color: $arkan-text-secondary; &:hover { color: $arkan-cyan; } }
+}
+
+// ═══ Mobile Responsive ═══
+@media (max-width: 768px) {
+    .arkan-topbar {
+        padding: 0 10px;
+        height: 36px;
+        min-height: 36px;
+    }
+    .arkan-topbar-brand-text { display: none; }
+    .arkan-topbar-logo { height: 20px; }
+    .arkan-topbar-center { padding: 0 8px; max-width: none; gap: 6px; }
+    .arkan-topbar .arkan-search-bar {
+        max-width: 240px;
+        min-width: 100px;
+        .desktop-navbar-modal-search { height: 26px; padding: 0 8px; }
+        .desktop-keyboard-shortcut { display: none; }
+    }
+    .arkan-topbar-comm-group {
+        gap: 0;
+        padding: 1px 2px;
+    }
+    .arkan-topbar-comm-btn {
+        padding: 4px;
+        svg { width: 13px; height: 13px; }
+    }
+    // On mobile, Frappe sidebar is hidden by default — so main-section is full width
+    .main-section { --arkan-topbar-height: 36px; }
+    .page-head { top: 0 !important; }
+}
+
+@media (max-width: 480px) {
+    .arkan-topbar {
+        padding: 0 8px;
+        height: 32px;
+        min-height: 32px;
+    }
+    .arkan-topbar-left { gap: 6px; }
+    .arkan-topbar-center { padding: 0 4px; max-width: none; gap: 4px; }
+    .arkan-topbar .arkan-search-bar {
+        max-width: 160px;
+        min-width: 70px;
+        .desktop-navbar-modal-search { height: 24px; padding: 0 6px; }
+        .desktop-search-icon { font-size: 11px; }
+        .desktop-keyboard-shortcut { display: none; }
+    }
+    .arkan-topbar-comm-group {
+        gap: 0;
+        padding: 0 1px;
+        // Hide labels, show only first 3 icons on very small screens
+        .arkan-topbar-comm-btn:nth-child(n+4) { display: none; }
+    }
+    .arkan-topbar-comm-btn {
+        padding: 3px;
+        svg { width: 12px; height: 12px; }
+    }
+    .main-section { --arkan-topbar-height: 32px; }
+}
+
+// ═══ Workspace Cards ═══
+// Style the workspace editor blocks (shortcuts, links, charts, number cards)
+.workspace-container {
+    .widget.onboarding-widget-box,
+    .widget.shortcut-widget-box,
+    .widget.links-widget-box,
+    .widget.number-widget-box,
+    .widget.chart-widget-box {
+        background: $arkan-panel-dark !important;
+        border: 1px solid $arkan-border !important;
+        border-radius: $arkan-radius-md !important;
+        transition: border-color 200ms ease, box-shadow 200ms ease;
+
+        &:hover {
+            border-color: rgba($arkan-cyan, 0.3) !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 0 12px rgba($arkan-cyan, 0.06);
+        }
+    }
+
+    .widget-head .widget-title {
+        color: $arkan-text-primary;
+        font-family: $arkan-font-heading;
+        font-weight: 600;
+    }
+
+    .widget-body .widget-link {
+        color: $arkan-text-secondary;
+        &:hover { color: $arkan-cyan; }
+    }
+}
+
+// Shortcut cards
+.desk-shortcut {
+    background: $arkan-panel-dark !important;
+    border: 1px solid $arkan-border !important;
+    border-radius: $arkan-radius-md !important;
+    color: $arkan-text-secondary;
+    transition: all 200ms ease;
+
+    &:hover {
+        border-color: rgba($arkan-cyan, 0.3) !important;
+        color: $arkan-cyan;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .indicator-pill { font-family: $arkan-font-mono; font-size: 11px; }
+}
+
+// Number cards
+.number-widget-box .widget-body {
+    .number { color: $arkan-text-primary; font-family: $arkan-font-heading; font-weight: 700; }
+    .number-label { color: $arkan-text-muted; }
+}
+
+// Chart cards
+.chart-widget-box .widget-body {
+    background: transparent;
+    .chart-container { background: transparent; }
+}
+
+// Controls
+.frappe-control .control-label { color: $arkan-text-secondary; font-family: $arkan-font-body; }
+
+// ═══ AwesomeBar Modal (Frappe search popup — opened from topbar search) ═══
+// Style the modal to match ARKAN theme.
+.modal.show .navbar-modal-wrapper {
+    background: $arkan-panel-dark;
+    border-bottom: 1px solid $arkan-border;
+
+    .modal-search-icon {
+        color: $arkan-text-muted;
+    }
+    #navbar-search {
+        color: $arkan-text-primary;
+        font-family: $arkan-font-body;
+        font-size: 14px;
+
+        &::placeholder {
+            color: $arkan-text-muted;
+        }
+    }
+    .modal-divider {
+        border-color: $arkan-border;
+    }
+}
+
+// Modal backdrop & container
+.modal.show .modal-content:has(.navbar-modal-wrapper) {
+    background: $arkan-panel-dark;
+    border: 1px solid $arkan-border;
+    border-radius: 12px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba($arkan-cyan, 0.05);
+    overflow: hidden;
+}
+
+// Results area
+.modal.show .awesomplete ul {
+    background: $arkan-panel-dark;
+    border-color: $arkan-border;
+
+    li {
+        border-bottom: 1px solid rgba($arkan-border, 0.3);
+
+        &:hover, &[aria-selected="true"] {
+            background: rgba($arkan-cyan, 0.08);
+        }
+
+        a {
+            color: $arkan-text-secondary;
+            &:hover { color: $arkan-cyan; }
+        }
+
+        .text-muted { color: $arkan-text-muted !important; }
+    }
+}
+
+// Modal footer with navigation hints
+.cool-awesomebar-modal-footer {
+    background: rgba($arkan-deep-black, 0.5);
+    border-top: 1px solid $arkan-border;
+    color: $arkan-text-muted;
+    font-family: $arkan-font-body;
+    font-size: 11px;
+
+    .help-item {
+        color: $arkan-text-muted;
+        background: rgba(#fff, 0.06);
+        border: 1px solid $arkan-border;
+        border-radius: 4px;
+        padding: 1px 4px;
+    }
+    .help-item-esc {
+        font-family: $arkan-font-mono;
+    }
+}
+
+// Light mode search modal
+[data-theme="light"] {
+    .modal.show .navbar-modal-wrapper {
+        background: #ffffff;
+        border-bottom-color: #e2e8f0;
+        #navbar-search { color: #1e293b; &::placeholder { color: #94a3b8; } }
+    }
+    .modal.show .modal-content:has(.navbar-modal-wrapper) {
+        background: #ffffff;
+        border-color: #e2e8f0;
+        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+    }
+    .modal.show .awesomplete ul {
+        background: #ffffff;
+        li:hover, li[aria-selected="true"] { background: rgba(2, 132, 199, 0.06); }
+        li a { color: #475569; &:hover { color: #0284c7; } }
+    }
+    .cool-awesomebar-modal-footer {
+        background: #f8fafc;
+        border-top-color: #e2e8f0;
+        color: #94a3b8;
+        .help-item { background: rgba(0, 0, 0, 0.04); border-color: #e2e8f0; }
+    }
+}
+
+// ═══ Scrollbar — thin, transparent, hover-only ═══
+// Global: very thin, invisible by default, appears on hover
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 2px;
+    transition: background 300ms ease;
+}
+
+// Show scrollbar thumb on container hover
+*:hover > ::-webkit-scrollbar-thumb,
+*:hover::-webkit-scrollbar-thumb {
+    background: rgba(#fff, 0.10);
+}
+*:hover > ::-webkit-scrollbar-thumb:hover,
+*:hover::-webkit-scrollbar-thumb:hover {
+    background: rgba($arkan-cyan, 0.35);
+}
+
+// Firefox thin scrollbar
+* {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+}
+*:hover {
+    scrollbar-color: rgba(#fff, 0.10) transparent;
+}
+
+// ── Desk sidebar scroll — elegant & minimal ──
+.body-sidebar-container .body-sidebar {
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    // Webkit — 3px ultra-thin, transparent until hover
+    &::-webkit-scrollbar { width: 3px; }
+    &::-webkit-scrollbar-track { background: transparent; }
+    &::-webkit-scrollbar-thumb {
+        background: transparent;
+        border-radius: 2px;
+    }
+    &:hover::-webkit-scrollbar-thumb {
+        background: rgba(#fff, 0.08);
+    }
+    &:hover::-webkit-scrollbar-thumb:hover {
+        background: rgba($arkan-cyan, 0.3);
+    }
+    // Firefox
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    &:hover {
+        scrollbar-color: rgba(#fff, 0.08) transparent;
+    }
+}
+
+// ── Collapsed sidebar — keep icons visible, scroll behind them ──
+.body-sidebar-container:not(.expanded) .body-sidebar {
+    // Ensure link icons are always visible (not clipped by scrollbar)
+    .sidebar-item-icon {
+        position: relative;
+        z-index: 2;
+    }
+}
+
+// ── Mobile touch scroll — momentum + smooth drag ──
+@media (max-width: 768px) {
+    .body-sidebar-container .body-sidebar {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+    }
+}
+
+// ── Light mode scrollbar ──
+[data-theme="light"] {
+    *:hover > ::-webkit-scrollbar-thumb,
+    *:hover::-webkit-scrollbar-thumb {
+        background: rgba(#000, 0.08);
+    }
+    *:hover > ::-webkit-scrollbar-thumb:hover,
+    *:hover::-webkit-scrollbar-thumb:hover {
+        background: rgba(#0284c7, 0.25);
+    }
+    *:hover { scrollbar-color: rgba(#000, 0.08) transparent; }
+
+    .body-sidebar-container .body-sidebar {
+        &:hover::-webkit-scrollbar-thumb { background: rgba(#000, 0.06); }
+        &:hover::-webkit-scrollbar-thumb:hover { background: rgba(#0284c7, 0.2); }
+        &:hover { scrollbar-color: rgba(#000, 0.06) transparent; }
+    }
+}

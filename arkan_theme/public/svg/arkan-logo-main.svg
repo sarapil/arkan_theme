@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <defs>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F0FF"/>
+      <stop offset="100%" stop-color="#8B5CF6"/>
+    </linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <!-- Outer triangle -->
+  <polygon points="100,15 185,175 15,175" stroke="url(#g1)" stroke-width="2" fill="none" opacity="0.3" filter="url(#glow)"/>
+  <!-- Inner triangle -->
+  <polygon points="100,40 165,160 35,160" stroke="url(#g1)" stroke-width="2" fill="none" opacity="0.6" filter="url(#glow)"/>
+  <!-- A letter -->
+  <text x="100" y="130" text-anchor="middle" fill="url(#g1)" font-family="Space Grotesk,sans-serif" font-size="72" font-weight="700" filter="url(#glow)">A</text>
+  <!-- Neural nodes -->
+  <circle cx="100" cy="20" r="4" fill="#00F0FF"><animate attributeName="opacity" values="1;0.3;1" dur="3s" repeatCount="indefinite"/></circle>
+  <circle cx="180" cy="170" r="4" fill="#8B5CF6"><animate attributeName="opacity" values="0.3;1;0.3" dur="3s" repeatCount="indefinite"/></circle>
+  <circle cx="20" cy="170" r="4" fill="#00F0FF"><animate attributeName="opacity" values="0.6;1;0.6" dur="3s" repeatCount="indefinite"/></circle>
+  <!-- Connection lines -->
+  <line x1="100" y1="20" x2="180" y2="170" stroke="#00F0FF" stroke-width="0.5" opacity="0.2"/>
+  <line x1="100" y1="20" x2="20" y2="170" stroke="#8B5CF6" stroke-width="0.5" opacity="0.2"/>
+  <line x1="20" y1="170" x2="180" y2="170" stroke="#00F0FF" stroke-width="0.5" opacity="0.2"/>
+</svg>

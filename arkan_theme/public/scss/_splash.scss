@@ -1,0 +1,63 @@
+// ARKAN Splash Screen
+// Override Frappe's .centered { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) }
+.arkan-splash-screen {
+    position: fixed !important;
+    inset: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    transform: none !important;
+    -webkit-transform: none !important;
+    z-index: $z-splash;
+    background: $arkan-deep-black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+
+    &.arkan-splash-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+    .arkan-splash-logo {
+        width: 120px; height: 120px;
+        animation: arkan-pulse-glow 2s ease-in-out infinite;
+    }
+    .arkan-splash-brand {
+        font-family: $arkan-font-heading;
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        @include arkan-gradient-text;
+        margin-top: 24px;
+    }
+    .arkan-splash-tagline {
+        color: $arkan-text-muted;
+        font-family: $arkan-font-mono;
+        font-size: 0.85rem;
+        margin-top: 8px;
+    }
+    .arkan-splash-progress {
+        width: 200px; height: 2px;
+        background: $arkan-border;
+        margin-top: 32px;
+        border-radius: 1px;
+        overflow: hidden;
+        .arkan-splash-progress-bar {
+            height: 100%;
+            background: $arkan-gradient-primary;
+            animation: arkan-progress-fill 2.5s ease-out forwards;
+        }
+    }
+}
+
+@keyframes arkan-pulse-glow {
+    0%, 100% { filter: drop-shadow(0 0 10px rgba($arkan-cyan, 0.3)); }
+    50% { filter: drop-shadow(0 0 25px rgba($arkan-cyan, 0.6)); }
+}
+@keyframes arkan-progress-fill {
+    from { width: 0; }
+    to { width: 100%; }
+}

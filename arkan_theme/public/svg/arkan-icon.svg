@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs><linearGradient id="ai" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00F0FF"/><stop offset="100%" stop-color="#8B5CF6"/></linearGradient></defs>
+  <polygon points="32,4 60,56 4,56" stroke="url(#ai)" stroke-width="2" fill="none" opacity="0.5"/>
+  <text x="32" y="44" text-anchor="middle" fill="url(#ai)" font-family="Space Grotesk,sans-serif" font-size="24" font-weight="700">A</text>
+</svg>

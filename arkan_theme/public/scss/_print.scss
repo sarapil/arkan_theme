@@ -1,0 +1,8 @@
+// ARKAN Print
+@media print {
+    .arkan-neural-grid-canvas,
+    .arkan-splash-screen,
+    .arkan-matrix-canvas,
+    .arkan-cursor-trail { display: none !important; }
+    body { background: white !important; color: black !important; }
+}

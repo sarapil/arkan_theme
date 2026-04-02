@@ -1,0 +1,15 @@
+// ARKAN Modals
+.modal-content {
+    @include arkan-glass(0.9);
+    border: 1px solid rgba($arkan-cyan, 0.15);
+    border-radius: $arkan-radius-lg;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), $arkan-glow-cyan;
+}
+.modal-header {
+    border-bottom: 1px solid $arkan-border;
+    .modal-title { font-family: $arkan-font-heading; color: $arkan-text-primary; }
+    .btn-close { filter: invert(1); }
+}
+.modal-body { color: $arkan-text-primary; }
+.modal-footer { border-top: 1px solid $arkan-border; }
+.modal-backdrop { background: rgba($arkan-deep-black, 0.8); }

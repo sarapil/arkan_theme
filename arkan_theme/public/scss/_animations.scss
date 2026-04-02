@@ -1,0 +1,16 @@
+// ARKAN Animations
+@keyframes arkan-fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes arkan-glow-pulse { 0%, 100% { box-shadow: 0 0 5px rgba($arkan-cyan, 0.2); } 50% { box-shadow: 0 0 20px rgba($arkan-cyan, 0.4); } }
+@keyframes arkan-scan-line {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100vh); }
+}
+@keyframes arkan-glitch {
+    0%, 100% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+}
+.arkan-animate-in { animation: arkan-fade-in 0.4s ease-out both; }
+@for $i from 1 through 10 { .arkan-animate-delay-#{$i} { animation-delay: #{$i * 80}ms; } }

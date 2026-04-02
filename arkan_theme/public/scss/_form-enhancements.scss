@@ -1,0 +1,9 @@
+// ARKAN Form Enhancements
+.form-timeline .timeline-item {
+    border-left: 2px solid $arkan-border;
+    &:hover { border-left-color: $arkan-cyan; }
+    .timeline-dot { background: $arkan-cyan; box-shadow: 0 0 8px rgba($arkan-cyan, 0.4); }
+}
+.comment-box { @include arkan-glass(0.3); border-radius: $arkan-radius-md; }
+.form-dashboard { background: $arkan-panel-dark; border-bottom: 1px solid $arkan-border; }
+.form-links .btn-new-doc { color: $arkan-cyan; }

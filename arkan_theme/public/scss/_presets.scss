@@ -1,0 +1,10 @@
+// ARKAN Presets
+.arkan-preset-card {
+    @include arkan-glass(0.5);
+    border-radius: $arkan-radius-lg;
+    padding: 16px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    &:hover { border-color: rgba($arkan-cyan, 0.3); }
+    &.active { border-color: $arkan-cyan; @include arkan-neon-glow($arkan-cyan, 8px); }
+}

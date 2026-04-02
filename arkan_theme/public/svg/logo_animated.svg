@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <defs><linearGradient id="la" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00F0FF"/><stop offset="100%" stop-color="#8B5CF6"/></linearGradient></defs>
+  <polygon points="60,10 110,100 10,100" stroke="url(#la)" stroke-width="2" fill="none">
+    <animate attributeName="stroke-dasharray" values="0,300;300,0" dur="2s" fill="freeze"/>
+  </polygon>
+  <text x="60" y="75" text-anchor="middle" fill="url(#la)" font-family="Space Grotesk,sans-serif" font-size="36" font-weight="700" opacity="0">
+    A
+    <animate attributeName="opacity" values="0;1" dur="0.5s" begin="1.5s" fill="freeze"/>
+  </text>
+  <circle cx="60" cy="12" r="3" fill="#00F0FF" opacity="0"><animate attributeName="opacity" values="0;1" dur="0.3s" begin="0.5s" fill="freeze"/></circle>
+  <circle cx="108" cy="98" r="3" fill="#8B5CF6" opacity="0"><animate attributeName="opacity" values="0;1" dur="0.3s" begin="1s" fill="freeze"/></circle>
+  <circle cx="12" cy="98" r="3" fill="#00F0FF" opacity="0"><animate attributeName="opacity" values="0;1" dur="0.3s" begin="1.5s" fill="freeze"/></circle>
+</svg>

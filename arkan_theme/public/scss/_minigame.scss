@@ -1,0 +1,7 @@
+// ARKAN Minigame
+.arkan-minigame-container {
+    position: fixed; bottom: 80px; right: 20px; z-index: $z-overlay;
+    @include arkan-glass-card;
+    border: 1px solid rgba($arkan-cyan, 0.2);
+    padding: 16px; width: 300px;
+}

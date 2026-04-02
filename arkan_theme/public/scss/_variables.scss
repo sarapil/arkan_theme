@@ -1,0 +1,125 @@
+// ARKAN Theme — Design Tokens & CSS Custom Properties
+// Futuristic Cyber-Tech AI Aesthetic
+
+// ─── Core Brand Colors ───
+$arkan-deep-black:   #0A0F1C;
+$arkan-panel-dark:   #111827;
+$arkan-surface:      #1E293B;
+$arkan-border:       #2D3A4F;
+$arkan-cyan:         #00F0FF;
+$arkan-purple:       #8B5CF6;
+$arkan-green:        #10B981;
+$arkan-amber:        #F59E0B;
+$arkan-rose:         #F43F5E;
+$arkan-text-primary: #E8ECF1;
+$arkan-text-secondary: #94A3B8;
+$arkan-text-muted:   #64748B;
+
+// ─── Gradients ───
+$arkan-gradient-primary: linear-gradient(135deg, $arkan-cyan, $arkan-purple);
+$arkan-gradient-header:  linear-gradient(90deg, $arkan-deep-black 0%, rgba($arkan-cyan, 0.05) 50%, $arkan-deep-black 100%);
+$arkan-gradient-card:    linear-gradient(180deg, rgba($arkan-cyan, 0.03) 0%, transparent 100%);
+
+// ─── Typography ───
+$arkan-font-heading: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+$arkan-font-body:    'Inter', system-ui, -apple-system, sans-serif;
+$arkan-font-mono:    'JetBrains Mono', 'Fira Code', monospace;
+
+// ─── Spacing ───
+$arkan-radius-sm: 6px;
+$arkan-radius-md: 10px;
+$arkan-radius-lg: 16px;
+$arkan-radius-xl: 24px;
+
+// ─── Shadows & Glows ───
+$arkan-glow-cyan:   0 0 20px rgba($arkan-cyan, 0.3), 0 0 40px rgba($arkan-cyan, 0.1);
+$arkan-glow-purple: 0 0 20px rgba($arkan-purple, 0.3), 0 0 40px rgba($arkan-purple, 0.1);
+$arkan-shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4), 0 0 1px rgba($arkan-cyan, 0.1);
+$arkan-transition-fast:   150ms cubic-bezier(0.4, 0, 0.2, 1);
+$arkan-transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+$arkan-transition-slow:   400ms cubic-bezier(0.4, 0, 0.2, 1);
+
+$z-neural-grid: 0;
+$z-content: 1;
+$z-navbar: 100;
+$z-overlay: 200;
+$z-splash: 9999;
+
+:root {
+    --arkan-bg-deep: #{$arkan-deep-black};
+    --arkan-bg-panel: #{$arkan-panel-dark};
+    --arkan-bg-surface: #{$arkan-surface};
+    --arkan-border: #{$arkan-border};
+    --arkan-cyan: #{$arkan-cyan};
+    --arkan-purple: #{$arkan-purple};
+    --arkan-green: #{$arkan-green};
+    --arkan-amber: #{$arkan-amber};
+    --arkan-rose: #{$arkan-rose};
+    --arkan-text: #{$arkan-text-primary};
+    --arkan-text-secondary: #{$arkan-text-secondary};
+    --arkan-text-muted: #{$arkan-text-muted};
+    --arkan-font-heading: #{$arkan-font-heading};
+    --arkan-font-body: #{$arkan-font-body};
+    --arkan-font-mono: #{$arkan-font-mono};
+    --arkan-radius-sm: #{$arkan-radius-sm};
+    --arkan-radius-md: #{$arkan-radius-md};
+    --arkan-radius-lg: #{$arkan-radius-lg};
+}
+
+// Override Frappe's native CSS variables for dark mode (ARKAN dark)
+// These control the sidebar, page head, cards etc.
+[data-theme="dark"] {
+    --surface-menu-bar: #{$arkan-panel-dark};
+    --sidebar-hover-color: #{rgba($arkan-cyan, 0.08)};
+    --sidebar-active-color: #{rgba($arkan-cyan, 0.12)};
+    --sidebar-border-color: #{$arkan-border};
+    --divider-color: #{$arkan-border};
+    --bg-color: #{$arkan-deep-black};
+    --card-bg: #{$arkan-panel-dark};
+    --border-color: #{$arkan-border};
+    --text-color: #{$arkan-text-primary};
+    --heading-color: #{$arkan-text-primary};
+    --text-muted: #{$arkan-text-muted};
+    --text-light: #{$arkan-text-secondary};
+}
+
+@mixin arkan-glass($opacity: 0.6) {
+    background: rgba($arkan-panel-dark, $opacity);
+    backdrop-filter: blur(12px) saturate(150%);
+    -webkit-backdrop-filter: blur(12px) saturate(150%);
+    border: 1px solid rgba($arkan-cyan, 0.08);
+}
+@mixin arkan-glass-card {
+    @include arkan-glass(0.7);
+    border-radius: $arkan-radius-lg;
+    box-shadow: $arkan-shadow-card;
+}
+@mixin arkan-neon-glow($color: $arkan-cyan, $spread: 20px) {
+    box-shadow: 0 0 $spread rgba($color, 0.3), 0 0 ($spread * 2) rgba($color, 0.1);
+}
+@mixin arkan-gradient-text {
+    background: $arkan-gradient-primary;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+@mixin arkan-focus-ring($color: $arkan-cyan) {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba($color, 0.4), 0 0 8px rgba($color, 0.2);
+}
+@mixin arkan-gradient-border($radius: $arkan-radius-md) {
+    position: relative;
+    &::before {
+        content: '';
+        position: absolute;
+        inset: -1px;
+        border-radius: $radius;
+        padding: 1px;
+        background: $arkan-gradient-primary;
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+        opacity: 0.4;
+    }
+}

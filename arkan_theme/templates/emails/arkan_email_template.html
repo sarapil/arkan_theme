@@ -1,0 +1,200 @@
+<!-- ARKAN Theme - Branded Email Template -->
+<!-- Used for system notifications and transactional emails -->
+
+{% macro arkan_email(subject, content, footer_text="") %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ subject }}</title>
+  <style>
+    /* Reset */
+    body, table, td, p, a { margin: 0; padding: 0; }
+    body { width: 100% !important; -webkit-text-size-adjust: none; }
+    img { border: 0; outline: none; text-decoration: none; }
+
+    /* Container */
+    .email-wrapper {
+      width: 100%;
+      background-color: #F5F0EB;
+      padding: 32px 0;
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    }
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #FFFFFF;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    /* Header */
+    .email-header {
+      background: linear-gradient(135deg, #1D2939 0%, #2A3A4D 100%);
+      padding: 28px 32px;
+      text-align: center;
+    }
+    .email-header img {
+      max-height: 40px;
+      width: auto;
+    }
+    .email-header .brand-name {
+      color: #DDA46F;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      margin-top: 8px;
+    }
+    .email-gold-bar {
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #DDA46F, transparent);
+    }
+
+    /* Body */
+    .email-body {
+      padding: 32px;
+      color: #1A1A1A;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+    .email-body h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1D2939;
+      margin: 0 0 16px;
+    }
+    .email-body h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1D2939;
+      margin: 24px 0 12px;
+    }
+    .email-body p {
+      margin: 0 0 16px;
+      color: #444;
+    }
+    .email-body a {
+      color: #DDA46F;
+      text-decoration: underline;
+    }
+
+    /* CTA Button */
+    .email-cta {
+      display: inline-block;
+      padding: 12px 28px;
+      background: linear-gradient(135deg, #DDA46F, #A56D29);
+      color: #FFFFFF !important;
+      text-decoration: none !important;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 14px;
+      margin: 8px 0 16px;
+    }
+    .email-cta:hover {
+      background: linear-gradient(135deg, #E8BE94, #DDA46F);
+    }
+
+    /* Info Box */
+    .email-info-box {
+      background: #FFF1E7;
+      border-left: 3px solid #DDA46F;
+      padding: 14px 18px;
+      margin: 16px 0;
+      border-radius: 0 6px 6px 0;
+      font-size: 13px;
+      color: #1D2939;
+    }
+
+    /* Table in email */
+    .email-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+    }
+    .email-table th {
+      background: #1D2939;
+      color: #FFF1E7;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+    .email-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #F0E6DC;
+      font-size: 13px;
+      color: #444;
+    }
+    .email-table tr:nth-child(even) td {
+      background: #FAF5F0;
+    }
+
+    /* Footer */
+    .email-footer {
+      background: #1D2939;
+      padding: 24px 32px;
+      text-align: center;
+    }
+    .email-footer p {
+      color: rgba(255,241,231,0.6);
+      font-size: 12px;
+      margin: 0 0 4px;
+    }
+    .email-footer .powered-by {
+      color: #DDA46F;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .email-footer a {
+      color: #DDA46F;
+      text-decoration: none;
+    }
+
+    /* Mobile */
+    @media (max-width: 600px) {
+      .email-container { margin: 0 12px; }
+      .email-header, .email-body, .email-footer { padding: 20px; }
+      .email-body h1 { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="email-wrapper">
+    <table class="email-container" role="presentation">
+      <!-- Header -->
+      <tr>
+        <td class="email-header">
+          {% if logo_url %}
+            <img src="{{ logo_url }}" alt="{{ brand_name or 'ARKAN' }}">
+          {% endif %}
+          <div class="brand-name">{{ brand_name or "ARKAN" }}</div>
+        </td>
+      </tr>
+      <tr><td class="email-gold-bar"></td></tr>
+
+      <!-- Body -->
+      <tr>
+        <td class="email-body">
+          {{ content }}
+        </td>
+      </tr>
+
+      <!-- Footer -->
+      <tr>
+        <td class="email-footer">
+          {% if footer_text %}
+            <p>{{ footer_text }}</p>
+          {% endif %}
+          <p class="powered-by">Powered by ARKAN</p>
+        </td>
+      </tr>
+    </table>
+  </div>
+</body>
+</html>
+{% endmacro %}

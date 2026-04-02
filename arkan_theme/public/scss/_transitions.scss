@@ -1,0 +1,4 @@
+// ARKAN Transitions
+.fade-enter-active, .fade-leave-active { transition: opacity $arkan-transition-normal; }
+.fade-enter, .fade-leave-to { opacity: 0; }
+.page-container { transition: opacity $arkan-transition-slow; }

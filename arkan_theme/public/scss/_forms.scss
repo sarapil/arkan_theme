@@ -1,0 +1,33 @@
+// ARKAN Forms
+.frappe-control input[type="text"],
+.frappe-control input[type="password"],
+.frappe-control input[type="email"],
+.frappe-control input[type="number"],
+.frappe-control select,
+.frappe-control textarea,
+.form-control {
+    background: $arkan-surface !important;
+    border: 1px solid $arkan-border !important;
+    color: $arkan-text-primary !important;
+    border-radius: $arkan-radius-md;
+    transition: border-color $arkan-transition-fast, box-shadow $arkan-transition-fast;
+    &:focus {
+        border-color: $arkan-cyan !important;
+        @include arkan-focus-ring;
+    }
+    &::placeholder { color: $arkan-text-muted; }
+}
+
+.form-layout { background: transparent; }
+.form-section, .section-body { background: transparent; }
+.form-section .section-head {
+    color: $arkan-text-primary;
+    font-family: $arkan-font-heading;
+    border-bottom: 1px solid $arkan-border;
+}
+
+.like-disabled-input {
+    background: rgba($arkan-surface, 0.5) !important;
+    color: $arkan-text-secondary !important;
+    border: 1px solid rgba($arkan-border, 0.5) !important;
+}

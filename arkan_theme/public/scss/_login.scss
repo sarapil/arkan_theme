@@ -1,0 +1,588 @@
+// ════════════════════════════════════════════════════════════════════
+// ARKAN Theme — Login Page
+// Futuristic cyber-tech login with glass-morphism, centered form,
+// animated background, responsive design, and full RTL support.
+//
+// Frappe login HTML structure (v16):
+//   body[data-path="login"]
+//     #page-login > .page-content-wrapper > main.container
+//       > .page_content > div > section.for-login
+//         > .page-card-head (logo + h4)   ← sibling, NOT inside .page-card
+//         > .login-content.page-card       ← the actual form card
+//     footer.web-footer
+// ════════════════════════════════════════════════════════════════════
+
+// ── 1. Page-level override ──
+body[data-path="login"] {
+    background: $arkan-deep-black !important;
+    color: $arkan-text-primary !important;
+    overflow-x: hidden !important;
+    display: block !important;
+
+    // ── 2. Background radial glows ──
+    &::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background:
+            radial-gradient(ellipse 80% 60% at 20% 80%, rgba($arkan-purple, 0.12) 0%, transparent 70%),
+            radial-gradient(ellipse 60% 50% at 80% 20%, rgba($arkan-cyan, 0.08) 0%, transparent 70%),
+            radial-gradient(ellipse 40% 40% at 50% 50%, rgba($arkan-cyan, 0.04) 0%, transparent 100%);
+        pointer-events: none;
+    }
+
+    // ── 3. Neural grid canvas (injected by JS) ──
+    .arkan-login-canvas {
+        position: fixed !important;
+        inset: 0;
+        width: 100% !important;
+        height: 100% !important;
+        z-index: 0;
+        pointer-events: none;
+        opacity: 0.5;
+    }
+
+    // ── 4. Hide navbar, footer, breadcrumbs, page-header ──
+    .navbar { display: none !important; }
+    footer.web-footer { display: none !important; }
+    .page-breadcrumbs { display: none !important; }
+    .page-header-wrapper { display: none !important; }
+    .page-footer { display: none !important; }
+
+    // ── 5. Centered layout — matching actual Frappe login DOM ──
+    // .page-content-wrapper is the outermost content div
+    .page-content-wrapper {
+        background: transparent !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 100vh !important;
+        height: auto !important;
+        overflow: auto !important;
+        padding: 20px !important;
+        position: relative;
+        z-index: 1;
+    }
+
+    // main.container wraps page_content
+    main.container,
+    > .container {
+        max-width: 100% !important;
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0 !important;
+    }
+
+    // .page_content > div wraps all sections
+    .page_content {
+        width: 100% !important;
+        display: flex !important;
+        justify-content: center !important;
+    }
+
+    .page_content > div {
+        width: 100% !important;
+        max-width: 480px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+
+    // ── 6. Logo area (injected by JS above the card) ──
+    .arkan-login-logo-wrapper {
+        text-align: center;
+        margin-bottom: 24px;
+        animation: arkanLoginLogoIn 1s ease-out forwards;
+
+        .arkan-login-logo-svg {
+            width: 100px;
+            height: 100px;
+            filter: drop-shadow(0 0 20px rgba($arkan-cyan, 0.4));
+            margin-bottom: 16px;
+            animation: arkanPulseGlow 3s ease-in-out infinite;
+        }
+
+        .arkan-login-brand-name {
+            font-family: $arkan-font-heading;
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            @include arkan-gradient-text;
+            line-height: 1;
+        }
+
+        .arkan-login-tagline {
+            font-family: $arkan-font-mono;
+            font-size: 0.75rem;
+            color: $arkan-text-muted;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            margin-top: 6px;
+        }
+    }
+
+    // ── 7. Page Card (glass form card) ──
+    .page-card {
+        @include arkan-glass(0.65);
+        border: 1px solid rgba($arkan-cyan, 0.12) !important;
+        border-radius: $arkan-radius-xl !important;
+        box-shadow:
+            0 8px 40px rgba(0, 0, 0, 0.5),
+            0 0 1px rgba($arkan-cyan, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+        max-width: 440px !important;
+        width: 100% !important;
+        padding: 36px 32px !important;
+        margin: 0 auto !important;
+        position: relative;
+        overflow: hidden;
+        animation: arkanCardIn 0.8s ease-out 0.2s both;
+
+        // Top gradient bar shimmer
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: $arkan-gradient-primary;
+            opacity: 0.7;
+            animation: arkanShimmer 3s ease-in-out infinite;
+        }
+
+        // Subtle corner glow
+        &::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba($arkan-cyan, 0.04) 0%, transparent 70%);
+            pointer-events: none;
+        }
+    }
+
+    // ── 8. Card head ──
+    // Hide the page-card-head in .for-login section (we inject our own logo)
+    section.for-login > .page-card-head {
+        display: none !important;
+    }
+
+    // Style page-card-head for other sections (forgot, signup, email-link)
+    .page-card-head {
+        text-align: center !important;
+        margin-bottom: 28px !important;
+        padding: 0 !important;
+
+        // Hide Frappe default logo (we inject our own above the card)
+        .app-logo {
+            display: none !important;
+        }
+
+        h4, .title {
+            font-family: $arkan-font-heading !important;
+            font-size: 1.4rem !important;
+            font-weight: 600 !important;
+            @include arkan-gradient-text;
+            margin: 0 !important;
+        }
+    }
+
+    // ── 9. Form inputs ──
+    .form-group {
+        margin-bottom: 20px !important;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    input[type="tel"],
+    .form-control {
+        background: rgba($arkan-surface, 0.6) !important;
+        border: 1px solid rgba($arkan-border, 0.7) !important;
+        border-radius: $arkan-radius-md !important;
+        color: $arkan-text-primary !important;
+        font-family: $arkan-font-body !important;
+        font-size: 0.95rem !important;
+        padding: 12px 14px !important;
+        height: auto !important;
+        transition: all 0.3s ease !important;
+
+        &:focus {
+            border-color: rgba($arkan-cyan, 0.6) !important;
+            background: rgba($arkan-surface, 0.8) !important;
+            box-shadow: 0 0 0 3px rgba($arkan-cyan, 0.12), 0 0 20px rgba($arkan-cyan, 0.06) !important;
+            outline: none !important;
+        }
+
+        &::placeholder {
+            color: $arkan-text-muted !important;
+            font-family: $arkan-font-body !important;
+        }
+    }
+
+    label, .control-label {
+        color: $arkan-text-secondary !important;
+        font-family: $arkan-font-body !important;
+        font-size: 0.85rem !important;
+        font-weight: 500 !important;
+        margin-bottom: 6px !important;
+    }
+
+    .toggle-password {
+        color: $arkan-text-muted !important;
+        &:hover { color: $arkan-cyan !important; }
+    }
+
+    // ── 10. Login button ──
+    .btn-primary,
+    .btn-login,
+    .btn-primary-dark,
+    .btn-register {
+        background: $arkan-gradient-primary !important;
+        border: none !important;
+        border-radius: $arkan-radius-md !important;
+        color: $arkan-deep-black !important;
+        font-family: $arkan-font-heading !important;
+        font-weight: 600 !important;
+        font-size: 1rem !important;
+        letter-spacing: 0.05em !important;
+        padding: 12px 24px !important;
+        width: 100% !important;
+        transition: all 0.3s ease !important;
+        position: relative;
+        overflow: hidden;
+        text-shadow: none !important;
+
+        &:hover, &:focus {
+            box-shadow: $arkan-glow-cyan !important;
+            transform: translateY(-1px);
+            filter: brightness(1.1);
+        }
+
+        &:active {
+            transform: translateY(0);
+        }
+
+        // Shine sweep
+        &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        &:hover::after {
+            left: 100%;
+        }
+    }
+
+    // ── 11. Social logins ──
+    .social-logins {
+        margin-top: 20px !important;
+        padding-top: 20px !important;
+        border-top: 1px solid rgba($arkan-border, 0.5) !important;
+
+        .btn-default {
+            background: rgba($arkan-surface, 0.5) !important;
+            border: 1px solid rgba($arkan-border, 0.6) !important;
+            border-radius: $arkan-radius-md !important;
+            color: $arkan-text-primary !important;
+            font-family: $arkan-font-body !important;
+            padding: 10px 16px !important;
+            transition: all 0.3s ease !important;
+
+            &:hover {
+                background: rgba($arkan-surface, 0.8) !important;
+                border-color: rgba($arkan-cyan, 0.3) !important;
+            }
+        }
+    }
+
+    // ── 12. Links ──
+    .forgot-password-message a,
+    .sign-up-message a,
+    .login-content a,
+    a.text-muted,
+    .page-card a {
+        color: $arkan-cyan !important;
+        text-decoration: none !important;
+        font-weight: 500;
+        transition: color 0.2s ease, text-shadow 0.2s ease;
+
+        &:hover {
+            color: lighten($arkan-cyan, 10%) !important;
+            text-shadow: 0 0 8px rgba($arkan-cyan, 0.3);
+        }
+    }
+
+    .forgot-password-message,
+    .sign-up-message {
+        text-align: center !important;
+        color: $arkan-text-muted !important;
+        font-size: 0.85rem !important;
+        margin-top: 16px !important;
+    }
+
+    // ── 13. OTP / 2FA ──
+    .otp-input {
+        letter-spacing: 0.5em !important;
+        font-family: $arkan-font-mono !important;
+        font-size: 1.3rem !important;
+        text-align: center !important;
+    }
+
+    .verify-otp, .resend-otp {
+        background: rgba($arkan-surface, 0.5) !important;
+        border: 1px solid rgba($arkan-border, 0.6) !important;
+        color: $arkan-text-primary !important;
+        border-radius: $arkan-radius-md !important;
+        &:hover { border-color: rgba($arkan-cyan, 0.3) !important; }
+    }
+
+    // ── 14. Error / success messages ──
+    .form-message.red, .form-message.orange {
+        background: rgba($arkan-rose, 0.1) !important;
+        border: 1px solid rgba($arkan-rose, 0.3) !important;
+        border-radius: $arkan-radius-sm !important;
+        color: $arkan-rose !important;
+        padding: 10px 14px !important;
+        margin-bottom: 16px !important;
+    }
+    .form-message.green, .form-message.blue {
+        background: rgba($arkan-green, 0.1) !important;
+        border: 1px solid rgba($arkan-green, 0.3) !important;
+        border-radius: $arkan-radius-sm !important;
+        color: $arkan-green !important;
+        padding: 10px 14px !important;
+        margin-bottom: 16px !important;
+    }
+
+    .shake {
+        animation: arkanShake 0.5s ease-in-out !important;
+    }
+
+    // ── 15. Brand footer (injected by JS) ──
+    .arkan-login-footer {
+        text-align: center;
+        margin-top: 28px;
+        font-size: 0.75rem;
+        color: $arkan-text-muted;
+        font-family: $arkan-font-mono;
+        letter-spacing: 0.05em;
+        animation: arkanFadeIn 1s ease-out 0.8s both;
+
+        a {
+            color: $arkan-cyan !important;
+            &:hover { text-shadow: 0 0 8px rgba($arkan-cyan, 0.4); }
+        }
+    }
+
+    // ── 16. Floating particles (injected by JS) ──
+    .arkan-login-particles {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        overflow: hidden;
+
+        .arkan-particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: $arkan-cyan;
+            opacity: 0;
+            animation: arkanParticleFloat 6s ease-in-out infinite;
+
+            &:nth-child(even) {
+                background: $arkan-purple;
+                animation-duration: 8s;
+            }
+        }
+    }
+
+    .page-card-actions {
+        margin-top: 8px !important;
+    }
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Animations
+// ════════════════════════════════════════════════════════════════════
+
+@keyframes arkanLoginLogoIn {
+    from { opacity: 0; transform: translateY(-30px) scale(0.8); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes arkanCardIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes arkanShimmer {
+    0%, 100% { opacity: 0.5; }
+    50%      { opacity: 1; }
+}
+
+@keyframes arkanShake {
+    0%, 100% { transform: translateX(0); }
+    15% { transform: translateX(-8px); }
+    30% { transform: translateX(8px); }
+    45% { transform: translateX(-6px); }
+    60% { transform: translateX(6px); }
+    75% { transform: translateX(-3px); }
+    90% { transform: translateX(3px); }
+}
+
+@keyframes arkanFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes arkanParticleFloat {
+    0%   { opacity: 0;   transform: translateY(100vh) scale(0); }
+    10%  { opacity: 0.6; transform: translateY(90vh) scale(1); }
+    90%  { opacity: 0.2; }
+    100% { opacity: 0;   transform: translateY(-10vh) scale(0.5); }
+}
+
+@keyframes arkanPulseGlow {
+    0%, 100% { filter: drop-shadow(0 0 12px rgba($arkan-cyan, 0.3)); }
+    50%      { filter: drop-shadow(0 0 25px rgba($arkan-cyan, 0.6)); }
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Responsive — Tablet
+// ════════════════════════════════════════════════════════════════════
+
+@media (max-width: 768px) {
+    body[data-path="login"] {
+        .page-content-wrapper {
+            padding: 16px !important;
+            align-items: flex-start !important;
+            padding-top: 10vh !important;
+        }
+        .page_content > div { max-width: 100% !important; }
+        .page-card {
+            padding: 28px 20px !important;
+            border-radius: $arkan-radius-lg !important;
+            max-width: 100% !important;
+        }
+        .arkan-login-logo-wrapper {
+            margin-bottom: 20px;
+            .arkan-login-logo-svg { width: 80px; height: 80px; }
+            .arkan-login-brand-name { font-size: 1.6rem; }
+        }
+    }
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Responsive — Mobile
+// ════════════════════════════════════════════════════════════════════
+
+@media (max-width: 480px) {
+    body[data-path="login"] {
+        .page-content-wrapper {
+            padding: 12px !important;
+            padding-top: 6vh !important;
+        }
+        .page-card {
+            padding: 24px 16px !important;
+            border-radius: $arkan-radius-md !important;
+            &::after { display: none; }
+        }
+        .page-card-head h4, .page-card-head .title {
+            font-size: 1.2rem !important;
+        }
+        .arkan-login-logo-wrapper {
+            margin-bottom: 16px;
+            .arkan-login-logo-svg { width: 64px; height: 64px; }
+            .arkan-login-brand-name { font-size: 1.3rem; letter-spacing: 0.1em; }
+            .arkan-login-tagline { font-size: 0.65rem; letter-spacing: 0.2em; }
+        }
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        input[type="tel"],
+        .form-control {
+            padding: 10px 12px !important;
+            font-size: 16px !important; // Prevents iOS auto-zoom
+        }
+        .btn-primary, .btn-login, .btn-register {
+            padding: 11px 20px !important;
+            font-size: 0.95rem !important;
+        }
+    }
+}
+
+// ════════════════════════════════════════════════════════════════════
+// RTL Support
+// ════════════════════════════════════════════════════════════════════
+
+html[dir="rtl"] body[data-path="login"],
+[dir="rtl"] body[data-path="login"],
+body[data-path="login"][dir="rtl"] {
+    .page-card {
+        direction: rtl;
+        text-align: right;
+    }
+    .page-card-head {
+        text-align: center !important;
+    }
+    .arkan-login-logo-wrapper {
+        text-align: center;
+    }
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    input[type="tel"],
+    .form-control {
+        text-align: right !important;
+        direction: rtl;
+        &::placeholder { text-align: right !important; }
+    }
+    .toggle-password {
+        left: 9px !important;
+        right: auto !important;
+    }
+    .forgot-password-message,
+    .sign-up-message {
+        text-align: center !important;
+    }
+    .arkan-login-footer {
+        text-align: center;
+    }
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Reduced motion + Print
+// ════════════════════════════════════════════════════════════════════
+
+@media (prefers-reduced-motion: reduce) {
+    body[data-path="login"] {
+        .arkan-login-logo-wrapper,
+        .page-card,
+        .arkan-login-footer { animation: none !important; }
+        .arkan-login-canvas,
+        .arkan-login-particles { display: none !important; }
+        .page-card::before { animation: none !important; opacity: 0.7; }
+    }
+}
+
+@media print {
+    body[data-path="login"] {
+        &::before, .arkan-login-canvas, .arkan-login-particles, .arkan-login-footer { display: none !important; }
+        .page-card { box-shadow: none !important; border: 1px solid #ccc !important; backdrop-filter: none !important; }
+    }
+}

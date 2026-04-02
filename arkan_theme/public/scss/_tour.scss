@@ -1,0 +1,9 @@
+// ARKAN Tour
+.arkan-tour-overlay { position: fixed; inset: 0; z-index: $z-overlay + 10; background: rgba($arkan-deep-black, 0.7); }
+.arkan-tour-tooltip {
+    @include arkan-glass-card;
+    border: 1px solid rgba($arkan-cyan, 0.3);
+    max-width: 320px;
+    padding: 16px;
+    .arkan-tour-title { font-family: $arkan-font-heading; color: $arkan-cyan; }
+}

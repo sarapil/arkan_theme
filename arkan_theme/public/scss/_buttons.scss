@@ -1,0 +1,38 @@
+// ARKAN Buttons — Neon-accented
+.btn-primary, .btn-primary-dark {
+    background: $arkan-gradient-primary !important;
+    border: none !important;
+    color: $arkan-deep-black !important;
+    font-weight: 600;
+    border-radius: $arkan-radius-md;
+    transition: all $arkan-transition-normal;
+    text-shadow: none;
+    &:hover {
+        @include arkan-neon-glow($arkan-cyan, 15px);
+        transform: translateY(-1px);
+    }
+    &:active { transform: translateY(0); }
+}
+
+.btn-default {
+    background: $arkan-surface;
+    border: 1px solid $arkan-border;
+    color: $arkan-text-primary;
+    border-radius: $arkan-radius-md;
+    &:hover {
+        border-color: $arkan-cyan;
+        color: $arkan-cyan;
+        background: rgba($arkan-cyan, 0.05);
+    }
+}
+
+.btn-secondary { background: rgba($arkan-purple, 0.15); color: $arkan-purple; border: 1px solid rgba($arkan-purple, 0.3); }
+.btn-secondary:hover { background: rgba($arkan-purple, 0.25); @include arkan-neon-glow($arkan-purple, 10px); }
+
+.btn-danger { background: rgba($arkan-rose, 0.15); color: $arkan-rose; border: 1px solid rgba($arkan-rose, 0.3); }
+
+// Icon buttons
+.icon-btn, .like-disabled-input .btn-open {
+    color: $arkan-text-muted;
+    &:hover { color: $arkan-cyan; }
+}

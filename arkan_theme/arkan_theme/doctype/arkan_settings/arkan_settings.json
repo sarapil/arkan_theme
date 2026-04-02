@@ -1,0 +1,243 @@
+{
+ "actions": [],
+ "creation": "2026-02-09 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "branding_section",
+  "brand_name",
+  "column_break_branding",
+  "logo_url",
+  "favicon_url",
+  "colors_section",
+  "primary_color",
+  "column_break_colors",
+  "secondary_color",
+  "accent_color",
+  "text_color",
+  "features_section",
+  "enable_splash_screen",
+  "enable_neural_grid",
+  "enable_matrix_rain",
+  "enable_particles",
+  "column_break_features",
+  "enable_glitch_effects",
+  "enable_cursor_effects",
+  "enable_sounds",
+  "enable_search_overlay",
+  "default_dark_mode",
+  "splash_section",
+  "splash_duration",
+  "column_break_splash",
+  "splash_logo_url",
+  "advanced_section",
+  "custom_css",
+  "custom_js"
+ ],
+ "fields": [
+  {
+   "fieldname": "branding_section",
+   "fieldtype": "Section Break",
+   "label": "Branding"
+  },
+  {
+   "default": "ARKAN",
+   "fieldname": "brand_name",
+   "fieldtype": "Data",
+   "label": "Brand Name",
+   "description": "Displayed in the browser title bar and splash screen"
+  },
+  {
+   "fieldname": "column_break_branding",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "/assets/arkan_theme/images/logo-header.png",
+   "fieldname": "logo_url",
+   "fieldtype": "Attach Image",
+   "label": "Logo (Header)"
+  },
+  {
+   "default": "/assets/arkan_theme/images/favicon.ico",
+   "fieldname": "favicon_url",
+   "fieldtype": "Attach Image",
+   "label": "Favicon"
+  },
+  {
+   "fieldname": "colors_section",
+   "fieldtype": "Section Break",
+   "label": "Colors"
+  },
+  {
+   "default": "#00F0FF",
+   "fieldname": "primary_color",
+   "fieldtype": "Color",
+   "label": "Primary Color (Electric Cyan)",
+   "description": "Main neon accent — cyber cyan"
+  },
+  {
+   "fieldname": "column_break_colors",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "#0A0F1C",
+   "fieldname": "secondary_color",
+   "fieldtype": "Color",
+   "label": "Secondary Color (Deep Black)",
+   "description": "Background and navbar color — near black"
+  },
+  {
+   "default": "#8B5CF6",
+   "fieldname": "accent_color",
+   "fieldtype": "Color",
+   "label": "Accent Color (Neon Purple)",
+   "description": "Secondary accent — violet/purple"
+  },
+  {
+   "default": "#E8ECF1",
+   "fieldname": "text_color",
+   "fieldtype": "Color",
+   "label": "Text Color",
+   "description": "Primary text color on dark backgrounds"
+  },
+  {
+   "fieldname": "features_section",
+   "fieldtype": "Section Break",
+   "label": "Feature Toggles"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_splash_screen",
+   "fieldtype": "Check",
+   "label": "Enable Splash Screen",
+   "description": "Show neural network formation splash on login"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_neural_grid",
+   "fieldtype": "Check",
+   "label": "Enable Neural Grid",
+   "description": "Animated neural network node visualization in hero areas"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_matrix_rain",
+   "fieldtype": "Check",
+   "label": "Enable Matrix Rain",
+   "description": "Matrix-style data rain effect on splash and login screens"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_particles",
+   "fieldtype": "Check",
+   "label": "Enable Particle Effects",
+   "description": "Cyan/purple floating particle animation"
+  },
+  {
+   "fieldname": "column_break_features",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_glitch_effects",
+   "fieldtype": "Check",
+   "label": "Enable Glitch Effects",
+   "description": "Cyber glitch text animations on headings"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_cursor_effects",
+   "fieldtype": "Check",
+   "label": "Enable Cursor Effects",
+   "description": "Neon glow cursor trail following mouse"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_sounds",
+   "fieldtype": "Check",
+   "label": "Enable Sound Effects",
+   "description": "Cyber notification sounds for events"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_search_overlay",
+   "fieldtype": "Check",
+   "label": "Enable Search Overlay",
+   "description": "Full-screen neural-themed search experience"
+  },
+  {
+   "default": "1",
+   "fieldname": "default_dark_mode",
+   "fieldtype": "Check",
+   "label": "Default to Dark Mode",
+   "description": "Dark mode is the default for ARKAN theme (recommended)"
+  },
+  {
+   "fieldname": "splash_section",
+   "fieldtype": "Section Break",
+   "label": "Splash Screen Settings",
+   "collapsible": 1,
+   "depends_on": "eval:doc.enable_splash_screen"
+  },
+  {
+   "default": "2800",
+   "fieldname": "splash_duration",
+   "fieldtype": "Int",
+   "label": "Splash Duration (ms)",
+   "description": "How long the splash screen is displayed (milliseconds)"
+  },
+  {
+   "fieldname": "column_break_splash",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "splash_logo_url",
+   "fieldtype": "Attach Image",
+   "label": "Splash Logo",
+   "description": "Custom logo for the splash screen (optional — defaults to neural A)"
+  },
+  {
+   "fieldname": "advanced_section",
+   "fieldtype": "Section Break",
+   "label": "Advanced",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "custom_css",
+   "fieldtype": "Code",
+   "label": "Custom CSS",
+   "description": "Additional CSS injected after the theme stylesheet",
+   "options": "CSS"
+  },
+  {
+   "fieldname": "custom_js",
+   "fieldtype": "Code",
+   "label": "Custom JavaScript",
+   "description": "Additional JS executed after theme initialization",
+   "options": "JS"
+  }
+ ],
+ "icon": "⚡",
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-02-09 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "ARKAN Theme",
+ "name": "ARKAN Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
