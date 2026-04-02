@@ -71,3 +71,9 @@ caps_capabilities = [
 fixtures = [
     {"dt": "Custom Field", "filters": [["module", "=", "ARKAN Theme"]]},
 ]
+
+app_icon = "/assets/arkan_theme/images/arkan_theme-logo.svg"
+app_color = "#1E40AF"
+app_logo_url = "/assets/arkan_theme/images/arkan_theme-logo.svg"
+
+after_install = "arkan_theme.install.after_install"

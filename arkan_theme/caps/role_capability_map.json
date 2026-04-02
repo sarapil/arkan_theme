@@ -1,0 +1,10 @@
+[
+  {
+    "role": "System Manager",
+    "capabilities": [
+      "AT_manage_theme",
+      "AT_customize_colors",
+      "AT_manage_assets"
+    ]
+  }
+]
