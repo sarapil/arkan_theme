@@ -57,3 +57,17 @@ boot_session = "arkan_theme.boot.boot_session"
 after_migrate = ["arkan_theme.arkan_theme.seed.seed_data"]
 
 required_apps = ["frappe"]
+
+# CAPS Integration — Capability-Based Access Control
+# ------------------------------------------------------------
+caps_capabilities = [
+    {"name": "AT_manage_theme", "category": "Module", "description": "Configure ARKAN Theme settings"},
+    {"name": "AT_customize_colors", "category": "Action", "description": "Customize brand colors and typography"},
+    {"name": "AT_manage_assets", "category": "Action", "description": "Upload and manage branding assets"},
+]
+
+# Fixtures
+# --------------------------------------------------------
+fixtures = [
+    {"dt": "Custom Field", "filters": [["module", "=", "ARKAN Theme"]]},
+]
