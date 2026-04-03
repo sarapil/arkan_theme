@@ -1,0 +1,12 @@
+{
+  "app": "arkan_theme",
+  "name": "Arkan Theme",
+  "icon": "palette",
+  "color": "#2C3E50",
+  "languages": [
+    "en",
+    "ar"
+  ],
+  "default_language": "en",
+  "fallback_language": "en"
+}
