@@ -54,7 +54,7 @@ boot_session = "arkan_theme.boot.boot_session"
 # Required for frappe compatibility
 
 # ─── Post-Migration Seed ───
-after_migrate = ["arkan_theme.arkan_theme.seed.seed_data"]
+after_migrate = ["arkan_theme.seed.seed_data"]
 
 required_apps = ["frappe"]
 
