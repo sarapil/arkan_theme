@@ -3,6 +3,14 @@
 > **Luxury Brand Theme for ERPNext 16 / Frappe 16**
 > *ARKAN Real Estate — Luxury Living, Refined*
 
+<p align="center">
+  <a href="https://github.com/ArkanLab/arkan_theme/actions/workflows/ci.yml"><img src="https://github.com/ArkanLab/arkan_theme/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/ArkanLab/arkan_theme/actions/workflows/linters.yml"><img src="https://github.com/ArkanLab/arkan_theme/actions/workflows/linters.yml/badge.svg" alt="Linters"></a>
+  <img src="https://img.shields.io/badge/Frappe-v16-blue" alt="Frappe v16">
+  <img src="https://img.shields.io/badge/ERPNext-v16-green" alt="ERPNext v16">
+  <img src="https://img.shields.io/badge/License-MIT-yellow" alt="MIT License">
+</p>
+
 ![ARKAN Theme](arkan_theme/public/images/logo.png)
 
 A premium, immersive brand theme that transforms ERPNext into a luxury real estate experience. Featuring an animated Dubai skyline, gold accents, glassmorphism effects, and sophisticated typography — all without modifying a single line of Frappe or ERPNext core code.

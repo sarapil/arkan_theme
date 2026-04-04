@@ -1,0 +1,52 @@
+{% extends "templates/web.html" %}
+
+{% block title %}{{ _("About ARKAN Theme") }}{% endblock %}
+
+{% block page_content %}
+<div id="arkan-theme-about-container" data-page="arkan-theme-about"></div>
+
+<style>
+  :root { --at-primary: #1E40AF; --at-gradient: linear-gradient(135deg, #1E40AF, #1D4ED8); }
+  #arkan-theme-about-container { min-height: 80vh; padding: 24px 0; }
+  .at-about-hero { text-align: center; padding: 60px 20px; }
+  .at-about-hero img { width: 140px; height: 140px; margin-bottom: 24px; }
+  .at-about-hero h1 { font-size: 2.5rem; font-weight: 800; background: var(--at-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; }
+  .at-about-hero p { font-size: 1.15rem; color: var(--text-muted); max-width: 600px; margin: 0 auto 32px; }
+  .at-features { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; padding: 40px 20px; max-width: 900px; margin: 0 auto; }
+  .at-feature-card { padding: 28px; border-radius: 16px; background: var(--card-bg); border: 1px solid var(--border-color); transition: transform 0.2s; }
+  .at-feature-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(30, 64, 175, 0.12); }
+  .at-feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+  .at-feature-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+  .at-footer { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 0.85rem; }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const container = document.getElementById('arkan-theme-about-container');
+  container.innerHTML = `
+    <div class="at-about-hero">
+      <img src="/assets/arkan_theme/images/arkan_theme-logo.svg" alt="ARKAN Theme" onerror="this.style.display='none'">
+      <h1>${__("ARKAN Theme")}</h1>
+      <p>${__("Futuristic Cyber-Tech AI Theme — Dark-first design with neon accents, neural-grid patterns, and premium visual effects for ERPNext 16.")}</p>
+    </div>
+    <div class="at-features">
+      <div class="at-feature-card">
+        <h3>🌙 ${__("Dark-First Design")}</h3>
+        <p>${__("Purpose-built dark theme with carefully tuned contrast ratios, WCAG AA compliance, and smooth light/dark mode transitions.")}</p>
+      </div>
+      <div class="at-feature-card">
+        <h3>⚡ ${__("Neon Accents")}</h3>
+        <p>${__("Vibrant neon color system with glow effects, animated gradients, and cyber-tech visual language throughout the interface.")}</p>
+      </div>
+      <div class="at-feature-card">
+        <h3>🧠 ${__("Neural Grid")}</h3>
+        <p>${__("AI-inspired background patterns, animated SVG neural networks, and futuristic UI elements that bring the interface to life.")}</p>
+      </div>
+    </div>
+    <div class="at-footer">
+      <p>${__("Built by")} <strong>Arkan Lab</strong> • ${__("Powered by")} <strong>Frappe Framework</strong></p>
+    </div>
+  `;
+});
+</script>
+{% endblock %}
