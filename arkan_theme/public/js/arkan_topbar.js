@@ -1,3 +1,8 @@
+// Copyright (c) 2024, Moataz M Hassan (Arkan Lab)
+// Developer Website: https://arkan.it.com
+// License: MIT
+// For license information, please see license.txt
+
 // ARKAN Topbar — Branded navigation bar
 // In Frappe v16 desk, there is no .navbar — the desk uses a sidebar + .page-head.
 // This script creates a visible ARKAN-branded topbar at the top of .main-section

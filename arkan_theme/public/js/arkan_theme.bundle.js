@@ -1,3 +1,8 @@
+// Copyright (c) 2024, Moataz M Hassan (Arkan Lab)
+// Developer Website: https://arkan.it.com
+// License: MIT
+// For license information, please see license.txt
+
 // ═══════════════════════════════════════════════════════════════════
 // ARKAN Theme — Bundled Desk JS
 // AI & Technology Solutions — Futuristic Cyber-Tech
@@ -1305,4 +1310,3 @@
         }
     };
 })();
-

@@ -1,3 +1,8 @@
+// Copyright (c) 2024, Moataz M Hassan (Arkan Lab)
+// Developer Website: https://arkan.it.com
+// License: MIT
+// For license information, please see license.txt
+
 // ARKAN Navbar — Search overlay, notification badges, brand topbar
 // Frappe v16: desk uses sidebar (.body-sidebar) not .navbar.
 // .navbar only exists on web/portal pages (login, website).

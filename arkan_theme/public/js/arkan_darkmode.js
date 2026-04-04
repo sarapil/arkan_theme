@@ -1,3 +1,8 @@
+// Copyright (c) 2024, Moataz M Hassan (Arkan Lab)
+// Developer Website: https://arkan.it.com
+// License: MIT
+// For license information, please see license.txt
+
 // ARKAN Dark Mode — Dark-first (default is ALWAYS dark)
 // ARKAN is a dark-first theme. We override Frappe's desk_theme to ensure
 // consistent dark styling. Users can manually toggle to light via the UI.

@@ -1,7 +1,12 @@
+# Copyright (c) 2024, Moataz M Hassan (Arkan Lab)
+# Developer Website: https://arkan.it.com
+# License: MIT
+# For license information, please see license.txt
+
 app_name = "arkan_theme"
 app_title = "ARKAN Theme"
 app_publisher = "ARKAN — AI & Technology Solutions"
-app_description = "Futuristic cyber-tech AI theme for ERPNext 16 — dark-first, neon-accented, neural-grid powered"
+app_description = "Modern glassmorphism desk theme with dark mode and RTL support"
 app_email = "info@arkan.tech"
 app_license = "MIT"
 source_link = "https://github.com/ArkAnTech/arkan_theme"
@@ -27,7 +32,8 @@ app_include_css = [
 
 # JS — single bundled file (26 modules → 1 HTTP request)
 app_include_js = [
-    f"/assets/arkan_theme/js/arkan_theme.bundle.js?v={_v}"
+    f"/assets/arkan_theme/js/arkan_theme.bundle.js?v={_v}",
+    "/assets/arkan_theme/js/fv_integration.js",
 ]
 
 # Website / Portal pages (includes login)
