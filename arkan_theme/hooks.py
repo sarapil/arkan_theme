@@ -56,7 +56,7 @@ boot_session = "arkan_theme.boot.boot_session"
 # ─── Post-Migration Seed ───
 after_migrate = ["arkan_theme.seed.seed_data"]
 
-required_apps = ["frappe", "frappe_visual"]
+required_apps = ["frappe", "frappe_visual", "arkan_help"]
 
 # CAPS Integration — Capability-Based Access Control
 # ------------------------------------------------------------
@@ -70,6 +70,8 @@ caps_capabilities = [
 # --------------------------------------------------------
 fixtures = [
     {"dt": "Custom Field", "filters": [["module", "=", "ARKAN Theme"]]},
+    {"dt": "Desktop Icon", "filters": [["app", "=", "arkan_theme"]]},
+    {"dt": "Workspace", "filters": [["module", "like", "ARKAN Theme%"]]},
 ]
 
 app_icon = "/assets/arkan_theme/images/arkan_theme-logo.svg"
