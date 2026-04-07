@@ -1,0 +1,365 @@
+// ════════════════════════════════════════════════════════════════════
+// ARKAN Theme — Setup Wizard
+// Applies the futuristic cyber-tech aesthetic to Frappe's /desk/setup-wizard
+// page including progress dots, slide cards, form fields, buttons,
+// and the in-progress/success states.
+//
+// Frappe setup wizard DOM (v16):
+//   [data-page-name="setup-wizard"]
+//     .slides-progress > .slide-step (.active | .step-success)
+//     .slides-wrapper.setup-wizard-slide
+//       .slide-wrapper > .slide-body
+//         h1.slide-title + .slide-help
+//         .form-wrapper > .form
+//       .slide-footer > .prev-btn + .next-btn
+//     .toggle-theme-btn (absolute top-right)
+//     (in-progress): .setup-in-progress .state-icon-container .setup-message .progress .success-state
+// ════════════════════════════════════════════════════════════════════
+
+// ── 1. Page-level background & centering ──
+[data-page-name="setup-wizard"] {
+    background: $arkan-deep-black !important;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    position: relative;
+    overflow-x: hidden;
+
+    // Radial glow background
+    &::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background:
+            radial-gradient(ellipse 60% 50% at 30% 80%, rgba($arkan-purple, 0.10) 0%, transparent 70%),
+            radial-gradient(ellipse 50% 40% at 70% 20%, rgba($arkan-cyan, 0.07) 0%, transparent 70%),
+            radial-gradient(ellipse 30% 30% at 50% 50%, rgba($arkan-cyan, 0.03) 0%, transparent 100%);
+    }
+
+    // Ensure content is above radial glow
+    > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    // Hide standard navbar when shown on wizard page
+    .navbar,
+    .page-head,
+    .page-breadcrumbs {
+        display: none !important;
+    }
+}
+
+// ── 2. Progress Dots ──
+[data-page-name="setup-wizard"] .slides-progress {
+    margin-top: 60px;
+
+    .slide-step {
+        border-color: $arkan-border;
+        background: $arkan-panel-dark;
+        transition: all $arkan-transition-normal;
+
+        .slide-step-indicator {
+            background: $arkan-text-muted;
+            transition: all $arkan-transition-normal;
+        }
+
+        // Active step — cyan glow
+        &.active {
+            border-color: $arkan-cyan;
+            box-shadow: 0 0 8px rgba($arkan-cyan, 0.4), 0 0 16px rgba($arkan-cyan, 0.15);
+
+            .slide-step-indicator {
+                background: $arkan-cyan;
+            }
+        }
+
+        // Completed step — purple solid
+        &.step-success:not(.active) {
+            background: $arkan-purple;
+            border-color: $arkan-purple;
+            box-shadow: 0 0 6px rgba($arkan-purple, 0.3);
+
+            .slide-step-complete .icon use {
+                stroke: #fff;
+            }
+        }
+    }
+}
+
+// ── 3. Main Card — Glass morphism ──
+[data-page-name="setup-wizard"] .slides-wrapper {
+    @include arkan-glass(0.7);
+    border-radius: $arkan-radius-lg;
+    box-shadow:
+        $arkan-shadow-card,
+        0 0 40px rgba($arkan-cyan, 0.04);
+    border: 1px solid rgba($arkan-cyan, 0.10);
+    max-width: 560px;
+    padding: var(--padding-xl) var(--padding-xl) var(--padding-lg);
+    animation: arkan-wizard-enter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+    // Subtle gradient border shimmer
+    @include arkan-gradient-border($arkan-radius-lg);
+    &::before {
+        opacity: 0.25;
+    }
+
+    // ── 3a. Slide Title ──
+    h1.slide-title {
+        color: $arkan-text-primary;
+        font-family: $arkan-font-heading;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+
+        // Gradient accent on title
+        @include arkan-gradient-text;
+    }
+
+    // ── 3b. Help text ──
+    .slide-help,
+    .lead {
+        color: $arkan-text-secondary;
+        font-family: $arkan-font-body;
+        line-height: 1.6;
+    }
+
+    // ── 3c. Content/description area ──
+    .content {
+        color: $arkan-text-secondary;
+    }
+
+    // ── 3d. Image illustrations ──
+    .slide-body img {
+        border-radius: $arkan-radius-md;
+        filter: brightness(0.95);
+    }
+}
+
+// ── 4. Form Fields inside Wizard ──
+[data-page-name="setup-wizard"] .slides-wrapper .form-wrapper {
+    .frappe-control {
+        .control-label,
+        .label-area label {
+            color: $arkan-text-secondary;
+            font-family: $arkan-font-body;
+            font-size: var(--text-sm);
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="number"],
+        select,
+        textarea,
+        .ql-editor,
+        .input-with-feedback {
+            background: rgba($arkan-surface, 0.6) !important;
+            border: 1px solid $arkan-border !important;
+            color: $arkan-text-primary !important;
+            border-radius: $arkan-radius-sm;
+            transition: border-color $arkan-transition-fast, box-shadow $arkan-transition-fast;
+
+            &::placeholder {
+                color: $arkan-text-muted;
+            }
+
+            &:focus {
+                border-color: rgba($arkan-cyan, 0.5) !important;
+                box-shadow: 0 0 0 2px rgba($arkan-cyan, 0.15), 0 0 8px rgba($arkan-cyan, 0.1) !important;
+                outline: none;
+            }
+        }
+
+        .link-btn .btn-open {
+            color: $arkan-cyan;
+        }
+
+        // Select2 / Awesomplete drop-downs
+        .frappe-control[data-fieldtype="Select"] select {
+            background-image: none;  // Remove default arrow; theme handles
+        }
+    }
+
+    // Checkbox
+    .checkbox .label-area {
+        color: $arkan-text-secondary;
+    }
+}
+
+// ── 5. Slide Footer — Buttons ──
+[data-page-name="setup-wizard"] .slides-wrapper .slide-footer {
+    border-block-start: 1px solid rgba($arkan-border, 0.5);
+    padding-block-start: var(--padding-md);
+    margin-block-start: var(--margin-lg);
+
+    .btn {
+        border-radius: $arkan-radius-sm;
+        font-family: $arkan-font-body;
+        font-weight: 500;
+        transition: all $arkan-transition-fast;
+    }
+
+    .prev-btn,
+    .complete-btn,
+    .next-btn {
+        &.btn-default,
+        &.btn-secondary {
+            background: rgba($arkan-surface, 0.6);
+            border: 1px solid $arkan-border;
+            color: $arkan-text-secondary;
+
+            &:hover {
+                background: rgba($arkan-surface, 0.9);
+                color: $arkan-text-primary;
+                border-color: rgba($arkan-cyan, 0.3);
+            }
+        }
+
+        &.btn-primary {
+            background: $arkan-gradient-primary;
+            border: none;
+            color: #fff;
+            font-weight: 600;
+
+            &:hover {
+                box-shadow: $arkan-glow-cyan;
+                transform: translateY(-1px);
+            }
+
+            &:active {
+                transform: translateY(0);
+            }
+        }
+    }
+}
+
+// ── 6. In-Progress State ──
+[data-page-name="setup-wizard"] .slides-wrapper.setup-in-progress {
+    .state-icon-container {
+        .icon use {
+            stroke: $arkan-cyan;
+        }
+    }
+
+    .setup-message {
+        color: $arkan-text-secondary;
+        font-family: $arkan-font-body;
+    }
+
+    .progress {
+        background: rgba($arkan-surface, 0.6);
+        border-radius: $arkan-radius-sm;
+        overflow: hidden;
+
+        .progress-bar {
+            background: $arkan-gradient-primary;
+            transition: width 0.4s ease;
+        }
+    }
+
+    .btn-abort {
+        background: transparent;
+        border: 1px solid $arkan-border;
+        color: $arkan-text-secondary;
+
+        &:hover {
+            border-color: $arkan-rose;
+            color: $arkan-rose;
+        }
+    }
+}
+
+// ── 7. Success State ──
+[data-page-name="setup-wizard"] .slides-wrapper .success-state {
+    .icon use {
+        stroke: $arkan-green;
+    }
+
+    h2 {
+        color: $arkan-text-primary;
+        font-family: $arkan-font-heading;
+    }
+}
+
+// ── 8. Theme Toggle Button ──
+[data-page-name="setup-wizard"] .toggle-theme-btn {
+    color: $arkan-text-muted;
+    transition: color $arkan-transition-fast;
+
+    &:hover {
+        color: $arkan-cyan;
+    }
+}
+
+// ── 9. "Add More" rows (like adding users) ──
+[data-page-name="setup-wizard"] .slides-wrapper .add-more {
+    .btn {
+        color: $arkan-cyan;
+        border-color: rgba($arkan-cyan, 0.2);
+
+        &:hover {
+            background: rgba($arkan-cyan, 0.08);
+        }
+    }
+}
+
+// ── 10. Entrance Animation ──
+@keyframes arkan-wizard-enter {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.98);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+// Slide transition
+[data-page-name="setup-wizard"] .slide-wrapper {
+    animation: arkan-wizard-slide-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes arkan-wizard-slide-in {
+    0% {
+        opacity: 0;
+        transform: translateX(12px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+// ── 11. RTL Overrides ──
+[dir="rtl"] [data-page-name="setup-wizard"] .slide-wrapper {
+    animation-name: arkan-wizard-slide-in-rtl;
+}
+
+@keyframes arkan-wizard-slide-in-rtl {
+    0% {
+        opacity: 0;
+        transform: translateX(-12px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+// ── 12. Responsive ──
+@media (max-width: 576px) {
+    [data-page-name="setup-wizard"] .slides-wrapper {
+        margin-inline: var(--margin-sm);
+        padding: var(--padding-lg) var(--padding-md);
+    }
+
+    [data-page-name="setup-wizard"] .slides-progress {
+        margin-top: 40px;
+    }
+}
