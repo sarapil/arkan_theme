@@ -25,9 +25,9 @@ add_to_apps_screen = [
     }
 ]
 
-# CSS (loads on every desk page)
+# CSS — esbuild-compiled SCSS bundle (loads on every desk page)
 app_include_css = [
-    f"/assets/arkan_theme/css/arkan.css?v={_v}"
+    "arkan_theme.bundle.css",
 ]
 
 # JS — single bundled file (13 modules → 1 HTTP request, v2: frappe_visual bridge)
