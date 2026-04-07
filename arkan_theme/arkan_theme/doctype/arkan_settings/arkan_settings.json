@@ -26,10 +26,45 @@
   "enable_sounds",
   "enable_search_overlay",
   "default_dark_mode",
+  "threed_bg_section",
+  "bg_preset",
+  "column_break_3d_bg",
+  "bg_parallax_intensity",
+  "threed_splash_section",
+  "enable_3d_splash",
+  "column_break_3d_splash",
+  "splash_style",
+  "threed_loading_section",
+  "enable_page_transitions",
+  "column_break_3d_loading",
+  "enable_3d_loading",
+  "accessibility_section",
+  "reduce_motion",
   "splash_section",
   "splash_duration",
   "column_break_splash",
   "splash_logo_url",
+  "org_branding_section",
+  "org_name",
+  "rebranding_mode",
+  "column_break_org",
+  "org_logo",
+  "org_favicon",
+  "org_splash_logo",
+  "org_media_section",
+  "org_splash_lottie",
+  "org_login_bg",
+  "column_break_org_media",
+  "org_email_header",
+  "org_print_header",
+  "org_watermark",
+  "per_app_section",
+  "app_media_overrides",
+  "license_section",
+  "license_tier",
+  "license_key",
+  "column_break_license",
+  "license_valid_until",
   "advanced_section",
   "custom_css",
   "custom_js"
@@ -173,6 +208,90 @@
    "description": "Dark mode is the default for ARKAN theme (recommended)"
   },
   {
+   "fieldname": "threed_bg_section",
+   "fieldtype": "Section Break",
+   "label": "3D Backgrounds"
+  },
+  {
+   "default": "Neural 3D",
+   "fieldname": "bg_preset",
+   "fieldtype": "Select",
+   "label": "Background Preset",
+   "options": "Neural 3D\nStarfield\nMatrix 3D\nGradient Mesh\nMinimal\nNone",
+   "description": "3D parallax background effect preset"
+  },
+  {
+   "fieldname": "column_break_3d_bg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "100",
+   "fieldname": "bg_parallax_intensity",
+   "fieldtype": "Percent",
+   "label": "Parallax Intensity",
+   "description": "Mouse parallax depth intensity (0 = disabled, 100 = full)"
+  },
+  {
+   "fieldname": "threed_splash_section",
+   "fieldtype": "Section Break",
+   "label": "3D Splash"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_3d_splash",
+   "fieldtype": "Check",
+   "label": "Enable 3D Splash",
+   "description": "Use GSAP-powered 3D splash screen instead of 2D fallback"
+  },
+  {
+   "fieldname": "column_break_3d_splash",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Normal",
+   "fieldname": "splash_style",
+   "fieldtype": "Select",
+   "label": "Splash Style",
+   "options": "Quick\nNormal\nCinematic",
+   "description": "Quick (1.5s), Normal (2.8s), Cinematic (5s)",
+   "depends_on": "eval:doc.enable_3d_splash"
+  },
+  {
+   "fieldname": "threed_loading_section",
+   "fieldtype": "Section Break",
+   "label": "3D Loading & Transitions"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_page_transitions",
+   "fieldtype": "Check",
+   "label": "Enable Page Transitions",
+   "description": "3D card-flip animation on route changes"
+  },
+  {
+   "fieldname": "column_break_3d_loading",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_3d_loading",
+   "fieldtype": "Check",
+   "label": "Enable 3D Loading",
+   "description": "3D loading indicators for API calls and form saves"
+  },
+  {
+   "fieldname": "accessibility_section",
+   "fieldtype": "Section Break",
+   "label": "Accessibility"
+  },
+  {
+   "default": "0",
+   "fieldname": "reduce_motion",
+   "fieldtype": "Check",
+   "label": "Reduce Motion",
+   "description": "Disable all 3D animations (respects prefers-reduced-motion)"
+  },
+  {
    "fieldname": "splash_section",
    "fieldtype": "Section Break",
    "label": "Splash Screen Settings",
@@ -195,6 +314,128 @@
    "fieldtype": "Attach Image",
    "label": "Splash Logo",
    "description": "Custom logo for the splash screen (optional — defaults to neural A)"
+  },
+  {
+   "fieldname": "org_branding_section",
+   "fieldtype": "Section Break",
+   "label": "Organization Branding"
+  },
+  {
+   "default": "ARKAN",
+   "fieldname": "org_name",
+   "fieldtype": "Data",
+   "label": "Organization Name",
+   "description": "Organization name for white-label branding"
+  },
+  {
+   "default": "ARKAN Defaults",
+   "fieldname": "rebranding_mode",
+   "fieldtype": "Select",
+   "label": "Rebranding Mode",
+   "options": "ARKAN Defaults\nOrganization Global\nPer-App Custom",
+   "description": "ARKAN Defaults = built-in, Organization Global = use org_* media, Per-App Custom = per-app overrides"
+  },
+  {
+   "fieldname": "column_break_org",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "org_logo",
+   "fieldtype": "Attach Image",
+   "label": "Organization Logo",
+   "description": "Master organization logo (used globally when mode is Organization Global)"
+  },
+  {
+   "fieldname": "org_favicon",
+   "fieldtype": "Attach Image",
+   "label": "Organization Favicon"
+  },
+  {
+   "fieldname": "org_splash_logo",
+   "fieldtype": "Attach Image",
+   "label": "Organization Splash Logo"
+  },
+  {
+   "fieldname": "org_media_section",
+   "fieldtype": "Section Break",
+   "label": "Organization Media",
+   "collapsible": 1,
+   "depends_on": "eval:doc.rebranding_mode !== 'ARKAN Defaults'"
+  },
+  {
+   "fieldname": "org_splash_lottie",
+   "fieldtype": "Attach",
+   "label": "Splash Lottie Animation",
+   "description": "Lottie JSON animation for organization splash"
+  },
+  {
+   "fieldname": "org_login_bg",
+   "fieldtype": "Attach Image",
+   "label": "Login Background"
+  },
+  {
+   "fieldname": "column_break_org_media",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "org_email_header",
+   "fieldtype": "Attach Image",
+   "label": "Email Header Logo"
+  },
+  {
+   "fieldname": "org_print_header",
+   "fieldtype": "Attach Image",
+   "label": "Print Header Logo"
+  },
+  {
+   "fieldname": "org_watermark",
+   "fieldtype": "Attach Image",
+   "label": "Document Watermark"
+  },
+  {
+   "fieldname": "per_app_section",
+   "fieldtype": "Section Break",
+   "label": "Per-App Media Overrides",
+   "depends_on": "eval:doc.rebranding_mode === 'Per-App Custom'"
+  },
+  {
+   "fieldname": "app_media_overrides",
+   "fieldtype": "Table",
+   "label": "App Media Overrides",
+   "options": "AT App Media Override",
+   "description": "Per-app branding overrides (Enterprise tier only)"
+  },
+  {
+   "fieldname": "license_section",
+   "fieldtype": "Section Break",
+   "label": "License & Tier",
+   "collapsible": 1
+  },
+  {
+   "default": "Free",
+   "fieldname": "license_tier",
+   "fieldtype": "Select",
+   "label": "License Tier",
+   "options": "Free\nProfessional\nEnterprise",
+   "description": "Current license tier — controls rebranding availability"
+  },
+  {
+   "fieldname": "license_key",
+   "fieldtype": "Password",
+   "label": "License Key",
+   "description": "License key (validated server-side)",
+   "depends_on": "eval:doc.license_tier !== 'Free'"
+  },
+  {
+   "fieldname": "column_break_license",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "license_valid_until",
+   "fieldtype": "Date",
+   "label": "Valid Until",
+   "read_only": 1,
+   "depends_on": "eval:doc.license_tier !== 'Free'"
   },
   {
    "fieldname": "advanced_section",
@@ -220,7 +461,7 @@
  "icon": "⚡",
  "issingle": 1,
  "links": [],
- "modified": "2026-02-09 10:00:00.000000",
+ "modified": "2026-04-07 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "ARKAN Theme",
  "name": "ARKAN Settings",

@@ -1,0 +1,62 @@
+// ARKAN Theme — 3D Background Layers
+// Multi-layer parallax with CSS 3D perspective
+
+.arkan-bg-3d {
+    position: fixed;
+    inset: 0;
+    z-index: $z-neural-grid;
+    pointer-events: none;
+    perspective: 2000px;
+    transform-style: preserve-3d;
+    overflow: hidden;
+
+    // Shared layer base
+    &__deep,
+    &__mid,
+    &__near,
+    &__surface {
+        position: absolute;
+        inset: 0;
+        will-change: transform;
+        transform-style: preserve-3d;
+    }
+
+    &__deep {
+        transform: translateZ(-200px) scale(1.2);
+        opacity: 0.6;
+    }
+
+    &__mid {
+        transform: translateZ(-100px) scale(1.1);
+        opacity: 0.8;
+    }
+
+    &__near {
+        transform: translateZ(-30px) scale(1.03);
+        opacity: 0.9;
+    }
+
+    &__surface {
+        transform: translateZ(0px);
+    }
+}
+
+// When neural grid canvas exists inside 3D background, reparent visually
+.arkan-bg-3d .arkan-neural-grid-canvas {
+    position: absolute;
+    z-index: auto;
+}
+
+// Reduced motion: flatten perspective
+@media (prefers-reduced-motion: reduce) {
+    .arkan-bg-3d {
+        perspective: none;
+
+        &__deep,
+        &__mid,
+        &__near,
+        &__surface {
+            transform: none !important;
+        }
+    }
+}

@@ -1,0 +1,95 @@
+// ARKAN Theme — 3D Splash Screen Styles
+// Enhances arkan_splash_3d.js with CSS 3D + perspective
+
+.arkan-splash3d-screen {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: $z-splash;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1200px;
+    overflow: hidden;
+    background: $arkan-deep-black;
+
+    // Background layer
+    .splash3d-bg {
+        position: absolute;
+        inset: 0;
+        will-change: background-size, opacity;
+    }
+
+    // Particles layer (preserve-3d for depth)
+    .splash3d-particles {
+        position: absolute;
+        inset: 0;
+        transform-style: preserve-3d;
+        pointer-events: none;
+    }
+
+    .splash3d-particle {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.4;
+        will-change: transform, opacity;
+    }
+
+    // Logo with 3D transform origin
+    .splash3d-logo {
+        width: 120px;
+        height: 120px;
+        object-fit: contain;
+        will-change: transform, opacity;
+        transform-style: preserve-3d;
+    }
+
+    // Brand name with gradient text
+    .splash3d-brand {
+        font-family: $arkan-font-heading;
+        font-size: 2.5rem;
+        font-weight: 800;
+        letter-spacing: 0.15em;
+        text-align: center;
+        will-change: transform, opacity;
+    }
+
+    // Tagline
+    .splash3d-tagline {
+        font-family: $arkan-font-body;
+        font-size: 1rem;
+        color: rgba($arkan-text-primary, 0.6);
+        letter-spacing: 0.05em;
+        text-align: center;
+        will-change: opacity;
+    }
+
+    // Progress ring
+    .splash3d-progress {
+        margin-top: 16px;
+        will-change: transform;
+    }
+
+    // Responsive sizing
+    @media (max-width: 480px) {
+        .splash3d-logo {
+            width: 80px;
+            height: 80px;
+        }
+        .splash3d-brand {
+            font-size: 1.8rem;
+            letter-spacing: 0.1em;
+        }
+        .splash3d-tagline {
+            font-size: 0.85rem;
+        }
+    }
+}
+
+// Reduced motion: collapse to simple fade
+@media (prefers-reduced-motion: reduce) {
+    .arkan-splash3d-screen {
+        perspective: none;
+        .splash3d-particles { display: none; }
+        .splash3d-progress { transform: none !important; }
+    }
+}

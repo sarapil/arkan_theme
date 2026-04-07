@@ -1,0 +1,31 @@
+// ARKAN Theme — 3D Loading & Transitions Styles
+
+// Save ring overlay — centered on screen
+.arkan-save-ring-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: $z-overlay + 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba($arkan-deep-black, 0.4);
+    backdrop-filter: blur(4px);
+    pointer-events: none;
+
+    .arkan-save-ring-svg {
+        filter: drop-shadow(0 0 12px var(--arkan-cyan, #{$arkan-cyan}));
+    }
+}
+
+// Page transition container hint
+.main-section,
+#page-container {
+    will-change: auto; // only during transitions — GSAP sets inline
+}
+
+// Reduced motion: disable all
+@media (prefers-reduced-motion: reduce) {
+    .arkan-save-ring-overlay {
+        backdrop-filter: none;
+    }
+}

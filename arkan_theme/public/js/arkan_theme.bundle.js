@@ -11,12 +11,10 @@
 // License: MIT
 // For license information, please see license.txt
 
-// ARKAN Theme — Main Coordinator (Slim v2.0)
-// This file ONLY handles: config defaults, CSS variable injection,
-// favicon, and initialization of kept brand-unique modules.
-// ALL fv-related features (dark mode, shortcuts, mobile, workspace,
-// forms, tour, effects, cursor, loading, desktop, welcome, scene)
-// are handled by fv_integration.js.
+// ARKAN Theme — Main Coordinator (v3.0)
+// Handles: config defaults, CSS variable injection, favicon,
+// app router, media switcher, 3D modules, and kept brand-unique modules.
+// fv-related features handled by fv_integration.js.
 (function() {
     "use strict";
 
@@ -28,7 +26,7 @@
         secondary_color: "#0A0F1C",
         accent_color: "#8B5CF6",
         text_color: "#E8ECF1",
-        version: "16.2.0",
+        version: "18.0.0",
         enable_splash_screen: 1,
         enable_neural_grid: 1,
         enable_matrix_rain: 0,
@@ -38,9 +36,25 @@
         splash_duration: 2800,
         logo_url: "/assets/arkan_theme/images/logo-header.png",
         favicon_url: "/assets/arkan_theme/images/favicon.ico",
+        // v18 3D defaults
+        bg_preset: "Neural 3D",
+        bg_parallax_intensity: 100,
+        enable_3d_splash: 1,
+        splash_style: "Normal",
+        enable_page_transitions: 1,
+        enable_3d_loading: 1,
+        reduce_motion: 0,
+        rebranding_mode: "ARKAN Defaults",
+        license_tier: "Free",
     };
 
     arkan.config = Object.assign({}, DEFAULTS);
+
+    // Detect reduced motion preference
+    arkan._prefersReducedMotion = function() {
+        return window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+               arkan.config.reduce_motion;
+    };
 
     // Safe module initializer — never let one module kill the rest
     arkan._initModule = function(name, fn) {
@@ -52,18 +66,32 @@
     };
 
     arkan.init = function() {
-        // Merge boot settings
+        // 1. Merge boot settings
         if (frappe.boot && frappe.boot.arkan_theme) {
             Object.assign(arkan.config, frappe.boot.arkan_theme);
         }
 
-        // Apply CSS custom properties from config
+        // 2. Respect reduced motion
+        if (arkan._prefersReducedMotion()) {
+            arkan.config.enable_3d_splash = 0;
+            arkan.config.bg_parallax_intensity = 0;
+            arkan.config.enable_page_transitions = 0;
+            arkan.config.enable_3d_loading = 0;
+        }
+
+        // 3. Apply CSS custom properties from config
         var root = document.documentElement;
         root.style.setProperty('--arkan-cyan', arkan.config.primary_color);
         root.style.setProperty('--arkan-bg-deep', arkan.config.secondary_color);
         root.style.setProperty('--arkan-purple', arkan.config.accent_color);
+        root.style.setProperty('--arkan-app-primary', arkan.config.primary_color);
+        root.style.setProperty('--arkan-app-accent', arkan.config.accent_color);
 
-        // Set favicon
+        // 4. Set tier class on body for CSS gating
+        var tier = (arkan.config.license_tier || "Free").toLowerCase();
+        document.body.classList.add('arkan-tier-' + tier);
+
+        // 5. Set favicon
         arkan._setFavicon(arkan.config.favicon_url);
 
         // Fix stale body padding from other themes
@@ -78,21 +106,44 @@
             mainSection.style.setProperty('min-width', '0');
         }
 
-        // Apply .fv-fx-mouse-glow on body — replaces arkan_cursor.js
+        // Apply .fv-fx-mouse-glow on body
         if (arkan.config.enable_cursor_glow) {
             document.body.classList.add('fv-fx-mouse-glow');
         }
 
-        // Initialize kept modules (unique brand features only)
-        if (arkan.config.enable_neural_grid && typeof arkan.neuralGrid !== 'undefined') {
-            arkan._initModule('neuralGrid', function() { arkan.neuralGrid.init(); });
+        // 6. Initialize App Router + Media Switcher (v18)
+        if (typeof arkan.mediaSwitcher !== 'undefined') {
+            arkan._initModule('mediaSwitcher', function() { arkan.mediaSwitcher.init(); });
         }
-        if (arkan.config.enable_splash_screen && typeof arkan.splash !== 'undefined') {
+        if (typeof arkan.appRouter !== 'undefined') {
+            arkan._initModule('appRouter', function() { arkan.appRouter.init(); });
+        }
+
+        // 7. Initialize 3D modules (v18)
+        if (arkan.config.enable_3d_splash && typeof arkan.splash3d !== 'undefined') {
+            arkan._initModule('splash3d', function() { arkan.splash3d.init(); });
+        } else if (arkan.config.enable_splash_screen && typeof arkan.splash !== 'undefined') {
+            // Fallback to 2D splash
             arkan._initModule('splash', function() { arkan.splash.init(); });
         }
-        if (arkan.config.enable_matrix_rain && typeof arkan.matrix !== 'undefined') {
-            arkan._initModule('matrix', function() { arkan.matrix.init(); });
+
+        if (arkan.config.bg_preset !== 'None' && typeof arkan.bg3d !== 'undefined') {
+            arkan._initModule('bg3d', function() { arkan.bg3d.init(); });
+        } else {
+            // Fallback to classic neural grid + matrix
+            if (arkan.config.enable_neural_grid && typeof arkan.neuralGrid !== 'undefined') {
+                arkan._initModule('neuralGrid', function() { arkan.neuralGrid.init(); });
+            }
+            if (arkan.config.enable_matrix_rain && typeof arkan.matrix !== 'undefined') {
+                arkan._initModule('matrix', function() { arkan.matrix.init(); });
+            }
         }
+
+        if (arkan.config.enable_page_transitions && typeof arkan.loading3d !== 'undefined') {
+            arkan._initModule('loading3d', function() { arkan.loading3d.init(); });
+        }
+
+        // 8. Initialize kept modules
         if (arkan.config.enable_sounds && typeof arkan.sounds !== 'undefined') {
             arkan._initModule('sounds', function() { arkan.sounds.init(); });
         }
@@ -100,14 +151,19 @@
             arkan._initModule('navbar', function() { arkan.navbar.init(); });
         }
 
-        // Apply custom CSS from settings (sanitized server-side)
+        // 9. Apply custom CSS from settings
         if (arkan.config.custom_css) {
             var style = document.createElement('style');
             style.textContent = arkan.config.custom_css;
             document.head.appendChild(style);
         }
 
-        console.log('%c⚡ ARKAN Theme v' + arkan.config.version + ' — frappe_visual bridge active',
+        // 10. Add watermark for free tier
+        if (tier === 'free') {
+            arkan._addWatermark();
+        }
+
+        console.log('%c⚡ ARKAN Theme v' + arkan.config.version + ' — 3D Engine active',
             'color:#00F0FF;font-weight:bold;font-size:14px;text-shadow:0 0 10px #00F0FF');
     };
 
@@ -118,6 +174,13 @@
         link.rel = 'shortcut icon';
         link.href = url;
         document.head.appendChild(link);
+    };
+
+    arkan._addWatermark = function() {
+        if (document.querySelector('.arkan-watermark')) return;
+        var wm = document.createElement('div');
+        wm.className = 'arkan-watermark';
+        document.body.appendChild(wm);
     };
 
     // Auto-init on frappe ready
@@ -579,6 +642,270 @@
 })();
 
 
+// ── arkan_app_router.js ──
+// Copyright (c) 2026, Arkan Lab — https://arkan.it.com
+// License: MIT
+// ARKAN Theme — App Router: route-based Arkan app detection
+
+(function() {
+    "use strict";
+
+    window.arkan = window.arkan || {};
+
+    arkan.appRouter = {
+        // Static registry — Arkan apps and their route/DocType prefixes
+        APP_REGISTRY: {
+            arrowz:       { prefix: ["arrowz", "az-", "az "], color: "#6366F1", label: "Arrowz" },
+            arkspace:     { prefix: ["arkspace", "as-", "as "], color: "#1B365D", label: "ARKSpace" },
+            auracrm:      { prefix: ["auracrm", "ac-", "ac_"], color: "#6366F1", label: "AuraCRM" },
+            candela:      { prefix: ["candela", "cd-", "cd "], color: "#F59E0B", label: "Candela" },
+            velara:       { prefix: ["velara", "vl-", "vl "], color: "#C9A84C", label: "Velara" },
+            vertex:       { prefix: ["vertex", "vx-", "vx "], color: "#E8590C", label: "Vertex" },
+            masar:        { prefix: ["masar", "ms-", "ms "], color: "#8B5CF6", label: "Masar" },
+            caps:         { prefix: ["caps", "caps_"], color: "#10B981", label: "CAPS" },
+            arkan_help:   { prefix: ["arkan-help", "arkan_help"], color: "#06B6D4", label: "Arkan Help" },
+            frappe_visual:{ prefix: ["frappe-visual", "frappe_visual", "fv-"], color: "#6366F1", label: "Frappe Visual" },
+            arkan_theme:  { prefix: ["arkan-theme", "arkan_theme", "arkan-settings"], color: "#1E40AF", label: "ARKAN Theme" },
+        },
+
+        _currentApp: null,
+        _listeners: [],
+
+        init: function() {
+            var self = this;
+            // Listen for Frappe route changes
+            $(document).on("page-change", function() {
+                self._onRouteChange();
+            });
+            // Initial detection
+            this._onRouteChange();
+        },
+
+        _onRouteChange: function() {
+            var detected = this.detectApp();
+            if (detected !== this._currentApp) {
+                this._currentApp = detected;
+                // Notify media switcher
+                if (arkan.mediaSwitcher) {
+                    arkan.mediaSwitcher.switchToApp(detected);
+                }
+            }
+        },
+
+        detectApp: function() {
+            var route = (frappe.get_route_str() || "").toLowerCase();
+            var doctype = "";
+
+            // Get DocType from current form or list
+            if (typeof cur_frm !== "undefined" && cur_frm && cur_frm.doc) {
+                doctype = (cur_frm.doc.doctype || "").toLowerCase();
+            } else if (typeof cur_list !== "undefined" && cur_list) {
+                doctype = (cur_list.doctype || "").toLowerCase();
+            }
+
+            // Method 1: Check route path
+            for (var app in this.APP_REGISTRY) {
+                var config = this.APP_REGISTRY[app];
+                for (var i = 0; i < config.prefix.length; i++) {
+                    if (route.indexOf(config.prefix[i].toLowerCase()) !== -1) {
+                        return app;
+                    }
+                }
+            }
+
+            // Method 2: Check DocType prefix
+            if (doctype) {
+                for (var app2 in this.APP_REGISTRY) {
+                    var config2 = this.APP_REGISTRY[app2];
+                    for (var j = 0; j < config2.prefix.length; j++) {
+                        var pfx = config2.prefix[j].replace("-", " ").toLowerCase();
+                        if (doctype.indexOf(pfx) === 0) {
+                            return app2;
+                        }
+                    }
+                }
+            }
+
+            // Method 3: Check workspace sidebar selection
+            var selected = document.querySelector(".workspace-sidebar .selected");
+            if (selected) {
+                var wsText = (selected.textContent || "").toLowerCase().trim();
+                for (var app3 in this.APP_REGISTRY) {
+                    if (wsText.indexOf(app3.replace("_", " ")) !== -1 ||
+                        wsText.indexOf(this.APP_REGISTRY[app3].label.toLowerCase()) !== -1) {
+                        return app3;
+                    }
+                }
+            }
+
+            return null; // No Arkan app detected → use defaults
+        },
+
+        getCurrentApp: function() {
+            return this._currentApp;
+        },
+
+        getAppConfig: function(appName) {
+            return this.APP_REGISTRY[appName] || null;
+        },
+    };
+})();
+
+
+// ── arkan_media_switcher.js ──
+// Copyright (c) 2026, Arkan Lab — https://arkan.it.com
+// License: MIT
+// ARKAN Theme — Media Switcher: dynamic favicon/logo/color switching per app
+
+(function() {
+    "use strict";
+
+    window.arkan = window.arkan || {};
+
+    arkan.mediaSwitcher = {
+        _currentApp: null,
+        _currentMedia: null,
+        _gsapAvailable: false,
+
+        init: function() {
+            this._gsapAvailable = (typeof gsap !== "undefined");
+        },
+
+        switchToApp: function(appName) {
+            if (appName === this._currentApp) return;
+            this._currentApp = appName;
+
+            var media = this._resolveMedia(appName);
+            this._currentMedia = media;
+
+            this._switchFavicon(media.favicon);
+            this._switchColors(media);
+            this._switchTopbarLogo(media.topbar_logo || media.logo);
+            this._updateDocTitle(media.brand_name);
+
+            // Emit event for other modules (splash, bg, etc.)
+            document.dispatchEvent(new CustomEvent("arkan:app-switched", {
+                detail: { app: appName, media: media }
+            }));
+        },
+
+        _resolveMedia: function(appName) {
+            // Use pre-resolved data from boot
+            var bootData = frappe.boot && frappe.boot.arkan_theme;
+            if (!bootData) return this._getDefaults();
+
+            if (appName && bootData.app_media && bootData.app_media[appName]) {
+                return bootData.app_media[appName];
+            }
+
+            // Fallback to global settings
+            return {
+                favicon: bootData.favicon_url || "/assets/arkan_theme/images/favicon.ico",
+                logo: bootData.logo_url || "/assets/arkan_theme/images/logo-header.png",
+                topbar_logo: "/assets/arkan_theme/images/arkan-nav-logo.png",
+                splash_logo: bootData.splash_logo_url || "",
+                splash_lottie: null,
+                primary_color: bootData.primary_color || "#00F0FF",
+                accent_color: bootData.accent_color || "#8B5CF6",
+                bg_color: bootData.secondary_color || "#0A0F1C",
+                brand_name: bootData.brand_name || "ARKAN",
+                splash_tagline: null,
+            };
+        },
+
+        _getDefaults: function() {
+            return {
+                favicon: "/assets/arkan_theme/images/favicon.ico",
+                logo: "/assets/arkan_theme/images/logo-header.png",
+                topbar_logo: "/assets/arkan_theme/images/arkan-nav-logo.png",
+                splash_logo: "",
+                splash_lottie: null,
+                primary_color: "#00F0FF",
+                accent_color: "#8B5CF6",
+                bg_color: "#0A0F1C",
+                brand_name: "ARKAN",
+                splash_tagline: null,
+            };
+        },
+
+        _switchFavicon: function(faviconUrl) {
+            if (!faviconUrl) return;
+            var links = document.querySelectorAll('link[rel*="icon"]');
+            if (links.length) {
+                links.forEach(function(link) {
+                    link.href = faviconUrl;
+                });
+            } else {
+                var link = document.createElement("link");
+                link.rel = "shortcut icon";
+                link.type = "image/x-icon";
+                link.href = faviconUrl;
+                document.head.appendChild(link);
+            }
+        },
+
+        _switchColors: function(media) {
+            var root = document.documentElement;
+            if (media.primary_color) {
+                root.style.setProperty("--arkan-app-primary", media.primary_color);
+                root.style.setProperty("--arkan-cyan", media.primary_color);
+            }
+            if (media.accent_color) {
+                root.style.setProperty("--arkan-app-accent", media.accent_color);
+            }
+            if (media.bg_color) {
+                root.style.setProperty("--arkan-app-bg", media.bg_color);
+            }
+        },
+
+        _switchTopbarLogo: function(logoUrl) {
+            if (!logoUrl) return;
+            var logo = document.querySelector(".arkan-nav-logo, .navbar-brand img");
+            if (!logo) return;
+
+            if (this._gsapAvailable) {
+                gsap.to(logo, {
+                    opacity: 0,
+                    scale: 0.8,
+                    duration: 0.2,
+                    onComplete: function() {
+                        logo.src = logoUrl;
+                        gsap.to(logo, {
+                            opacity: 1,
+                            scale: 1,
+                            duration: 0.3,
+                            ease: "back.out"
+                        });
+                    }
+                });
+            } else {
+                logo.src = logoUrl;
+            }
+        },
+
+        _updateDocTitle: function(brandName) {
+            if (!brandName) return;
+            // Only update the brand portion of title — respect Frappe's page title
+            var title = document.title || "";
+            // Frappe titles are like "Page Name | ARKAN"
+            var parts = title.split(" | ");
+            if (parts.length > 1) {
+                parts[parts.length - 1] = brandName;
+                document.title = parts.join(" | ");
+            }
+        },
+
+        getCurrentMedia: function() {
+            return this._currentMedia || this._getDefaults();
+        },
+
+        getCurrentApp: function() {
+            return this._currentApp;
+        },
+    };
+})();
+
+
 // ── arkan_navbar.js ──
 // Copyright (c) 2024, Moataz M Hassan (Arkan Lab)
 // Developer Website: https://arkan.it.com
@@ -602,6 +929,32 @@
 
             // Desk sidebar glow + dark mode toggle
             this._tryDeskSidebar();
+
+            // Listen for per-app switching to update topbar logo
+            var self = this;
+            document.addEventListener('arkan:app-switched', function(e) {
+                var media = e.detail && e.detail.media;
+                if (media && media.topbar_logo) {
+                    self._switchTopbarLogo(media.topbar_logo);
+                }
+            });
+        },
+
+        _switchTopbarLogo: function(logoUrl) {
+            if (!logoUrl) return;
+            var logo = document.querySelector('.arkan-nav-logo, .navbar-brand img');
+            if (!logo) return;
+            if (typeof gsap !== 'undefined') {
+                gsap.to(logo, {
+                    opacity: 0, scale: 0.8, duration: 0.2,
+                    onComplete: function() {
+                        logo.src = logoUrl;
+                        gsap.to(logo, { opacity: 1, scale: 1, duration: 0.3, ease: 'back.out' });
+                    }
+                });
+            } else {
+                logo.src = logoUrl;
+            }
         },
 
         _tryDeskSidebar: function() {
@@ -887,6 +1240,664 @@
 })();
 
 
+// ── arkan_splash_3d.js ──
+// Copyright (c) 2026, Arkan Lab — https://arkan.it.com
+// License: MIT
+// ARKAN Theme — 3D Splash Screen with GSAP + Lottie + CSS 3D
+
+(function() {
+    "use strict";
+
+    window.arkan = window.arkan || {};
+
+    var SPLASH_DURATIONS = { Quick: 1500, Normal: 2800, Cinematic: 5000 };
+    var SESSION_KEY = "arkan-splash-shown";
+    var FAILSAFE_MS = 8000;
+
+    // Per-app gradient themes
+    var APP_THEMES = {
+        arkan_theme: { bg: "radial-gradient(ellipse at center, #0A0F1C 0%, #000510 50%, #00F0FF08 100%)", particle: "#00F0FF" },
+        vertex:      { bg: "radial-gradient(ellipse at center, #1A0A00 0%, #0D0500 50%, #E8590C08 100%)", particle: "#E8590C" },
+        velara:      { bg: "radial-gradient(ellipse at center, #1A1000 0%, #0D0800 50%, #C9A84C08 100%)", particle: "#C9A84C" },
+        arrowz:      { bg: "radial-gradient(ellipse at center, #0A001A 0%, #050010 50%, #6366F108 100%)", particle: "#6366F1" },
+        auracrm:     { bg: "radial-gradient(ellipse at center, #0A001A 0%, #050010 50%, #6366F108 100%)", particle: "#6366F1" },
+        candela:     { bg: "radial-gradient(ellipse at center, #1A0800 0%, #0D0400 50%, #F59E0B08 100%)", particle: "#F59E0B" },
+        arkspace:    { bg: "radial-gradient(ellipse at center, #000A1A 0%, #000510 50%, #1B365D08 100%)", particle: "#1B365D" },
+        masar:       { bg: "radial-gradient(ellipse at center, #0A001A 0%, #050010 50%, #8B5CF608 100%)", particle: "#8B5CF6" },
+        caps:        { bg: "radial-gradient(ellipse at center, #001A10 0%, #000D08 50%, #10B98108 100%)", particle: "#10B981" },
+    };
+
+    arkan.splash3d = {
+        _overlay: null,
+        _timeline: null,
+
+        init: function() {
+            // Session gate — only show once per browser session
+            if (sessionStorage.getItem(SESSION_KEY)) return;
+            sessionStorage.setItem(SESSION_KEY, "1");
+
+            if (typeof gsap === "undefined") {
+                // GSAP not available — fall back to 2D splash
+                if (arkan.splash) arkan.splash.init();
+                return;
+            }
+
+            var config = arkan.config || {};
+            var appName = arkan.appRouter ? arkan.appRouter.getCurrentApp() : null;
+            var media = arkan.mediaSwitcher ? arkan.mediaSwitcher.getCurrentMedia() : {};
+            var style = config.splash_style || "Normal";
+            var duration = SPLASH_DURATIONS[style] || 2800;
+
+            this.show(appName, media, duration);
+        },
+
+        show: function(appName, media, duration) {
+            var self = this;
+            var overlay = this._createOverlay(appName, media);
+            this._overlay = overlay;
+            document.body.appendChild(overlay);
+
+            // Force reflow
+            overlay.offsetHeight;
+
+            var tl = gsap.timeline({
+                onComplete: function() {
+                    self._exit(overlay);
+                }
+            });
+            this._timeline = tl;
+
+            // 1. Background gradient scale
+            tl.fromTo(overlay.querySelector(".splash3d-bg"), {
+                backgroundSize: "100% 100%", opacity: 0
+            }, {
+                backgroundSize: "200% 200%", opacity: 1,
+                duration: Math.min(duration / 1000, 2.5), ease: "power2.inOut"
+            }, 0);
+
+            // 2. Depth particles stagger entrance
+            var particles = overlay.querySelectorAll(".splash3d-particle");
+            if (particles.length) {
+                tl.from(particles, {
+                    z: -200, opacity: 0, scale: 0,
+                    stagger: { each: 0.05, from: "random" },
+                    duration: 1, ease: "back.out(1.7)"
+                }, 0.2);
+            }
+
+            // 3. Logo 3D entrance
+            var logo = overlay.querySelector(".splash3d-logo");
+            if (logo) {
+                tl.from(logo, {
+                    rotateY: -90, scale: 0.3, opacity: 0,
+                    transformPerspective: 1200,
+                    duration: 0.8, ease: "back.out(2)"
+                }, 0.4);
+            }
+
+            // 4. Brand text — SplitText if available
+            var brandEl = overlay.querySelector(".splash3d-brand");
+            if (brandEl && typeof SplitText !== "undefined") {
+                var split = new SplitText(brandEl, { type: "chars" });
+                tl.from(split.chars, {
+                    rotateX: -90, opacity: 0, y: 50,
+                    stagger: 0.03, duration: 0.6, ease: "back.out(1.7)"
+                }, 0.8);
+            } else if (brandEl) {
+                tl.from(brandEl, {
+                    opacity: 0, y: 30, duration: 0.6, ease: "power2.out"
+                }, 0.8);
+            }
+
+            // 5. Tagline
+            var tagline = overlay.querySelector(".splash3d-tagline");
+            if (tagline) {
+                tl.from(tagline, {
+                    opacity: 0, y: 20, duration: 0.4, ease: "power2.out"
+                }, 1.2);
+            }
+
+            // 6. Progress ring (DrawSVG if available)
+            var progressCircle = overlay.querySelector(".splash3d-progress circle.progress-ring");
+            if (progressCircle && typeof DrawSVGPlugin !== "undefined") {
+                gsap.registerPlugin(DrawSVGPlugin);
+                tl.from(progressCircle, {
+                    drawSVG: "0%",
+                    duration: duration / 1000 * 0.6, ease: "power2.inOut"
+                }, 0.5);
+            }
+
+            // Schedule exit
+            tl.duration(Math.max(tl.duration(), duration / 1000));
+
+            // Failsafe
+            setTimeout(function() {
+                if (self._overlay) self._exit(self._overlay);
+            }, FAILSAFE_MS);
+        },
+
+        _createOverlay: function(appName, media) {
+            var theme = APP_THEMES[appName] || APP_THEMES.arkan_theme;
+            var primaryColor = (media && media.primary_color) || theme.particle;
+            var brandName = (media && media.brand_name) || arkan.config.brand_name || "ARKAN";
+            var splashTagline = (media && media.splash_tagline) || "";
+            var logoUrl = (media && media.splash_logo) || (media && media.logo) || arkan.config.logo_url || "";
+
+            var overlay = document.createElement("div");
+            overlay.className = "arkan-splash3d-screen";
+            overlay.style.cssText = "position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;perspective:1200px;overflow:hidden;";
+
+            // Background
+            var bg = document.createElement("div");
+            bg.className = "splash3d-bg";
+            bg.style.cssText = "position:absolute;inset:0;background:" + theme.bg + ";background-size:100% 100%;";
+            overlay.appendChild(bg);
+
+            // Particles container (20 particles)
+            var particleContainer = document.createElement("div");
+            particleContainer.className = "splash3d-particles";
+            particleContainer.style.cssText = "position:absolute;inset:0;transform-style:preserve-3d;pointer-events:none;";
+            for (var i = 0; i < 20; i++) {
+                var p = document.createElement("div");
+                p.className = "splash3d-particle";
+                var size = 4 + Math.random() * 8;
+                var x = Math.random() * 100;
+                var y = Math.random() * 100;
+                var z = -100 + Math.random() * 200;
+                p.style.cssText = "position:absolute;width:" + size + "px;height:" + size + "px;border-radius:50%;background:" + primaryColor + ";opacity:0.4;left:" + x + "%;top:" + y + "%;transform:translateZ(" + z + "px);box-shadow:0 0 " + (size * 2) + "px " + primaryColor + ";";
+                particleContainer.appendChild(p);
+            }
+            overlay.appendChild(particleContainer);
+
+            // Center content container
+            var center = document.createElement("div");
+            center.style.cssText = "position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:16px;transform-style:preserve-3d;";
+
+            // Logo
+            if (logoUrl) {
+                var img = document.createElement("img");
+                img.className = "splash3d-logo";
+                img.src = logoUrl;
+                img.alt = brandName;
+                img.style.cssText = "width:120px;height:120px;object-fit:contain;filter:drop-shadow(0 0 20px " + primaryColor + "40);";
+                center.appendChild(img);
+            }
+
+            // Brand name
+            var brand = document.createElement("div");
+            brand.className = "splash3d-brand";
+            brand.textContent = brandName;
+            brand.style.cssText = "font-size:2.5rem;font-weight:800;letter-spacing:0.15em;background:linear-gradient(135deg, " + primaryColor + ", #fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;";
+            center.appendChild(brand);
+
+            // Tagline
+            if (splashTagline) {
+                var tag = document.createElement("div");
+                tag.className = "splash3d-tagline";
+                tag.textContent = splashTagline;
+                tag.style.cssText = "font-size:1rem;color:rgba(255,255,255,0.6);letter-spacing:0.05em;";
+                center.appendChild(tag);
+            }
+
+            // Progress ring SVG
+            var svgNS = "http://www.w3.org/2000/svg";
+            var svg = document.createElementNS(svgNS, "svg");
+            svg.setAttribute("class", "splash3d-progress");
+            svg.setAttribute("width", "60");
+            svg.setAttribute("height", "60");
+            svg.setAttribute("viewBox", "0 0 60 60");
+            svg.style.cssText = "margin-top:16px;transform:rotateX(60deg);";
+
+            var bgRing = document.createElementNS(svgNS, "circle");
+            bgRing.setAttribute("cx", "30");
+            bgRing.setAttribute("cy", "30");
+            bgRing.setAttribute("r", "24");
+            bgRing.setAttribute("fill", "none");
+            bgRing.setAttribute("stroke", "rgba(255,255,255,0.1)");
+            bgRing.setAttribute("stroke-width", "3");
+            svg.appendChild(bgRing);
+
+            var ring = document.createElementNS(svgNS, "circle");
+            ring.setAttribute("class", "progress-ring");
+            ring.setAttribute("cx", "30");
+            ring.setAttribute("cy", "30");
+            ring.setAttribute("r", "24");
+            ring.setAttribute("fill", "none");
+            ring.setAttribute("stroke", primaryColor);
+            ring.setAttribute("stroke-width", "3");
+            ring.setAttribute("stroke-linecap", "round");
+            ring.setAttribute("stroke-dasharray", String(2 * Math.PI * 24));
+            ring.setAttribute("stroke-dashoffset", String(2 * Math.PI * 24));
+            ring.setAttribute("transform", "rotate(-90 30 30)");
+            svg.appendChild(ring);
+
+            center.appendChild(svg);
+            overlay.appendChild(center);
+
+            return overlay;
+        },
+
+        _exit: function(overlay) {
+            if (!overlay || !overlay.parentNode) return;
+            this._overlay = null;
+
+            if (typeof gsap !== "undefined") {
+                var children = overlay.querySelector("div[style*='z-index:2']");
+                gsap.to(children ? [children] : overlay.children, {
+                    z: 500, opacity: 0, filter: "blur(20px)",
+                    stagger: 0.1, duration: 0.6, ease: "power3.in",
+                    onComplete: function() {
+                        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+                    }
+                });
+            } else {
+                overlay.style.transition = "opacity 0.5s ease";
+                overlay.style.opacity = "0";
+                setTimeout(function() {
+                    if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+                }, 500);
+            }
+        },
+
+        // Allow manual skip (e.g., on click)
+        skip: function() {
+            if (this._timeline) this._timeline.progress(1);
+            if (this._overlay) this._exit(this._overlay);
+        }
+    };
+})();
+
+
+// ── arkan_bg_3d.js ──
+// Copyright (c) 2026, Arkan Lab — https://arkan.it.com
+// License: MIT
+// ARKAN Theme — 3D Multi-Layer Parallax Background with GSAP
+
+(function() {
+    "use strict";
+
+    window.arkan = window.arkan || {};
+
+    // Preset definitions: each preset defines layer visuals
+    var PRESETS = {
+        "Neural 3D": {
+            deep:    { gradient: "radial-gradient(ellipse at 30% 70%, rgba(0,240,255,0.04) 0%, transparent 70%)" },
+            mid:     { useNeuralGrid: true },
+            near:    { type: "dots", color: "rgba(139,92,246,0.08)", count: 12 },
+            surface: { gradient: "linear-gradient(180deg, transparent, rgba(10,15,28,0.3))" }
+        },
+        "Starfield": {
+            deep:    { gradient: "radial-gradient(ellipse at 50% 50%, rgba(0,5,16,1) 0%, rgba(0,0,0,1) 100%)" },
+            mid:     { type: "stars", color: "rgba(255,255,255,0.6)", count: 40 },
+            near:    { type: "stars", color: "rgba(0,240,255,0.4)", count: 15 },
+            surface: { gradient: "none" }
+        },
+        "Matrix 3D": {
+            deep:    { gradient: "radial-gradient(ellipse at 50% 30%, rgba(16,185,129,0.05) 0%, transparent 70%)" },
+            mid:     { useMatrix: true },
+            near:    { type: "dots", color: "rgba(16,185,129,0.1)", count: 8 },
+            surface: { gradient: "linear-gradient(180deg, transparent 80%, rgba(10,15,28,0.5))" }
+        },
+        "Gradient Mesh": {
+            deep:    { gradient: "conic-gradient(from 180deg at 50% 70%, rgba(0,240,255,0.06), rgba(139,92,246,0.06), rgba(245,158,11,0.04), rgba(0,240,255,0.06))" },
+            mid:     { gradient: "radial-gradient(ellipse at 30% 30%, rgba(139,92,246,0.04) 0%, transparent 50%)" },
+            near:    { gradient: "radial-gradient(ellipse at 70% 60%, rgba(0,240,255,0.03) 0%, transparent 50%)" },
+            surface: { gradient: "none" }
+        },
+        "Minimal": {
+            deep:    { gradient: "none" },
+            mid:     { gradient: "none" },
+            near:    { gradient: "none" },
+            surface: { gradient: "none" }
+        },
+        "None": null
+    };
+
+    arkan.bg3d = {
+        _container: null,
+        _layers: {},
+        _mouseX: 0.5,
+        _mouseY: 0.5,
+        _rafId: null,
+
+        init: function() {
+            var config = arkan.config || {};
+            var preset = config.bg_preset || "Neural 3D";
+
+            if (preset === "None" || !PRESETS[preset]) return;
+
+            var presetDef = PRESETS[preset];
+            if (!presetDef) return;
+
+            // If reduced motion, skip parallax (still render static layers)
+            var reduced = arkan.theme && arkan.theme._prefersReducedMotion
+                ? arkan.theme._prefersReducedMotion()
+                : window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+            this._createLayers(presetDef);
+
+            if (!reduced) {
+                this._bindMouse();
+                this._startParallax(config.bg_parallax_intensity || 50);
+            }
+        },
+
+        _createLayers: function(presetDef) {
+            var container = document.createElement("div");
+            container.className = "arkan-bg-3d";
+            this._container = container;
+
+            var layerNames = ["deep", "mid", "near", "surface"];
+            var zValues = { deep: -200, mid: -100, near: -30, surface: 0 };
+
+            for (var i = 0; i < layerNames.length; i++) {
+                var name = layerNames[i];
+                var def = presetDef[name];
+                if (!def) continue;
+
+                var layer = document.createElement("div");
+                layer.className = "arkan-bg-3d__" + name;
+                layer.style.transform = "translateZ(" + zValues[name] + "px)";
+
+                if (def.gradient && def.gradient !== "none") {
+                    layer.style.background = def.gradient;
+                }
+
+                if (def.type === "dots" || def.type === "stars") {
+                    this._populateParticles(layer, def);
+                }
+
+                // Neural grid and matrix are handled externally by arkan_theme.js
+                // They get placed as siblings; we just flag them
+                if (def.useNeuralGrid) {
+                    layer.setAttribute("data-bg-layer", "neural-grid");
+                }
+                if (def.useMatrix) {
+                    layer.setAttribute("data-bg-layer", "matrix");
+                }
+
+                container.appendChild(layer);
+                this._layers[name] = layer;
+            }
+
+            // Insert at beginning of body
+            if (document.body.firstChild) {
+                document.body.insertBefore(container, document.body.firstChild);
+            } else {
+                document.body.appendChild(container);
+            }
+        },
+
+        _populateParticles: function(layer, def) {
+            var count = def.count || 10;
+            var color = def.color || "rgba(255,255,255,0.3)";
+            var isStar = (def.type === "stars");
+
+            for (var i = 0; i < count; i++) {
+                var el = document.createElement("div");
+                var size = isStar ? (1 + Math.random() * 3) : (4 + Math.random() * 8);
+                el.style.cssText = "position:absolute;border-radius:50%;background:" + color + ";width:" + size + "px;height:" + size + "px;left:" + (Math.random() * 100) + "%;top:" + (Math.random() * 100) + "%;";
+                if (isStar) {
+                    el.style.boxShadow = "0 0 " + (size * 3) + "px " + color;
+                }
+                layer.appendChild(el);
+            }
+        },
+
+        _bindMouse: function() {
+            var self = this;
+            document.addEventListener("mousemove", function(e) {
+                self._mouseX = e.clientX / window.innerWidth;
+                self._mouseY = e.clientY / window.innerHeight;
+            }, { passive: true });
+        },
+
+        _startParallax: function(intensityPercent) {
+            var self = this;
+            var intensity = (intensityPercent || 50) / 100;
+            var depthScale = { deep: 30 * intensity, mid: 15 * intensity, near: 5 * intensity, surface: 0 };
+
+            function tick() {
+                var mx = (self._mouseX - 0.5) * 2;
+                var my = (self._mouseY - 0.5) * 2;
+
+                var names = ["deep", "mid", "near"];
+                for (var i = 0; i < names.length; i++) {
+                    var layer = self._layers[names[i]];
+                    if (!layer) continue;
+
+                    var s = depthScale[names[i]];
+                    var tx = mx * s;
+                    var ty = my * s;
+
+                    // Use GSAP quickTo if available for smooth interpolation
+                    if (typeof gsap !== "undefined") {
+                        gsap.to(layer, {
+                            x: tx, y: ty,
+                            duration: 0.6, ease: "power2.out", overwrite: "auto"
+                        });
+                    } else {
+                        layer.style.transform = "translate(" + tx + "px, " + ty + "px) translateZ(" + (names[i] === "deep" ? -200 : names[i] === "mid" ? -100 : -30) + "px)";
+                    }
+                }
+
+                self._rafId = requestAnimationFrame(tick);
+            }
+
+            tick();
+        },
+
+        destroy: function() {
+            if (this._rafId) cancelAnimationFrame(this._rafId);
+            if (this._container && this._container.parentNode) {
+                this._container.parentNode.removeChild(this._container);
+            }
+            this._layers = {};
+        },
+
+        setPreset: function(presetName) {
+            this.destroy();
+            if (presetName === "None" || !PRESETS[presetName]) return;
+            this._createLayers(PRESETS[presetName]);
+            var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            if (!reduced) {
+                this._startParallax((arkan.config || {}).bg_parallax_intensity || 50);
+            }
+        }
+    };
+})();
+
+
+// ── arkan_loading_3d.js ──
+// Copyright (c) 2026, Arkan Lab — https://arkan.it.com
+// License: MIT
+// ARKAN Theme — 3D Page Transitions + Loading Indicators
+
+(function() {
+    "use strict";
+
+    window.arkan = window.arkan || {};
+
+    arkan.loading3d = {
+        _lastRoute: null,
+        _overlay: null,
+
+        init: function() {
+            var config = arkan.config || {};
+            if (!config.enable_page_transitions && !config.enable_3d_loading) return;
+
+            if (config.enable_page_transitions) {
+                this._initPageTransitions();
+            }
+
+            if (config.enable_3d_loading) {
+                this._initFormSaveIndicator();
+            }
+        },
+
+        // ─── Page Transitions (Route Change) ────────────────────
+        _initPageTransitions: function() {
+            var self = this;
+            // Hook into Frappe's page-change event
+            $(document).on("page-change", function() {
+                var newRoute = frappe.get_route_str();
+                if (self._lastRoute && self._lastRoute !== newRoute) {
+                    self._playTransition();
+                }
+                self._lastRoute = newRoute;
+            });
+        },
+
+        _playTransition: function() {
+            if (typeof gsap === "undefined") return;
+
+            var pageContainer = document.querySelector(".main-section") || document.querySelector("#page-container");
+            if (!pageContainer) return;
+
+            // Quick 3D flip: old page flips out, new content fades in
+            gsap.fromTo(pageContainer, {
+                opacity: 0, rotateY: -3, transformPerspective: 2000, transformOrigin: "center center"
+            }, {
+                opacity: 1, rotateY: 0,
+                duration: 0.35, ease: "power2.out", clearProps: "all"
+            });
+        },
+
+        // ─── Form Save Progress Indicator ────────────────────────
+        _initFormSaveIndicator: function() {
+            var self = this;
+            // Hook before form save
+            $(document).on("form-refresh", function() {
+                if (typeof cur_frm === "undefined" || !cur_frm) return;
+
+                var originalSave = cur_frm.save;
+                if (originalSave && !originalSave._arkan_wrapped) {
+                    cur_frm.save = function() {
+                        self._showSaveRing(cur_frm.wrapper);
+                        return originalSave.apply(this, arguments).then(function(r) {
+                            self._showSaveSuccess();
+                            return r;
+                        }).catch(function(e) {
+                            self._hideSaveRing();
+                            throw e;
+                        });
+                    };
+                    cur_frm.save._arkan_wrapped = true;
+                }
+            });
+        },
+
+        _showSaveRing: function(wrapper) {
+            if (this._overlay) this._hideSaveRing();
+
+            var overlay = document.createElement("div");
+            overlay.className = "arkan-save-ring-overlay";
+
+            var svgNS = "http://www.w3.org/2000/svg";
+            var svg = document.createElementNS(svgNS, "svg");
+            svg.setAttribute("width", "64");
+            svg.setAttribute("height", "64");
+            svg.setAttribute("viewBox", "0 0 64 64");
+            svg.setAttribute("class", "arkan-save-ring-svg");
+
+            // Background ring
+            var bgRing = document.createElementNS(svgNS, "circle");
+            bgRing.setAttribute("cx", "32");
+            bgRing.setAttribute("cy", "32");
+            bgRing.setAttribute("r", "26");
+            bgRing.setAttribute("fill", "none");
+            bgRing.setAttribute("stroke", "rgba(255,255,255,0.1)");
+            bgRing.setAttribute("stroke-width", "3");
+            svg.appendChild(bgRing);
+
+            // Progress ring
+            var ring = document.createElementNS(svgNS, "circle");
+            ring.setAttribute("class", "save-progress-ring");
+            ring.setAttribute("cx", "32");
+            ring.setAttribute("cy", "32");
+            ring.setAttribute("r", "26");
+            ring.setAttribute("fill", "none");
+            ring.setAttribute("stroke", "var(--arkan-cyan, #00F0FF)");
+            ring.setAttribute("stroke-width", "3");
+            ring.setAttribute("stroke-linecap", "round");
+            ring.setAttribute("transform", "rotate(-90 32 32)");
+            var circumference = 2 * Math.PI * 26;
+            ring.setAttribute("stroke-dasharray", String(circumference));
+            ring.setAttribute("stroke-dashoffset", String(circumference));
+            svg.appendChild(ring);
+
+            overlay.appendChild(svg);
+            document.body.appendChild(overlay);
+            this._overlay = overlay;
+
+            // Animate ring to ~80% (the save call will complete it)
+            if (typeof gsap !== "undefined") {
+                gsap.to(ring, {
+                    strokeDashoffset: circumference * 0.2,
+                    duration: 2, ease: "power2.out"
+                });
+            }
+        },
+
+        _showSaveSuccess: function() {
+            if (!this._overlay) return;
+
+            var ring = this._overlay.querySelector(".save-progress-ring");
+            var svg = this._overlay.querySelector("svg");
+
+            if (typeof gsap !== "undefined" && ring) {
+                gsap.to(ring, {
+                    strokeDashoffset: 0,
+                    stroke: "var(--arkan-green, #10B981)",
+                    duration: 0.3, ease: "power2.out",
+                    onComplete: function() {
+                        // Draw checkmark
+                        if (svg) {
+                            var svgNS = "http://www.w3.org/2000/svg";
+                            var check = document.createElementNS(svgNS, "path");
+                            check.setAttribute("d", "M20 32 L28 40 L44 24");
+                            check.setAttribute("fill", "none");
+                            check.setAttribute("stroke", "var(--arkan-green, #10B981)");
+                            check.setAttribute("stroke-width", "3");
+                            check.setAttribute("stroke-linecap", "round");
+                            check.setAttribute("stroke-linejoin", "round");
+                            svg.appendChild(check);
+
+                            if (typeof DrawSVGPlugin !== "undefined") {
+                                gsap.registerPlugin(DrawSVGPlugin);
+                                gsap.from(check, { drawSVG: "0%", duration: 0.4, ease: "power2.out" });
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Auto-dismiss after 1.2s
+            var self = this;
+            setTimeout(function() { self._hideSaveRing(); }, 1200);
+        },
+
+        _hideSaveRing: function() {
+            if (!this._overlay) return;
+            var overlay = this._overlay;
+            this._overlay = null;
+
+            if (typeof gsap !== "undefined") {
+                gsap.to(overlay, {
+                    opacity: 0, scale: 0.8,
+                    duration: 0.3, ease: "power2.in",
+                    onComplete: function() {
+                        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+                    }
+                });
+            } else {
+                if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            }
+        }
+    };
+})();
+
+
 // ── arkan_matrix.js ──
 // Copyright (c) 2024, Moataz M Hassan (Arkan Lab)
 // Developer Website: https://arkan.it.com
@@ -1087,28 +2098,44 @@
 // License: MIT
 // For license information, please see license.txt
 
-// ARKAN Animated Favicon
+// ARKAN Animated Favicon — v3.0: per-app favicon awareness
 (function() {
     "use strict";
     window.arkan = window.arkan || {};
     arkan.animatedFavicon = {
+        _baseFavicon: null,
+
         init: function() {
-            // Pulse favicon on notifications
-            if (typeof frappe !== 'undefined') {
-                frappe.realtime.on('notification', () => this.pulse());
+            var self = this;
+            // Store base favicon
+            var link = document.querySelector("link[rel*='icon']");
+            this._baseFavicon = link ? link.href : null;
+
+            // Pulse on notifications
+            if (typeof frappe !== 'undefined' && frappe.realtime) {
+                frappe.realtime.on('notification', function() { self.pulse(); });
             }
+
+            // Listen for app-switch to update base favicon reference
+            document.addEventListener('arkan:app-switched', function(e) {
+                var media = e.detail && e.detail.media;
+                if (media && media.favicon) {
+                    self._baseFavicon = media.favicon;
+                }
+            });
         },
+
         pulse: function() {
-            const link = document.querySelector("link[rel*='icon']");
-            if (link) {
-                const original = link.href;
-                // Brief visual pulse - in production would swap favicon frames
-                document.title = '⚡ ' + document.title;
-                setTimeout(() => { document.title = document.title.replace('⚡ ', ''); }, 3000);
+            var title = document.title || '';
+            if (title.indexOf('⚡ ') !== 0) {
+                document.title = '⚡ ' + title;
+                setTimeout(function() {
+                    document.title = document.title.replace('⚡ ', '');
+                }, 3000);
             }
         }
     };
-    $(document).on('app_ready', () => arkan.animatedFavicon.init());
+    $(document).on('app_ready', function() { arkan.animatedFavicon.init(); });
 })();
 
 

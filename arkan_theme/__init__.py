@@ -3,4 +3,4 @@
 # License: MIT
 # For license information, please see license.txt
 
-__version__ = "16.0.0"
+__version__ = "18.0.0"

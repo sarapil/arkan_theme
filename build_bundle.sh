@@ -14,13 +14,18 @@ BUNDLE="$JS_DIR/arkan_theme.bundle.js"
 echo "🔧 Building ARKAN desk JS bundle (slim)..."
 
 # Order: arkan_theme.js (coordinator) first, then fv_integration (bridge),
-# then navbar, then unique brand features.
+# then app router + media switcher, then navbar, then 3D modules, then unique brand features.
 FILES=(
     "$JS_DIR/arkan_theme.js"
     "$JS_DIR/fv_integration.js"
+    "$JS_DIR/arkan_app_router.js"
+    "$JS_DIR/arkan_media_switcher.js"
     "$JS_DIR/arkan_navbar.js"
     "$JS_DIR/arkan_neural_grid.js"
     "$JS_DIR/arkan_splash.js"
+    "$JS_DIR/arkan_splash_3d.js"
+    "$JS_DIR/arkan_bg_3d.js"
+    "$JS_DIR/arkan_loading_3d.js"
     "$JS_DIR/arkan_matrix.js"
     "$JS_DIR/arkan_sounds.js"
     "$JS_DIR/arkan_interactive_grid.js"

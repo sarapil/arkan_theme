@@ -20,6 +20,32 @@
 
             // Desk sidebar glow + dark mode toggle
             this._tryDeskSidebar();
+
+            // Listen for per-app switching to update topbar logo
+            var self = this;
+            document.addEventListener('arkan:app-switched', function(e) {
+                var media = e.detail && e.detail.media;
+                if (media && media.topbar_logo) {
+                    self._switchTopbarLogo(media.topbar_logo);
+                }
+            });
+        },
+
+        _switchTopbarLogo: function(logoUrl) {
+            if (!logoUrl) return;
+            var logo = document.querySelector('.arkan-nav-logo, .navbar-brand img');
+            if (!logo) return;
+            if (typeof gsap !== 'undefined') {
+                gsap.to(logo, {
+                    opacity: 0, scale: 0.8, duration: 0.2,
+                    onComplete: function() {
+                        logo.src = logoUrl;
+                        gsap.to(logo, { opacity: 1, scale: 1, duration: 0.3, ease: 'back.out' });
+                    }
+                });
+            } else {
+                logo.src = logoUrl;
+            }
         },
 
         _tryDeskSidebar: function() {

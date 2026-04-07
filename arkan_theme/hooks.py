@@ -13,7 +13,7 @@ source_link = "https://github.com/ArkAnTech/arkan_theme"
 app_home = "/desk"
 
 # Cache-busting version — bump this after every CSS/JS change
-_v = "17.0.0"
+_v = "18.0.0"
 
 # v16 App Launcher
 add_to_apps_screen = [
@@ -77,6 +77,7 @@ fixtures = [
     {"dt": "Custom Field", "filters": [["module", "=", "ARKAN Theme"]]},
     {"dt": "Desktop Icon", "filters": [["app", "=", "arkan_theme"]]},
     {"dt": "Workspace", "filters": [["module", "like", "ARKAN Theme%"]]},
+    {"dt": "AT App Media Override", "filters": [["parent", "=", "ARKAN Settings"]]},
 ]
 
 app_icon = "/assets/arkan_theme/images/arkan_theme-logo.svg"

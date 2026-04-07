@@ -4,72 +4,55 @@
 # For license information, please see license.txt
 
 import frappe
+from frappe import _
 from frappe.model.document import Document
 
 
 class ARKANSettings(Document):
-    """ARKAN Theme Settings - Single DocType for runtime theme customization."""
+	"""ARKAN Theme Settings — Single DocType for runtime theme customization."""
 
-    def validate(self):
-        """Validate settings before saving."""
-        if self.splash_duration and self.splash_duration < 500:
-            frappe.throw("Splash duration must be at least 500ms")
-        if self.splash_duration and self.splash_duration > 10000:
-            frappe.throw("Splash duration must not exceed 10000ms")
+	def validate(self):
+		self._validate_splash_duration()
+		self._validate_rebranding_mode()
+		self._validate_custom_css_limit()
 
-    def on_update(self):
-        """Clear cache when settings are updated so changes take effect."""
-        frappe.clear_cache()
+	def _validate_splash_duration(self):
+		if self.splash_duration and self.splash_duration < 500:
+			frappe.throw(_("Splash duration must be at least 500ms"))
+		if self.splash_duration and self.splash_duration > 10000:
+			frappe.throw(_("Splash duration must not exceed 10000ms"))
+
+	def _validate_rebranding_mode(self):
+		"""Enforce tier restrictions on rebranding mode."""
+		from arkan_theme.services.license_service import LicenseService
+
+		allowed = LicenseService.get_allowed_rebranding_modes()
+		mode = self.rebranding_mode or "ARKAN Defaults"
+		if mode not in allowed:
+			frappe.throw(
+				_("Rebranding mode '{0}' requires a higher license tier. Allowed: {1}").format(
+					mode, ", ".join(allowed)
+				)
+			)
+
+	def _validate_custom_css_limit(self):
+		"""Enforce CSS size limit on Free tier."""
+		from arkan_theme.services.license_service import LicenseService
+
+		limit = LicenseService.get_custom_css_limit()
+		if limit and self.custom_css and len(self.custom_css) > limit:
+			frappe.throw(
+				_("Custom CSS exceeds {0} byte limit for current tier. Upgrade for unlimited.").format(limit)
+			)
+
+	def on_update(self):
+		"""Clear cache when settings are updated so changes take effect."""
+		frappe.clear_cache()
 
 
 @frappe.whitelist()
 def get_arkan_settings():
-    """Return ARKAN settings as dict for boot/JS consumption."""
-    frappe.only_for(["System Manager"])
-    try:
-        doc = frappe.get_single("ARKAN Settings")
-        return {
-            "brand_name": doc.brand_name or "ARKAN",
-            "logo_url": doc.logo_url or "/assets/arkan_theme/images/logo-header.png",
-            "favicon_url": doc.favicon_url or "/assets/arkan_theme/images/favicon.ico",
-            "primary_color": doc.primary_color or "#00F0FF",
-            "secondary_color": doc.secondary_color or "#0A0F1C",
-            "accent_color": doc.accent_color or "#8B5CF6",
-            "text_color": getattr(doc, "text_color", None) or "#E8ECF1",
-            "enable_splash_screen": doc.enable_splash_screen,
-            "enable_neural_grid": getattr(doc, "enable_neural_grid", 1),
-            "enable_matrix_rain": getattr(doc, "enable_matrix_rain", 0),
-            "enable_particles": doc.enable_particles,
-            "enable_glitch_effects": getattr(doc, "enable_glitch_effects", 1),
-            "enable_cursor_effects": getattr(doc, "enable_cursor_effects", 1),
-            "enable_sounds": doc.enable_sounds,
-            "enable_search_overlay": doc.enable_search_overlay,
-            "default_dark_mode": doc.default_dark_mode,
-            "splash_duration": doc.splash_duration or 2800,
-            "splash_logo_url": doc.splash_logo_url or "",
-            "custom_css": doc.custom_css or "",
-            "custom_js": doc.custom_js or "",
-        }
-    except Exception:
-        return {
-            "brand_name": "ARKAN",
-            "logo_url": "/assets/arkan_theme/images/logo-header.png",
-            "favicon_url": "/assets/arkan_theme/images/favicon.ico",
-            "primary_color": "#00F0FF",
-            "secondary_color": "#0A0F1C",
-            "accent_color": "#8B5CF6",
-            "text_color": "#E8ECF1",
-            "enable_splash_screen": 1,
-            "enable_neural_grid": 1,
-            "enable_matrix_rain": 0,
-            "enable_particles": 1,
-            "enable_glitch_effects": 1,
-            "enable_cursor_effects": 1,
-            "enable_sounds": 0,
-            "enable_search_overlay": 1,
-            "default_dark_mode": 1,
-            "splash_duration": 2800,
-            "splash_logo_url": "",
-            "custom_css": "",
-            "custom_js": "",
-        }
+	"""Return ARKAN settings as dict for boot/JS consumption."""
+	frappe.only_for(["System Manager"])
+	from arkan_theme.boot import _get_settings
+	return _get_settings()
