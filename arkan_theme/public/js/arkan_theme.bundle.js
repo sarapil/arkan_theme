@@ -11,9 +11,12 @@
 // License: MIT
 // For license information, please see license.txt
 
-// ARKAN Theme — Main Coordinator (Slim)
-// Delegates dark mode, shortcuts, mobile, workspace, forms, tour, effects,
-// cursor, loading, presets, desktop, welcome to fv_integration.js
+// ARKAN Theme — Main Coordinator (Slim v2.0)
+// This file ONLY handles: config defaults, CSS variable injection,
+// favicon, and initialization of kept brand-unique modules.
+// ALL fv-related features (dark mode, shortcuts, mobile, workspace,
+// forms, tour, effects, cursor, loading, desktop, welcome, scene)
+// are handled by fv_integration.js.
 (function() {
     "use strict";
 
@@ -25,14 +28,12 @@
         secondary_color: "#0A0F1C",
         accent_color: "#8B5CF6",
         text_color: "#E8ECF1",
+        version: "16.2.0",
         enable_splash_screen: 1,
         enable_neural_grid: 1,
         enable_matrix_rain: 0,
-        enable_particles: 0,
-        enable_glitch_effects: 1,
-        enable_cursor_effects: 0,
+        enable_cursor_glow: 0,
         enable_sounds: 0,
-        enable_search_overlay: 1,
         default_dark_mode: 1,
         splash_duration: 2800,
         logo_url: "/assets/arkan_theme/images/logo-header.png",
@@ -77,6 +78,11 @@
             mainSection.style.setProperty('min-width', '0');
         }
 
+        // Apply .fv-fx-mouse-glow on body — replaces arkan_cursor.js
+        if (arkan.config.enable_cursor_glow) {
+            document.body.classList.add('fv-fx-mouse-glow');
+        }
+
         // Initialize kept modules (unique brand features only)
         if (arkan.config.enable_neural_grid && typeof arkan.neuralGrid !== 'undefined') {
             arkan._initModule('neuralGrid', function() { arkan.neuralGrid.init(); });
@@ -94,14 +100,14 @@
             arkan._initModule('navbar', function() { arkan.navbar.init(); });
         }
 
-        // Apply custom CSS/JS from settings
+        // Apply custom CSS from settings (sanitized server-side)
         if (arkan.config.custom_css) {
             var style = document.createElement('style');
             style.textContent = arkan.config.custom_css;
             document.head.appendChild(style);
         }
 
-        console.log('%c⚡ ARKAN Theme v' + (arkan.config.version || '16.2.0') + ' initialized',
+        console.log('%c⚡ ARKAN Theme v' + arkan.config.version + ' — frappe_visual bridge active',
             'color:#00F0FF;font-weight:bold;font-size:14px;text-shadow:0 0 10px #00F0FF');
     };
 
@@ -137,18 +143,34 @@
 // ── fv_integration.js ──
 // Copyright (c) 2024, Arkan Lab — https://arkan.it.com
 // License: MIT
-// frappe_visual Integration for ARKAN Theme
-// Central bridge: replaces arkan_darkmode, arkan_shortcuts, arkan_mobile,
-// arkan_workspace, arkan_forms, arkan_tour, arkan_effects, arkan_cursor,
-// arkan_loading, arkan_presets, arkan_desktop, arkan_topbar, arkan_ambient,
-// arkan_welcome_msg — all delegated to frappe_visual components.
+// frappe_visual Integration for ARKAN Theme — Central Bridge v2.0
+// ═══════════════════════════════════════════════════════════════════
+// This is the SINGLE integration layer that replaces 14+ standalone
+// modules by delegating to frappe_visual components:
+//   arkan_darkmode   → frappe.visual.ThemeManager
+//   arkan_shortcuts  → frappe.visual.shortcutManager + commandBar
+//   arkan_mobile     → frappe.visual.bottomNav
+//   arkan_workspace  → frappe.visual.workspaceEnhancer (auto)
+//   arkan_forms      → frappe.visual.formEnhancer (auto)
+//   arkan_tour       → frappe.visual.onboardingTour
+//   arkan_effects    → .fv-fx-* CSS classes
+//   arkan_cursor     → .fv-fx-mouse-glow
+//   arkan_loading    → fv loading states
+//   arkan_presets    → frappe.visual.ThemeManager
+//   arkan_desktop    → frappe.visual.workspaceEnhancer (auto)
+//   arkan_topbar     → merged into navbar brand-only
+//   arkan_ambient    → .fv-fx-morph-blob + .fv-fx-dot-pattern
+//   arkan_welcome_msg→ scene engine workspace header
+// ═══════════════════════════════════════════════════════════════════
 
 (function() {
     "use strict";
 
     window.arkan = window.arkan || {};
 
-    // ── Dark Mode — delegates to frappe.visual.ThemeManager ──
+    // ══════════════════════════════════════════════════════════════
+    // DARK MODE — syncs ARKAN theme with frappe.visual.ThemeManager
+    // ══════════════════════════════════════════════════════════════
     const STORAGE_KEY = 'arkan-theme-mode';
 
     arkan.darkmode = {
@@ -157,7 +179,7 @@
         init: function() {
             const saved = localStorage.getItem(STORAGE_KEY);
             const defaultDark = arkan.config ? arkan.config.default_dark_mode : 1;
-            this.setMode(saved || (defaultDark ? 'dark' : 'dark'));
+            this.setMode(saved || (defaultDark ? 'dark' : 'light'));
         },
 
         setMode: function(mode) {
@@ -179,7 +201,9 @@
         }
     };
 
-    // ── Loading overlay (simple, fv-compatible) ──
+    // ══════════════════════════════════════════════════════════════
+    // LOADING OVERLAY — simple, fv-compatible
+    // ══════════════════════════════════════════════════════════════
     arkan.loading = {
         overlay: null,
 
@@ -189,9 +213,9 @@
             this.overlay.className = 'fv-fx-glass';
             this.overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(10,15,28,0.85);backdrop-filter:blur(4px);';
             this.overlay.innerHTML =
-                '<div style="width:40px;height:40px;border:2px solid var(--arkan-border,#2D3A4F);border-top-color:var(--arkan-cyan,#00F0FF);border-radius:50%;animation:spin 0.8s linear infinite;"></div>' +
+                '<div style="width:40px;height:40px;border:2px solid var(--arkan-border,#2D3A4F);border-top-color:var(--arkan-cyan,#00F0FF);border-radius:50%;animation:arkan-spin 0.8s linear infinite;"></div>' +
                 '<div style="color:var(--arkan-text,#E8ECF1);font-family:var(--arkan-font-heading);margin-top:16px;font-size:14px;">' + (message || __('Processing...')) + '</div>' +
-                '<style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
+                '<style>@keyframes arkan-spin{to{transform:rotate(360deg)}}</style>';
             document.body.appendChild(this.overlay);
         },
 
@@ -203,7 +227,9 @@
         }
     };
 
-    // ── Workspace welcome banner ──
+    // ══════════════════════════════════════════════════════════════
+    // WORKSPACE — welcome banner + widget animation
+    // ══════════════════════════════════════════════════════════════
     arkan.workspace = {
         init: function() {
             if (typeof frappe !== 'undefined' && frappe.router && typeof frappe.router.on === 'function') {
@@ -225,24 +251,26 @@
             const container = document.querySelector('.workspace-container .codex-editor, .desk-page .layout-main');
             if (container && !document.querySelector('.arkan-welcome-banner')) {
                 const banner = document.createElement('div');
-                banner.className = 'arkan-welcome-banner fv-fx-page-enter';
+                banner.className = 'arkan-welcome-banner fv-fx-page-enter fv-fx-glass';
                 const hour = new Date().getHours();
                 const greeting = hour < 12 ? __('Good Morning') : hour < 17 ? __('Good Afternoon') : __('Good Evening');
                 const user = frappe.session.user_fullname || __('User');
                 banner.innerHTML =
-                    '<div class="arkan-welcome-title">' + greeting + ', ' + user + '</div>' +
+                    '<div class="arkan-welcome-title fv-fx-gradient-text">' + greeting + ', ' + user + '</div>' +
                     '<div class="arkan-welcome-subtitle">// ' + (arkan.config.brand_name || 'ARKAN') + ' — ' + __('AI & Technology Solutions') + '</div>';
                 container.parentNode.insertBefore(banner, container);
             }
             // Animate workspace widgets with stagger
             document.querySelectorAll('.widget:not(.arkan-animated)').forEach(function(w, i) {
-                w.classList.add('arkan-animated', 'fv-fx-page-enter');
+                w.classList.add('arkan-animated', 'fv-fx-page-enter', 'fv-fx-hover-lift');
                 w.style.animationDelay = (i * 0.05) + 's';
             });
         }
     };
 
-    // ── Forms timeline reveal ──
+    // ══════════════════════════════════════════════════════════════
+    // FORMS — timeline + section reveal via IntersectionObserver
+    // ══════════════════════════════════════════════════════════════
     arkan.forms = {
         init: function() {
             if (!('IntersectionObserver' in window)) return;
@@ -260,7 +288,40 @@
 
     $(document).on('form-render', function() { setTimeout(function() { arkan.forms.init(); }, 200); });
 
-    // ── frappe_visual integration on app_ready ──
+    // ══════════════════════════════════════════════════════════════
+    // SCENE ENGINE — workspace dashboard header
+    // ══════════════════════════════════════════════════════════════
+    arkan.scene = {
+        _rendered: false,
+
+        renderWorkspaceScene: function(container) {
+            if (this._rendered || !container || !frappe.visual) return;
+            this._rendered = true;
+
+            // Use scenePresetOffice for the ARKAN settings workspace
+            if (frappe.visual.scenePresetOffice) {
+                frappe.visual.scenePresetOffice({
+                    container: container,
+                    theme: arkan.darkmode.isDark() ? 'dark' : 'cool',
+                    frames: [
+                        { label: __('Theme'), value: 'ARKAN', status: 'success' },
+                        { label: __('Dark Mode'), value: arkan.darkmode.isDark() ? __('ON') : __('OFF'), status: 'info' },
+                        { label: __('Version'), value: arkan.config.version || '16.2.0', status: 'info' },
+                    ],
+                    documents: [
+                        { label: __('Settings'), count: 1, href: '/app/arkan-settings', color: '#00F0FF' },
+                    ],
+                    books: [
+                        { label: __('Help'), href: '/app/arkan-theme-about', color: '#8B5CF6' },
+                    ],
+                }).catch(function() {});
+            }
+        }
+    };
+
+    // ══════════════════════════════════════════════════════════════
+    // FRAPPE_VISUAL INTEGRATION — app_ready event
+    // ══════════════════════════════════════════════════════════════
     $(document).on("app_ready", function() {
         // Initialize dark mode
         arkan.darkmode.init();
@@ -271,17 +332,27 @@
         // Register app color
         document.documentElement.style.setProperty("--arkan-theme-primary", "#1E40AF");
 
-        // Load frappe_visual lazy — configure auto-enhancers & register shortcuts
+        // Load frappe_visual lazy — configure auto-enhancers, register shortcuts,
+        // setup command bar, mobile nav, and theme sync
         if (typeof frappe !== 'undefined' && frappe.require) {
             frappe.require("frappe_visual.bundle.js", function() {
                 if (!frappe.visual) return;
 
-                // Theme sync — bridge ARKAN dark mode to fv ThemeManager
-                if (frappe.visual.ThemeManager && frappe.visual.ThemeManager.init) {
-                    try { frappe.visual.ThemeManager.init(); } catch(e) {}
+                // ── ThemeManager sync ──
+                if (frappe.visual.ThemeManager) {
+                    try {
+                        if (frappe.visual.ThemeManager.init) frappe.visual.ThemeManager.init();
+                        if (frappe.visual.ThemeManager.on) {
+                            frappe.visual.ThemeManager.on('change', function(theme) {
+                                arkan.darkmode.setMode(theme === 'dark' ? 'dark' : 'light');
+                            });
+                        }
+                    } catch(e) {}
                 }
 
-                // Configure auto-enhancers
+                // ── Auto-Enhancer Configuration ──
+                // formEnhancer, listEnhancer, workspaceEnhancer are already active
+                // We just configure their options + let CSS handle the look
                 if (frappe.visual.formEnhancer && frappe.visual.formEnhancer.configure) {
                     try {
                         frappe.visual.formEnhancer.configure({
@@ -297,14 +368,15 @@
                     } catch(e) {}
                 }
 
-                // Shortcuts — replaces arkan_shortcuts.js
+                // ── Shortcuts — replaces arkan_shortcuts.js ──
                 if (frappe.visual.shortcutManager) {
                     try {
                         frappe.visual.shortcutManager({
                             shortcuts: [
                                 { key: 'mod+shift+d', action: function() { arkan.darkmode.toggle(); }, label: __('Toggle Dark Mode') },
-                                { key: 'mod+shift+n', action: function() { if (arkan.neuralGrid) arkan.neuralGrid.toggle(); }, label: __('Toggle Neural Grid') },
-                                { key: 'mod+shift+s', action: function() { if (arkan.sounds) arkan.sounds.toggle(); }, label: __('Toggle Sounds') },
+                                { key: 'mod+shift+n', action: function() { if (arkan.neuralGrid) arkan.neuralGrid.toggle ? arkan.neuralGrid.toggle() : null; }, label: __('Toggle Neural Grid') },
+                                { key: 'mod+shift+s', action: function() { if (arkan.sounds && arkan.sounds.toggle) arkan.sounds.toggle(); }, label: __('Toggle Sounds') },
+                                { key: 'mod+k', action: function() { if (frappe.visual.commandBar) frappe.visual.commandBar.open(); }, label: __('Command Palette') },
                             ]
                         });
                     } catch(e) {
@@ -318,8 +390,18 @@
                     }
                 }
 
-                // Mobile bottom nav — replaces arkan_mobile.js
-                if (frappe.is_mobile && frappe.is_mobile() && frappe.visual.bottomNav) {
+                // ── Command Bar — replaces arkan_shortcuts.js search overlay ──
+                if (frappe.visual.commandBar) {
+                    try {
+                        frappe.visual.commandBar({
+                            theme: { bg: 'var(--arkan-bg-panel)', accent: 'var(--arkan-cyan)' },
+                        });
+                    } catch(e) {}
+                }
+
+                // ── Mobile Bottom Nav — replaces arkan_mobile.js ──
+                var isMobile = window.innerWidth <= 768 || (frappe.is_mobile && frappe.is_mobile());
+                if (isMobile && frappe.visual.bottomNav) {
                     try {
                         frappe.visual.bottomNav({
                             items: [
@@ -329,23 +411,36 @@
                                 { icon: 'bell', label: __('Alerts'), route: '/desk#notifications' },
                                 { icon: 'settings', label: __('Settings'), route: '/app/arkan-settings' },
                             ],
+                            theme: { activeColor: 'var(--arkan-cyan)' },
                         });
                     } catch(e) {}
                 }
 
-                console.log('%c⚡ ARKAN + frappe_visual integration active', 'color:#00F0FF;font-weight:bold;');
+                console.log('%c⚡ ARKAN + frappe_visual v2.0 bridge active', 'color:#00F0FF;font-weight:bold;');
             });
         }
     });
 
-    // ── Route-based visual page rendering ──
+    // ══════════════════════════════════════════════════════════════
+    // ROUTE-BASED VISUAL PAGE RENDERING
+    // ══════════════════════════════════════════════════════════════
     $(document).on("page-change", function() {
-        if (!frappe.visual || !frappe.visual.generator) return;
+        var route = frappe.get_route_str();
 
-        // Visual Settings Page
-        if (frappe.get_route_str() === 'arkan-theme-settings') {
+        // ── About Page — /arkan-theme-about ──
+        if (route === 'arkan-theme-about' || route === 'عن-arkan-theme') {
+            _renderAboutPage();
+        }
+
+        // ── Onboarding — /arkan-theme-onboarding ──
+        if (route === 'arkan-theme-onboarding') {
+            _renderOnboarding();
+        }
+
+        // ── Visual Settings Page ──
+        if (route === 'arkan-theme-settings') {
             var page = frappe.container.page;
-            if (page && page.main && frappe.visual.generator) {
+            if (page && page.main && frappe.visual && frappe.visual.generator) {
                 frappe.visual.generator.settingsPage(
                     page.main[0] || page.main,
                     "ARKAN Settings"
@@ -353,17 +448,134 @@
             }
         }
 
-        // Visual Reports Hub
-        if (frappe.get_route_str() === 'arkan-theme-reports') {
+        // ── Visual Reports Hub ──
+        if (route === 'arkan-theme-reports') {
             var page = frappe.container.page;
-            if (page && page.main && frappe.visual.generator) {
+            if (page && page.main && frappe.visual && frappe.visual.generator) {
                 frappe.visual.generator.reportsHub(
                     page.main[0] || page.main,
                     "ARKAN Theme"
                 );
             }
         }
+
+        // ── ARKAN Settings Workspace — inject scene header ──
+        if (route.startsWith('Workspaces/arkan') || route === 'Workspaces/ARKAN Theme') {
+            setTimeout(function() {
+                var header = document.querySelector('.workspace-container .codex-editor');
+                if (header) {
+                    var sceneContainer = document.createElement('div');
+                    sceneContainer.id = 'arkan-workspace-scene';
+                    sceneContainer.className = 'fv-fx-page-enter';
+                    sceneContainer.style.cssText = 'margin-block-end:24px;min-height:180px;';
+                    header.parentNode.insertBefore(sceneContainer, header);
+                    frappe.require("frappe_visual.bundle.js", function() {
+                        arkan.scene.renderWorkspaceScene(sceneContainer);
+                    });
+                }
+            }, 400);
+        }
     });
+
+    // ══════════════════════════════════════════════════════════════
+    // ABOUT PAGE RENDERER — uses frappe.visual.generator.aboutPage
+    // ══════════════════════════════════════════════════════════════
+    function _renderAboutPage() {
+        frappe.require("frappe_visual.bundle.js", function() {
+            if (!frappe.visual || !frappe.visual.generator) return;
+
+            var page = frappe.container.page;
+            if (!page || !page.main) return;
+            var container = page.main[0] || page.main;
+
+            // Use the frappe_visual aboutPage generator
+            if (frappe.visual.generator.aboutPage) {
+                frappe.visual.generator.aboutPage(container, 'arkan_theme');
+            } else {
+                // Fallback: render custom about page with fv components
+                _renderAboutFallback(container);
+            }
+        });
+    }
+
+    function _renderAboutFallback(container) {
+        container.innerHTML = '';
+        var wrapper = document.createElement('div');
+        wrapper.className = 'fv-about-page fv-fx-page-enter';
+        wrapper.innerHTML =
+            '<div style="max-width:900px;margin:0 auto;padding:40px 20px;">' +
+            '  <h1 class="fv-fx-gradient-text" style="font-family:var(--arkan-font-heading);font-size:48px;margin-bottom:8px;">&lt; ARKAN /&gt;</h1>' +
+            '  <p style="color:var(--arkan-text-secondary);font-size:18px;margin-bottom:40px;">' + __('AI & Technology Solutions — Modern Theme for Frappe') + '</p>' +
+            '  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;">' +
+            '    <div class="fv-fx-glass fv-fx-hover-lift" style="padding:24px;border-radius:16px;">' +
+            '      <h3 style="color:var(--arkan-cyan);margin-bottom:8px;">🌙 ' + __('Dark Mode') + '</h3>' +
+            '      <p style="color:var(--arkan-text-secondary);">' + __('Cyber-tech dark-first aesthetic with full light mode support') + '</p>' +
+            '    </div>' +
+            '    <div class="fv-fx-glass fv-fx-hover-lift" style="padding:24px;border-radius:16px;">' +
+            '      <h3 style="color:var(--arkan-purple);margin-bottom:8px;">🎨 ' + __('Visual Integration') + '</h3>' +
+            '      <p style="color:var(--arkan-text-secondary);">' + __('Full frappe_visual integration — 307+ components themed') + '</p>' +
+            '    </div>' +
+            '    <div class="fv-fx-glass fv-fx-hover-lift" style="padding:24px;border-radius:16px;">' +
+            '      <h3 style="color:var(--arkan-green);margin-bottom:8px;">🌐 ' + __('RTL Ready') + '</h3>' +
+            '      <p style="color:var(--arkan-text-secondary);">' + __('Full Arabic + English support with CSS Logical Properties') + '</p>' +
+            '    </div>' +
+            '    <div class="fv-fx-glass fv-fx-hover-lift" style="padding:24px;border-radius:16px;">' +
+            '      <h3 style="color:var(--arkan-amber);margin-bottom:8px;">⚡ ' + __('Neural Grid') + '</h3>' +
+            '      <p style="color:var(--arkan-text-secondary);">' + __('Animated neural network background — unique brand identity') + '</p>' +
+            '    </div>' +
+            '    <div class="fv-fx-glass fv-fx-hover-lift" style="padding:24px;border-radius:16px;">' +
+            '      <h3 style="color:var(--arkan-cyan);margin-bottom:8px;">🎯 ' + __('Scene Engine') + '</h3>' +
+            '      <p style="color:var(--arkan-text-secondary);">' + __('Immersive SVG workspace headers with live data binding') + '</p>' +
+            '    </div>' +
+            '    <div class="fv-fx-glass fv-fx-hover-lift" style="padding:24px;border-radius:16px;">' +
+            '      <h3 style="color:var(--arkan-rose);margin-bottom:8px;">📱 ' + __('Mobile First') + '</h3>' +
+            '      <p style="color:var(--arkan-text-secondary);">' + __('Responsive from 320px to 4K with bottom navigation') + '</p>' +
+            '    </div>' +
+            '  </div>' +
+            '</div>';
+        container.appendChild(wrapper);
+    }
+
+    // ══════════════════════════════════════════════════════════════
+    // ONBOARDING — uses frappe.visual.storyboard inside floatingWindow
+    // ══════════════════════════════════════════════════════════════
+    function _renderOnboarding() {
+        frappe.require("frappe_visual.bundle.js", function() {
+            if (!frappe.visual) return;
+
+            var steps = [
+                { title: __('Welcome to ARKAN'), content: '<p class="fv-fx-gradient-text" style="font-size:24px;">&lt; ARKAN /&gt;</p><p>' + __('A futuristic cyber-tech theme for Frappe ERP') + '</p>' },
+                { title: __('Dark Mode'), content: '<p>' + __('Toggle with Ctrl+Shift+D or the sidebar button. Your preference is saved.') + '</p>' },
+                { title: __('Neural Grid'), content: '<p>' + __('The animated neural network background is our brand signature. Toggle with Ctrl+Shift+N.') + '</p>' },
+                { title: __('Theme Colors'), content: '<p>' + __('Cyan (#00F0FF) + Purple (#8B5CF6) — the ARKAN DNA. Customizable in Settings.') + '</p>' },
+                { title: __('frappe_visual'), content: '<p>' + __('All 307+ visual components are themed to match ARKAN automatically.') + '</p>' },
+                { title: __('Scene Engine'), content: '<p>' + __('Workspace dashboards use immersive SVG rooms with live KPI data.') + '</p>' },
+                { title: __('Auto-Enhancers'), content: '<p>' + __('Forms, lists, and workspaces are automatically enhanced. No config needed.') + '</p>' },
+                { title: __('Command Palette'), content: '<p>' + __('Press Ctrl+K to open the command bar — search anything instantly.') + '</p>' },
+                { title: __('Icons'), content: '<p>' + __('5000+ Tabler Icons via frappe.visual.icons — all themed to ARKAN colors.') + '</p>' },
+                { title: __('RTL Support'), content: '<p>' + __('Full Arabic/RTL support using CSS Logical Properties throughout.') + '</p>' },
+                { title: __('Mobile Navigation'), content: '<p>' + __('Bottom navigation bar on mobile devices for quick access to key features.') + '</p>' },
+                { title: __('Sounds'), content: '<p>' + __('Optional cyber notification tones via Web Audio API. Enable in Settings.') + '</p>' },
+                { title: __('Print Headers'), content: '<p>' + __('Branded print headers with ARKAN logo and gradient accents.') + '</p>' },
+                { title: __('Get Started'), content: '<p>' + __('Visit Settings to customize your ARKAN experience. Happy theming!') + '</p>' },
+            ];
+
+            // Try fv floatingWindow + storyboard
+            if (frappe.visual.FloatingWindow && frappe.visual.storyboard) {
+                var win = new frappe.visual.FloatingWindow({
+                    title: __('ARKAN Theme Setup'),
+                    position: 'right',
+                    width: '450px',
+                });
+                frappe.visual.storyboard(win.body, { steps: steps });
+            } else if (frappe.visual.generator && frappe.visual.generator.onboardingWizard) {
+                var page = frappe.container.page;
+                if (page && page.main) {
+                    frappe.visual.generator.onboardingWizard(page.main[0] || page.main, 'arkan_theme', steps);
+                }
+            }
+        });
+    }
 })();
 
 
@@ -373,8 +585,9 @@
 // License: MIT
 // For license information, please see license.txt
 
-// ARKAN Navbar — Sidebar glow & dark mode toggle (slim)
-// Topbar creation moved to Frappe native. Dark mode delegated to fv_integration.
+// ARKAN Navbar — Brand-specific: sidebar glow & dark mode toggle button.
+// Topbar/navigation structure handled by Frappe + frappe_visual auto-enhancers.
+// Dark mode logic lives in fv_integration.js (arkan.darkmode).
 (function() {
     "use strict";
     window.arkan = window.arkan || {};
@@ -431,16 +644,30 @@
             var btn = document.createElement('button');
             btn.className = 'arkan-darkmode-toggle';
             btn.style.cssText = 'background:none;border:none;color:var(--arkan-text-secondary,#94A3B8);cursor:pointer;font-size:16px;padding:6px;margin:0;border-radius:8px;transition:all 150ms ease;display:flex;align-items:center;justify-content:center;';
-            btn.innerHTML = arkan.darkmode && arkan.darkmode.isDark() ? '\u2600\uFE0F' : '\uD83C\uDF19';
             btn.title = __('Toggle dark/light mode');
+
+            // Use frappe.visual.icons if available, fallback to text
+            var _updateIcon = function() {
+                var isDark = arkan.darkmode && arkan.darkmode.isDark();
+                if (typeof frappe !== 'undefined' && frappe.visual && frappe.visual.icons && frappe.visual.icons.render) {
+                    btn.innerHTML = frappe.visual.icons.render(isDark ? 'sun' : 'moon', { size: 'md', color: 'var(--arkan-text-secondary)' });
+                } else {
+                    btn.textContent = isDark ? '\u2600\uFE0F' : '\uD83C\uDF19';
+                }
+            };
+            _updateIcon();
+
             btn.addEventListener('click', function() {
                 if (arkan.darkmode) {
                     arkan.darkmode.toggle();
-                    btn.innerHTML = arkan.darkmode.isDark() ? '\u2600\uFE0F' : '\uD83C\uDF19';
+                    _updateIcon();
                 }
             });
             btn.addEventListener('mouseenter', function() { btn.style.background = 'rgba(0,240,255,0.1)'; });
             btn.addEventListener('mouseleave', function() { btn.style.background = 'none'; });
+
+            // Listen for theme changes from other sources (keyboard shortcut, fv ThemeManager)
+            document.addEventListener('arkan-theme-change', function() { _updateIcon(); });
 
             // Try desk sidebar bottom
             var sidebarBottom = document.querySelector('.body-sidebar .body-sidebar-bottom');
@@ -593,6 +820,7 @@
 // For license information, please see license.txt
 
 // ARKAN Splash Screen — Neural network formation
+// Uses .fv-fx-gradient-animated and .fv-fx-gradient-text from frappe_visual
 (function() {
     "use strict";
     window.arkan = window.arkan || {};
@@ -601,58 +829,55 @@
         init: function() {
             // Only show once per session
             if (sessionStorage.getItem('arkan-splash-shown')) {
-                // Immediately remove any template splash that's still in the DOM
-                const leftover = document.querySelector('.arkan-splash-screen');
+                var leftover = document.querySelector('.arkan-splash-screen');
                 if (leftover) leftover.remove();
                 return;
             }
 
-            const duration = (arkan.config && arkan.config.splash_duration) || 2800;
+            var duration = (arkan.config && arkan.config.splash_duration) || 2800;
 
             // Check if the server-rendered template splash already exists
-            let splash = document.getElementById('arkan-splash');
+            var splash = document.getElementById('arkan-splash');
 
             if (!splash) {
-                // No template splash — create dynamically (shouldn't normally happen)
                 splash = document.createElement('div');
-                splash.className = 'splash arkan-splash-screen';
+                splash.className = 'splash arkan-splash-screen fv-fx-gradient-animated';
                 splash.id = 'arkan-splash';
-                splash.innerHTML = `
-                    <div class="arkan-splash-logo">
-                        <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <defs>
-                                <linearGradient id="arkan-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#00F0FF"/>
-                                    <stop offset="100%" style="stop-color:#8B5CF6"/>
-                                </linearGradient>
-                            </defs>
-                            <polygon points="60,10 110,100 10,100" stroke="url(#arkan-grad)" stroke-width="2" fill="none" opacity="0.3"/>
-                            <polygon points="60,25 95,90 25,90" stroke="url(#arkan-grad)" stroke-width="2" fill="none" opacity="0.6"/>
-                            <text x="60" y="75" text-anchor="middle" fill="url(#arkan-grad)" font-family="Space Grotesk,sans-serif" font-size="36" font-weight="700">A</text>
-                            <circle cx="60" cy="15" r="3" fill="#00F0FF"><animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/></circle>
-                            <circle cx="105" cy="95" r="3" fill="#8B5CF6"><animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/></circle>
-                            <circle cx="15" cy="95" r="3" fill="#00F0FF"><animate attributeName="opacity" values="0.6;1;0.6" dur="2s" repeatCount="indefinite"/></circle>
-                        </svg>
-                    </div>
-                    <div class="arkan-splash-brand">&lt; ARKAN /&gt;</div>
-                    <div class="arkan-splash-tagline">AI & Technology Solutions</div>
-                    <div class="arkan-splash-progress"><div class="arkan-splash-progress-bar"></div></div>
-                `;
+                splash.innerHTML =
+                    '<div class="arkan-splash-logo">' +
+                    '  <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+                    '    <defs>' +
+                    '      <linearGradient id="arkan-grad" x1="0%" y1="0%" x2="100%" y2="100%">' +
+                    '        <stop offset="0%" style="stop-color:#00F0FF"/>' +
+                    '        <stop offset="100%" style="stop-color:#8B5CF6"/>' +
+                    '      </linearGradient>' +
+                    '    </defs>' +
+                    '    <polygon points="60,10 110,100 10,100" stroke="url(#arkan-grad)" stroke-width="2" fill="none" opacity="0.3"/>' +
+                    '    <polygon points="60,25 95,90 25,90" stroke="url(#arkan-grad)" stroke-width="2" fill="none" opacity="0.6"/>' +
+                    '    <text x="60" y="75" text-anchor="middle" fill="url(#arkan-grad)" font-family="Space Grotesk,sans-serif" font-size="36" font-weight="700">A</text>' +
+                    '    <circle cx="60" cy="15" r="3" fill="#00F0FF"><animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/></circle>' +
+                    '    <circle cx="105" cy="95" r="3" fill="#8B5CF6"><animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/></circle>' +
+                    '    <circle cx="15" cy="95" r="3" fill="#00F0FF"><animate attributeName="opacity" values="0.6;1;0.6" dur="2s" repeatCount="indefinite"/></circle>' +
+                    '  </svg>' +
+                    '</div>' +
+                    '<div class="arkan-splash-brand fv-fx-gradient-text">&lt; ARKAN /&gt;</div>' +
+                    '<div class="arkan-splash-tagline">AI & Technology Solutions</div>' +
+                    '<div class="arkan-splash-progress"><div class="arkan-splash-progress-bar"></div></div>';
                 document.body.appendChild(splash);
             }
 
-            // Animate fade-out after the duration
-            setTimeout(() => {
+            // Animate fade-out
+            setTimeout(function() {
                 splash.classList.add('arkan-splash-hidden');
-                setTimeout(() => { if (splash.parentNode) splash.remove(); }, 800);
+                setTimeout(function() { if (splash.parentNode) splash.remove(); }, 800);
             }, duration);
 
-            // FAILSAFE: force-remove after 5 seconds no matter what
-            setTimeout(() => {
-                const el = document.querySelector('.arkan-splash-screen');
+            // FAILSAFE: force-remove after 5 seconds
+            setTimeout(function() {
+                var el = document.querySelector('.arkan-splash-screen');
                 if (el) {
                     el.style.cssText += 'opacity:0 !important;visibility:hidden !important;pointer-events:none !important;';
-                    setTimeout(() => { if (el.parentNode) el.remove(); }, 300);
+                    setTimeout(function() { if (el.parentNode) el.remove(); }, 300);
                 }
             }, 5000);
 

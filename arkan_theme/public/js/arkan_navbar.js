@@ -3,8 +3,9 @@
 // License: MIT
 // For license information, please see license.txt
 
-// ARKAN Navbar — Sidebar glow & dark mode toggle (slim)
-// Topbar creation moved to Frappe native. Dark mode delegated to fv_integration.
+// ARKAN Navbar — Brand-specific: sidebar glow & dark mode toggle button.
+// Topbar/navigation structure handled by Frappe + frappe_visual auto-enhancers.
+// Dark mode logic lives in fv_integration.js (arkan.darkmode).
 (function() {
     "use strict";
     window.arkan = window.arkan || {};
@@ -61,16 +62,30 @@
             var btn = document.createElement('button');
             btn.className = 'arkan-darkmode-toggle';
             btn.style.cssText = 'background:none;border:none;color:var(--arkan-text-secondary,#94A3B8);cursor:pointer;font-size:16px;padding:6px;margin:0;border-radius:8px;transition:all 150ms ease;display:flex;align-items:center;justify-content:center;';
-            btn.innerHTML = arkan.darkmode && arkan.darkmode.isDark() ? '\u2600\uFE0F' : '\uD83C\uDF19';
             btn.title = __('Toggle dark/light mode');
+
+            // Use frappe.visual.icons if available, fallback to text
+            var _updateIcon = function() {
+                var isDark = arkan.darkmode && arkan.darkmode.isDark();
+                if (typeof frappe !== 'undefined' && frappe.visual && frappe.visual.icons && frappe.visual.icons.render) {
+                    btn.innerHTML = frappe.visual.icons.render(isDark ? 'sun' : 'moon', { size: 'md', color: 'var(--arkan-text-secondary)' });
+                } else {
+                    btn.textContent = isDark ? '\u2600\uFE0F' : '\uD83C\uDF19';
+                }
+            };
+            _updateIcon();
+
             btn.addEventListener('click', function() {
                 if (arkan.darkmode) {
                     arkan.darkmode.toggle();
-                    btn.innerHTML = arkan.darkmode.isDark() ? '\u2600\uFE0F' : '\uD83C\uDF19';
+                    _updateIcon();
                 }
             });
             btn.addEventListener('mouseenter', function() { btn.style.background = 'rgba(0,240,255,0.1)'; });
             btn.addEventListener('mouseleave', function() { btn.style.background = 'none'; });
+
+            // Listen for theme changes from other sources (keyboard shortcut, fv ThemeManager)
+            document.addEventListener('arkan-theme-change', function() { _updateIcon(); });
 
             // Try desk sidebar bottom
             var sidebarBottom = document.querySelector('.body-sidebar .body-sidebar-bottom');

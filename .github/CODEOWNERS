@@ -1,0 +1,36 @@
+# CODEOWNERS — مالكو الكود
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# These owners will be automatically requested for review when a PR
+# modifies files matching the patterns.
+# سيتم طلب مراجعة هؤلاء المالكين تلقائياً عند تعديل ملفات مطابقة.
+
+# ─── Default Owner — المالك الافتراضي ─────────────────────────────────────────
+*                           @sarapil/arkan_theme-maintainers
+
+# ─── Core Configuration — الإعدادات الأساسية ──────────────────────────────────
+arkan_theme/hooks.py       @sarapil/arkan_theme-maintainers
+arkan_theme/install.py     @sarapil/arkan_theme-maintainers
+arkan_theme/seed.py        @sarapil/arkan_theme-maintainers
+pyproject.toml              @sarapil/arkan_theme-maintainers
+setup.cfg                   @sarapil/arkan_theme-maintainers
+
+# ─── API Layer — طبقة الواجهة البرمجية ────────────────────────────────────────
+arkan_theme/api/           @sarapil/arkan_theme-maintainers
+
+# ─── Security & Permissions — الأمان والصلاحيات ───────────────────────────────
+arkan_theme/caps/          @sarapil/arkan_theme-maintainers
+SECURITY.md                 @sarapil/arkan_theme-maintainers
+
+# ─── CI/CD — خط الأنابيب ─────────────────────────────────────────────────────
+.github/workflows/          @sarapil/arkan_theme-maintainers
+
+# ─── Frontend — الواجهة الأمامية ──────────────────────────────────────────────
+arkan_theme/public/        @sarapil/arkan_theme-maintainers
+
+# ─── Translations — الترجمات ──────────────────────────────────────────────────
+arkan_theme/translations/  @sarapil/arkan_theme-maintainers
+
+# ─── Documentation — التوثيق ──────────────────────────────────────────────────
+arkan_theme/help/          @sarapil/arkan_theme-maintainers
+*.md                        @sarapil/arkan_theme-maintainers

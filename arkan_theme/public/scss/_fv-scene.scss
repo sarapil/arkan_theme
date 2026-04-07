@@ -1,15 +1,39 @@
 // ARKAN Theme — Scene Engine Overrides
-// Styles Scene Engine presets (Office, Library, etc.) with ARKAN's cyber-tech palette
+// Styles all Scene Engine presets (Office, Library, Cafe, Workshop, Clinic)
+// and sub-components (SceneFrame, SceneDesk, SceneDocument, SceneShelf,
+// SceneBoard, SceneWidget, SceneLighting, SceneNavigator, SceneExporter,
+// SceneDataBinder, SceneRefresher) with ARKAN's cyber-tech palette.
 
+// ═══════════════════════════════════════════════════════════════════
+// SCENE CONTAINER — shared by all presets
+// ═══════════════════════════════════════════════════════════════════
 .fv-scene-container {
     border-radius: $arkan-radius-lg;
     overflow: hidden;
+    position: relative;
+    background: var(--arkan-bg-deep);
+    border: 1px solid rgba(0, 240, 255, 0.06);
 }
 
+// ═══════════════════════════════════════════════════════════════════
+// SCENE BACKGROUND (SVG fill / room wall)
+// ═══════════════════════════════════════════════════════════════════
+.fv-scene-bg {
+    fill: var(--arkan-bg-deep);
+}
+
+.fv-scene-wall  { fill: rgba(17, 24, 39, 0.9); }
+.fv-scene-floor { fill: rgba(30, 41, 59, 0.8); }
+
+// ═══════════════════════════════════════════════════════════════════
+// SCENE FRAMES (KPI picture frames on the wall)
+// ═══════════════════════════════════════════════════════════════════
 .fv-scene-frame {
     fill: var(--arkan-bg-panel);
     stroke: rgba(0, 240, 255, 0.15);
     stroke-width: 1;
+    cursor: pointer;
+    transition: filter 200ms ease;
 
     &:hover {
         stroke: var(--arkan-cyan);
@@ -17,6 +41,14 @@
     }
 }
 
+.fv-scene-frame-glass {
+    fill: rgba(0, 240, 255, 0.02);
+    stroke: rgba(0, 240, 255, 0.06);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SCENE LABELS & VALUES
+// ═══════════════════════════════════════════════════════════════════
 .fv-scene-label {
     fill: var(--arkan-text-secondary);
     font-family: $arkan-font-body;
@@ -27,49 +59,40 @@
     fill: var(--arkan-text);
     font-family: $arkan-font-heading;
     font-weight: 700;
+    font-size: 18px;
 }
 
+// ═══════════════════════════════════════════════════════════════════
+// STATUS INDICATORS
+// ═══════════════════════════════════════════════════════════════════
 .fv-scene-status-success { fill: $arkan-green; }
 .fv-scene-status-warning { fill: $arkan-amber; }
 .fv-scene-status-danger  { fill: $arkan-rose; }
 .fv-scene-status-info    { fill: $arkan-cyan; }
 
-// Scene background
-.fv-scene-bg {
-    fill: var(--arkan-bg-deep);
+// Status glow pulse
+.fv-scene-status-pulse {
+    animation: arkan-scene-pulse 2s ease-in-out infinite;
+}
+@keyframes arkan-scene-pulse {
+    0%, 100% { opacity: 0.6; }
+    50%      { opacity: 1; }
 }
 
-// Scene navigator buttons
-.fv-scene-navigator {
-    background: var(--arkan-bg-panel);
-    border: 1px solid rgba(0, 240, 255, 0.08);
-    border-radius: $arkan-radius-md;
-
-    button {
-        color: var(--arkan-text-secondary);
-
-        &:hover {
-            color: var(--arkan-cyan);
-            background: rgba(0, 240, 255, 0.08);
-        }
-    }
+// ═══════════════════════════════════════════════════════════════════
+// SCENE DESK (documents scattered on a desk)
+// ═══════════════════════════════════════════════════════════════════
+.fv-scene-desk {
+    fill: rgba(30, 41, 59, 0.7);
+    stroke: var(--arkan-border);
+    rx: 4;
 }
 
-// Scene exporter
-.fv-scene-exporter {
-    background: var(--arkan-bg-surface);
-    border-radius: $arkan-radius-sm;
-    color: var(--arkan-text-secondary);
-
-    &:hover {
-        color: var(--arkan-cyan);
-    }
-}
-
-// Documents on the desk
 .fv-scene-document {
     fill: var(--arkan-bg-surface);
     stroke: var(--arkan-border);
+    cursor: pointer;
+    transition: filter 200ms ease;
 
     &:hover {
         stroke: var(--arkan-purple);
@@ -81,17 +104,162 @@
         font-family: $arkan-font-heading;
         font-weight: 700;
     }
-}
 
-// Books on the shelf
-.fv-scene-book {
-    &:hover {
-        filter: brightness(1.2);
+    .fv-scene-doc-label {
+        fill: var(--arkan-text-secondary);
+        font-size: 10px;
     }
 }
 
-// Data binder refresh indicator
+// ═══════════════════════════════════════════════════════════════════
+// SCENE SHELF (books / categories)
+// ═══════════════════════════════════════════════════════════════════
+.fv-scene-shelf {
+    fill: rgba(30, 41, 59, 0.5);
+    stroke: var(--arkan-border);
+}
+
+.fv-scene-book {
+    cursor: pointer;
+    transition: filter 200ms ease;
+
+    &:hover {
+        filter: brightness(1.2) drop-shadow(0 0 4px rgba(0, 240, 255, 0.2));
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SCENE BOARD (whiteboard / notice board)
+// ═══════════════════════════════════════════════════════════════════
+.fv-scene-board {
+    fill: var(--arkan-bg-surface);
+    stroke: rgba(0, 240, 255, 0.08);
+    rx: 8;
+}
+
+.fv-scene-board-note {
+    fill: rgba(0, 240, 255, 0.05);
+    stroke: rgba(0, 240, 255, 0.1);
+    rx: 2;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SCENE WIDGET (mini data displays embedded in the room)
+// ═══════════════════════════════════════════════════════════════════
+.fv-scene-widget {
+    fill: var(--arkan-bg-panel);
+    stroke: rgba(0, 240, 255, 0.1);
+    rx: 4;
+
+    .fv-scene-widget-value {
+        fill: var(--arkan-cyan);
+        font-family: $arkan-font-heading;
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SCENE LIGHTING
+// ═══════════════════════════════════════════════════════════════════
+.fv-scene-lighting {
+    &.warm  { filter: sepia(0.05) saturate(1.1); }
+    &.cool  { filter: hue-rotate(-5deg) saturate(1.1); }
+    &.dark  { filter: brightness(0.9) contrast(1.1); }
+    &.blueprint {
+        filter: hue-rotate(10deg) saturate(0.8);
+        .fv-scene-bg { fill: #0a1628; }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SCENE NAVIGATOR (zoom/pan controls)
+// ═══════════════════════════════════════════════════════════════════
+.fv-scene-navigator {
+    background: var(--arkan-bg-panel);
+    border: 1px solid rgba(0, 240, 255, 0.08);
+    border-radius: $arkan-radius-md;
+    backdrop-filter: blur(8px);
+
+    button {
+        color: var(--arkan-text-secondary);
+        transition: all $arkan-transition-fast;
+
+        &:hover {
+            color: var(--arkan-cyan);
+            background: rgba(0, 240, 255, 0.08);
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SCENE EXPORTER (download/export button)
+// ═══════════════════════════════════════════════════════════════════
+.fv-scene-exporter {
+    background: var(--arkan-bg-surface);
+    border-radius: $arkan-radius-sm;
+    color: var(--arkan-text-secondary);
+    border: 1px solid rgba(0, 240, 255, 0.06);
+    transition: all $arkan-transition-fast;
+
+    &:hover {
+        color: var(--arkan-cyan);
+        border-color: rgba(0, 240, 255, 0.2);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SCENE DATA BINDER (refresh indicator)
+// ═══════════════════════════════════════════════════════════════════
 .fv-scene-refresh-indicator {
     stroke: var(--arkan-cyan);
     opacity: 0.6;
+    animation: arkan-scene-spin 1s linear infinite;
+}
+@keyframes arkan-scene-spin {
+    to { transform: rotate(360deg); }
+}
+
+.fv-scene-data-stale {
+    .fv-scene-value {
+        opacity: 0.5;
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// PRESET-SPECIFIC TWEAKS
+// ═══════════════════════════════════════════════════════════════════
+
+// Office preset — used by ARKAN Settings workspace
+.fv-scene-preset-office {
+    .fv-scene-bg { fill: var(--arkan-bg-deep); }
+}
+
+// Workshop preset — used by construction apps
+.fv-scene-preset-workshop {
+    .fv-scene-frame { stroke: rgba($arkan-amber, 0.2); }
+    .fv-scene-frame:hover { stroke: $arkan-amber; filter: drop-shadow(0 0 8px rgba($arkan-amber, 0.3)); }
+}
+
+// Cafe preset — used by hospitality/restaurant apps
+.fv-scene-preset-cafe {
+    .fv-scene-desk { fill: rgba(40, 30, 20, 0.4); }
+}
+
+// Library preset — knowledge apps
+.fv-scene-preset-library {
+    .fv-scene-shelf { fill: rgba(60, 40, 20, 0.3); }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// LIGHT MODE
+// ═══════════════════════════════════════════════════════════════════
+body.arkan-light-mode {
+    .fv-scene-container { background: #f8fafc; border-color: rgba(0,0,0,0.08); }
+    .fv-scene-bg { fill: #f1f5f9; }
+    .fv-scene-wall { fill: #e2e8f0; }
+    .fv-scene-floor { fill: #cbd5e1; }
+    .fv-scene-frame { fill: #fff; stroke: rgba(0,0,0,0.1); }
+    .fv-scene-label { fill: #64748b; }
+    .fv-scene-value { fill: #111827; }
+    .fv-scene-document { fill: #fff; stroke: rgba(0,0,0,0.08); }
+    .fv-scene-navigator { background: #fff; border-color: rgba(0,0,0,0.08); }
 }

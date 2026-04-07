@@ -1,7 +1,10 @@
 // ARKAN Theme — frappe_visual CSS Effect Overrides
-// Customizes .fv-fx-* classes for ARKAN's dark cyber-tech palette
+// Customizes ALL .fv-fx-* classes for ARKAN's dark cyber-tech palette.
+// Every screen MUST use at least 3 of these effects per the design guide.
 
-// ── Glass effect — deeper background for ARKAN ──
+// ═══════════════════════════════════════════════════════════════════
+// GLASS — deeper background for ARKAN
+// ═══════════════════════════════════════════════════════════════════
 .fv-fx-glass {
     background: rgba(17, 24, 39, 0.6) !important;
     border: 1px solid rgba(0, 240, 255, 0.08) !important;
@@ -14,29 +17,38 @@ body.arkan-light-mode .fv-fx-glass {
     border-color: rgba(0, 240, 255, 0.12) !important;
 }
 
-// ── Hover lift — cyan glow on lift ──
+// ═══════════════════════════════════════════════════════════════════
+// HOVER LIFT — cyan glow on lift
+// ═══════════════════════════════════════════════════════════════════
 .fv-fx-hover-lift {
     transition: transform $arkan-transition-normal, box-shadow $arkan-transition-normal !important;
 
     &:hover {
+        transform: translateY(-4px) !important;
         box-shadow: $arkan-glow-cyan !important;
     }
 }
 
-// ── Page enter — slide-up with ARKAN timing ──
+// ═══════════════════════════════════════════════════════════════════
+// PAGE ENTER — slide-up with ARKAN timing
+// ═══════════════════════════════════════════════════════════════════
 .fv-fx-page-enter {
     animation-duration: 400ms !important;
     animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-// ── Mouse glow — cyan color ──
+// ═══════════════════════════════════════════════════════════════════
+// MOUSE GLOW — replaces arkan_cursor.js
+// ═══════════════════════════════════════════════════════════════════
 .fv-fx-mouse-glow {
     --fv-glow-color: #{$arkan-cyan};
     --fv-glow-size: 200px;
     --fv-glow-opacity: 0.12;
 }
 
-// ── Gradient animated — ARKAN cyan→purple ──
+// ═══════════════════════════════════════════════════════════════════
+// GRADIENT ANIMATED — replaces arkan_effects.js gradient
+// ═══════════════════════════════════════════════════════════════════
 .fv-fx-gradient-animated {
     background: linear-gradient(
         -45deg,
@@ -46,9 +58,28 @@ body.arkan-light-mode .fv-fx-glass {
         rgba($arkan-purple, 0.15)
     ) !important;
     background-size: 400% 400% !important;
+    animation: fv-arkan-gradient 12s ease infinite !important;
 }
 
-// ── Hover shine — cyan sweep ──
+@keyframes fv-arkan-gradient {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+body.arkan-light-mode .fv-fx-gradient-animated {
+    background: linear-gradient(
+        -45deg,
+        #f8fafc,
+        rgba($arkan-cyan, 0.08),
+        #f1f5f9,
+        rgba($arkan-purple, 0.08)
+    ) !important;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// HOVER SHINE — cyan sweep
+// ═══════════════════════════════════════════════════════════════════
 .fv-fx-hover-shine {
     &::before {
         background: linear-gradient(
@@ -60,7 +91,9 @@ body.arkan-light-mode .fv-fx-glass {
     }
 }
 
-// ── Gradient text — ARKAN branded ──
+// ═══════════════════════════════════════════════════════════════════
+// GRADIENT TEXT — ARKAN branded cyan→purple
+// ═══════════════════════════════════════════════════════════════════
 .fv-fx-gradient-text {
     background: $arkan-gradient-primary !important;
     -webkit-background-clip: text !important;
@@ -68,7 +101,9 @@ body.arkan-light-mode .fv-fx-glass {
     background-clip: text !important;
 }
 
-// ── Morph blob — cyan/purple blobs ──
+// ═══════════════════════════════════════════════════════════════════
+// MORPH BLOB — replaces arkan_ambient.js blobs
+// ═══════════════════════════════════════════════════════════════════
 .fv-fx-morph-blob {
     &::before {
         background: radial-gradient(circle, rgba($arkan-cyan, 0.08), transparent 70%) !important;
@@ -78,31 +113,46 @@ body.arkan-light-mode .fv-fx-glass {
     }
 }
 
-// ── Parallax container — ensured in ARKAN z-index ──
+// ═══════════════════════════════════════════════════════════════════
+// PARALLAX CONTAINER — neural grid background layer
+// ═══════════════════════════════════════════════════════════════════
 .fv-fx-parallax-container {
     z-index: $z-content;
 }
 
-// ── Dot pattern — subtle ARKAN grid ──
+// ═══════════════════════════════════════════════════════════════════
+// DOT PATTERN — replaces arkan_ambient.js dots
+// ═══════════════════════════════════════════════════════════════════
 .fv-fx-dot-pattern {
     --fv-dot-color: #{rgba($arkan-cyan, 0.06)};
     --fv-dot-size: 1px;
     --fv-dot-spacing: 24px;
 }
 
-// ── Number ticker ──
+// ═══════════════════════════════════════════════════════════════════
+// NUMBER TICKER
+// ═══════════════════════════════════════════════════════════════════
 .fv-fx-number-ticker {
     font-family: $arkan-font-heading;
     color: var(--arkan-cyan);
 }
 
-// ── Glow card ──
+// ═══════════════════════════════════════════════════════════════════
+// GLOW CARD
+// ═══════════════════════════════════════════════════════════════════
 .fv-fx-glow-card {
     --fv-glow-color: #{$arkan-cyan};
     border-radius: $arkan-radius-lg;
+
+    &:hover {
+        box-shadow: 0 0 24px rgba($arkan-cyan, 0.2),
+                    0 0 48px rgba($arkan-cyan, 0.08);
+    }
 }
 
-// ── Typewriter ──
+// ═══════════════════════════════════════════════════════════════════
+// TYPEWRITER — replaces arkan_welcome_msg.js typing effect
+// ═══════════════════════════════════════════════════════════════════
 .fv-fx-typewriter {
     font-family: $arkan-font-mono;
     color: var(--arkan-cyan);
@@ -112,12 +162,48 @@ body.arkan-light-mode .fv-fx-glass {
     }
 }
 
-// ── Confetti colors ──
+// ═══════════════════════════════════════════════════════════════════
+// CONFETTI — ARKAN branded colors
+// ═══════════════════════════════════════════════════════════════════
 .fv-fx-confetti {
     --fv-confetti-colors: #{$arkan-cyan}, #{$arkan-purple}, #{$arkan-green}, #{$arkan-amber};
 }
 
-// ── Ripple ──
+// ═══════════════════════════════════════════════════════════════════
+// RIPPLE — cyan ripple
+// ═══════════════════════════════════════════════════════════════════
 .fv-fx-ripple {
     --fv-ripple-color: #{rgba($arkan-cyan, 0.25)};
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// MORPHING TEXT — replaces arkan_splash.js brand text animation
+// ═══════════════════════════════════════════════════════════════════
+.fv-fx-morphing-text {
+    font-family: $arkan-font-heading;
+    color: var(--arkan-text);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// TEXT LOOP
+// ═══════════════════════════════════════════════════════════════════
+.fv-fx-text-loop {
+    font-family: $arkan-font-heading;
+    color: var(--arkan-cyan);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// VERTICAL TEXT — for sidebar labels
+// ═══════════════════════════════════════════════════════════════════
+.fv-fx-vertical-text {
+    font-family: $arkan-font-heading;
+    color: var(--arkan-text-muted);
+    letter-spacing: 2px;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// LOTTIE CONTAINER
+// ═══════════════════════════════════════════════════════════════════
+.fv-fx-lottie {
+    border-radius: $arkan-radius-md;
 }

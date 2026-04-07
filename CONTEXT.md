@@ -300,7 +300,9 @@ All directional properties use CSS Logical Properties.
 ```
 
 #### `_splash.scss` — Splash overlay + loading + #freeze hide
+
 #### `_login.scss` — Login page (RTL-safe via logical properties)
+
 #### `_rtl.scss` — RTL overrides for Frappe core physical-property CSS
 
 ---

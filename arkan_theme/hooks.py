@@ -13,7 +13,7 @@ source_link = "https://github.com/ArkAnTech/arkan_theme"
 app_home = "/desk"
 
 # Cache-busting version — bump this after every CSS/JS change
-_v = "16.2.0"
+_v = "17.0.0"
 
 # v16 App Launcher
 add_to_apps_screen = [
@@ -30,7 +30,7 @@ app_include_css = [
     f"/assets/arkan_theme/css/arkan.css?v={_v}"
 ]
 
-# JS — single bundled file (13 modules → 1 HTTP request, slim: 14 modules delegated to frappe_visual)
+# JS — single bundled file (13 modules → 1 HTTP request, v2: frappe_visual bridge)
 app_include_js = [
     f"/assets/arkan_theme/js/arkan_theme.bundle.js?v={_v}",
 ]
@@ -90,5 +90,6 @@ after_install = "arkan_theme.install.after_install"
 website_route_rules = [
     {"from_route": "/arkan-theme-about", "to_route": "arkan_theme_about"},
     {"from_route": "/عن-arkan-theme", "to_route": "arkan_theme_about"},
+    {"from_route": "/arkan-theme-onboarding", "to_route": "arkan_theme_onboarding"},
     {"from_route": "/arkan-theme/<path:app_path>", "to_route": "arkan-theme/<app_path>"},
 ]

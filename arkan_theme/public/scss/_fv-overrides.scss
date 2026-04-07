@@ -1,18 +1,27 @@
 // ARKAN Theme — frappe_visual Auto-Enhancer Overrides
-// Styles the formEnhancer, listEnhancer, workspaceEnhancer, bilingualTooltip
-// with ARKAN's dark cyber-tech palette.
+// Styles formEnhancer, listEnhancer, workspaceEnhancer, bilingualTooltip,
+// command bar, bottom nav, tour, floating window, storyboard, generators,
+// DocType visualizers — ALL frappe_visual output themed for ARKAN cyber-tech.
 
-// ── Form Enhancer ──
+// ═══════════════════════════════════════════════════════════════════
+// FORM ENHANCER
+// ═══════════════════════════════════════════════════════════════════
 .fv-form-stats-ribbon {
     background: var(--arkan-bg-panel);
     border-color: rgba(0, 240, 255, 0.1);
     border-radius: $arkan-radius-md;
+    backdrop-filter: blur(8px);
 }
 
 .fv-form-stats-badge {
     border-color: rgba(0, 240, 255, 0.15);
     color: var(--arkan-text);
     background: var(--arkan-bg-surface);
+    font-family: $arkan-font-heading;
+
+    &.success { border-color: rgba($arkan-green, 0.3); color: $arkan-green; }
+    &.warning { border-color: rgba($arkan-amber, 0.3); color: $arkan-amber; }
+    &.danger  { border-color: rgba($arkan-rose, 0.3);  color: $arkan-rose; }
 }
 
 .fv-form-dashboard {
@@ -21,19 +30,40 @@
     border: 1px solid rgba(0, 240, 255, 0.08);
 }
 
-.fv-relationship-graph {
-    .cy-node {
-        border-color: var(--arkan-cyan);
-    }
-    .cy-edge {
-        stroke: var(--arkan-purple);
+.fv-form-quick-links {
+    a {
+        color: var(--arkan-cyan);
+        transition: color $arkan-transition-fast;
+        &:hover { color: lighten($arkan-cyan, 15%); }
     }
 }
 
-// ── List Enhancer ──
+.fv-relationship-graph {
+    background: var(--arkan-bg-deep);
+    border-radius: $arkan-radius-lg;
+    border: 1px solid rgba(0, 240, 255, 0.06);
+
+    .cy-node {
+        border-color: var(--arkan-cyan);
+        background-color: var(--arkan-bg-panel);
+    }
+    .cy-edge {
+        stroke: var(--arkan-purple);
+        opacity: 0.6;
+    }
+    .cy-node-label {
+        color: var(--arkan-text);
+        font-family: $arkan-font-body;
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// LIST ENHANCER
+// ═══════════════════════════════════════════════════════════════════
 .fv-list-view-toggle {
     background: var(--arkan-bg-surface);
     border-radius: $arkan-radius-sm;
+    border: 1px solid rgba(0, 240, 255, 0.06);
 
     .active {
         color: var(--arkan-cyan);
@@ -43,20 +73,53 @@
     button {
         color: var(--arkan-text-secondary);
         transition: color $arkan-transition-fast;
-
-        &:hover {
-            color: var(--arkan-text);
-        }
+        &:hover { color: var(--arkan-text); }
     }
 }
 
 .fv-card-list .fv-card {
     @include arkan-glass-card;
+    transition: transform $arkan-transition-normal, box-shadow $arkan-transition-normal;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: $arkan-glow-cyan;
+    }
 }
 
-// ── Workspace Enhancer ──
+.fv-kanban-board {
+    .fv-kanban-column {
+        background: var(--arkan-bg-panel);
+        border: 1px solid rgba(0, 240, 255, 0.06);
+        border-radius: $arkan-radius-md;
+    }
+    .fv-kanban-card {
+        @include arkan-glass(0.5);
+        border-radius: $arkan-radius-sm;
+        &:hover { border-color: rgba($arkan-cyan, 0.2); }
+    }
+    .fv-kanban-header {
+        font-family: $arkan-font-heading;
+        color: var(--arkan-text);
+    }
+}
+
+.fv-timeline-view {
+    .fv-timeline-item {
+        border-inline-start: 2px solid rgba($arkan-cyan, 0.2);
+        &::before {
+            background: var(--arkan-cyan);
+            box-shadow: 0 0 6px rgba($arkan-cyan, 0.4);
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// WORKSPACE ENHANCER
+// ═══════════════════════════════════════════════════════════════════
 .fv-workspace-card {
     @include arkan-glass-card;
+    transition: transform $arkan-transition-normal, box-shadow $arkan-transition-normal;
 
     &:hover {
         transform: translateY(-2px);
@@ -72,9 +135,12 @@
 .fv-workspace-count {
     color: var(--arkan-cyan);
     font-family: $arkan-font-heading;
+    font-weight: 700;
 }
 
-// ── Bilingual Tooltip ──
+// ═══════════════════════════════════════════════════════════════════
+// BILINGUAL TOOLTIP
+// ═══════════════════════════════════════════════════════════════════
 .fv-bilingual-tooltip {
     background: var(--arkan-bg-panel);
     border: 1px solid rgba(0, 240, 255, 0.1);
@@ -82,9 +148,12 @@
     border-radius: $arkan-radius-sm;
     backdrop-filter: blur(12px);
     box-shadow: $arkan-shadow-card;
+    font-family: $arkan-font-body;
 }
 
-// ── Command Bar (replaces arkan_shortcuts.js) ──
+// ═══════════════════════════════════════════════════════════════════
+// COMMAND BAR (replaces arkan_shortcuts.js)
+// ═══════════════════════════════════════════════════════════════════
 .fv-command-bar {
     background: var(--arkan-bg-panel);
     border: 1px solid rgba(0, 240, 255, 0.15);
@@ -96,6 +165,7 @@
         background: transparent;
         color: var(--arkan-text);
         font-family: $arkan-font-body;
+        &::placeholder { color: var(--arkan-text-muted); }
     }
 
     .fv-command-item {
@@ -161,7 +231,9 @@
     }
 }
 
-// ── Storyboard (replaces about/onboarding slides) ──
+// ═══════════════════════════════════════════════════════════════════
+// STORYBOARD (about/onboarding slides)
+// ═══════════════════════════════════════════════════════════════════
 .fv-storyboard-slide {
     background: var(--arkan-bg-panel);
     border-radius: $arkan-radius-lg;
@@ -171,10 +243,329 @@
 .fv-storyboard-nav {
     .fv-storyboard-dot {
         background: var(--arkan-border);
+        transition: all $arkan-transition-fast;
 
         &.active {
             background: var(--arkan-cyan);
             box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
         }
     }
+
+    .fv-storyboard-prev,
+    .fv-storyboard-next {
+        color: var(--arkan-text-secondary);
+        &:hover { color: var(--arkan-cyan); }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// PAGE GENERATORS (aboutPage, settingsPage, reportsHub, onboarding)
+// ═══════════════════════════════════════════════════════════════════
+.fv-about-page {
+    background: var(--arkan-bg-deep);
+    color: var(--arkan-text);
+
+    .fv-about-hero {
+        @include arkan-gradient-text;
+        font-family: $arkan-font-heading;
+    }
+
+    .fv-about-section {
+        @include arkan-glass(0.4);
+        border-radius: $arkan-radius-lg;
+        margin-block-end: 24px;
+    }
+
+    .fv-about-feature-card {
+        @include arkan-glass-card;
+        &:hover { box-shadow: $arkan-glow-cyan; }
+    }
+}
+
+.fv-settings-page {
+    .fv-settings-group {
+        @include arkan-glass(0.5);
+        border-radius: $arkan-radius-lg;
+        margin-block-end: 16px;
+    }
+    .fv-settings-label {
+        color: var(--arkan-text-secondary);
+        font-family: $arkan-font-heading;
+    }
+}
+
+.fv-reports-hub {
+    .fv-report-card {
+        @include arkan-glass-card;
+        transition: transform $arkan-transition-normal, box-shadow $arkan-transition-normal;
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: $arkan-glow-purple;
+        }
+    }
+    .fv-report-icon {
+        color: var(--arkan-cyan);
+    }
+}
+
+.fv-onboarding-wizard {
+    .fv-wizard-step {
+        background: var(--arkan-bg-panel);
+        border-radius: $arkan-radius-md;
+        border: 1px solid rgba(0, 240, 255, 0.06);
+
+        &.active {
+            border-color: var(--arkan-cyan);
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.15);
+        }
+        &.completed {
+            border-color: var(--arkan-green);
+        }
+    }
+    .fv-wizard-progress {
+        background: var(--arkan-bg-surface);
+        .fv-wizard-progress-fill {
+            background: $arkan-gradient-primary;
+        }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// DOCTYPE VISUALIZERS (cardList, visualForm, quickEntry, relationship)
+// ═══════════════════════════════════════════════════════════════════
+.fv-doctype-card-list {
+    .fv-dt-card {
+        @include arkan-glass-card;
+        &:hover { transform: translateY(-1px); box-shadow: $arkan-glow-cyan; }
+    }
+}
+
+.fv-visual-form {
+    background: var(--arkan-bg-panel);
+    border-radius: $arkan-radius-lg;
+    border: 1px solid rgba(0, 240, 255, 0.06);
+}
+
+.fv-quick-entry {
+    @include arkan-glass(0.85);
+    border-radius: $arkan-radius-lg;
+    box-shadow: 0 8px 48px rgba(0, 0, 0, 0.5);
+
+    .fv-quick-entry-field label {
+        color: var(--arkan-text-secondary);
+    }
+    .fv-quick-entry-submit {
+        background: $arkan-gradient-primary;
+        color: $arkan-deep-black;
+        border: none;
+        &:hover { box-shadow: $arkan-glow-cyan; }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// PAGE TEMPLATES (dashboard, erd, workflow, tree, wizard, kanban, timeline)
+// ═══════════════════════════════════════════════════════════════════
+.fv-template-dashboard {
+    .fv-kpi-card {
+        @include arkan-glass-card;
+        .fv-kpi-value { color: var(--arkan-cyan); font-family: $arkan-font-heading; font-weight: 700; }
+        .fv-kpi-label { color: var(--arkan-text-secondary); }
+    }
+}
+
+.fv-template-erd {
+    background: var(--arkan-bg-deep);
+    .fv-erd-node {
+        fill: var(--arkan-bg-panel);
+        stroke: var(--arkan-cyan);
+    }
+    .fv-erd-edge { stroke: var(--arkan-purple); opacity: 0.5; }
+}
+
+.fv-template-workflow {
+    .fv-wf-node {
+        fill: var(--arkan-bg-panel);
+        stroke: rgba(0, 240, 255, 0.2);
+        &.active { stroke: var(--arkan-cyan); box-shadow: $arkan-glow-cyan; }
+    }
+    .fv-wf-edge { stroke: var(--arkan-border); }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// DATA VISUALIZATION (heatmap, sparkline, radar, funnel, etc.)
+// ═══════════════════════════════════════════════════════════════════
+.fv-chart-container {
+    background: var(--arkan-bg-panel);
+    border-radius: $arkan-radius-lg;
+    border: 1px solid rgba(0, 240, 255, 0.06);
+}
+
+.fv-data-card {
+    @include arkan-glass-card;
+    .fv-data-card-value { color: var(--arkan-cyan); font-family: $arkan-font-heading; }
+    .fv-data-card-label { color: var(--arkan-text-secondary); }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// NAVIGATION COMPONENTS (NavRail, TabBar, SpeedDial, AnchorNav)
+// ═══════════════════════════════════════════════════════════════════
+.fv-nav-rail {
+    background: var(--arkan-bg-panel);
+    border-inline-end: 1px solid rgba(0, 240, 255, 0.06);
+    .fv-nav-rail-item {
+        color: var(--arkan-text-muted);
+        &.active { color: var(--arkan-cyan); background: rgba(0, 240, 255, 0.08); }
+        &:hover  { color: var(--arkan-text); }
+    }
+}
+
+.fv-speed-dial {
+    .fv-speed-dial-trigger {
+        background: $arkan-gradient-primary;
+        color: $arkan-deep-black;
+        box-shadow: $arkan-glow-cyan;
+    }
+    .fv-speed-dial-action {
+        @include arkan-glass(0.85);
+        color: var(--arkan-text);
+        &:hover { box-shadow: $arkan-glow-cyan; }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// LAYOUT COMPONENTS (Masonry, GridStack, Bento)
+// ═══════════════════════════════════════════════════════════════════
+.fv-masonry-item,
+.fv-grid-stack-item,
+.fv-bento-item {
+    @include arkan-glass-card;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// FEEDBACK COMPONENTS (BottomSheet, Lightbox, Popconfirm, NotificationStack)
+// ═══════════════════════════════════════════════════════════════════
+.fv-bottom-sheet {
+    @include arkan-glass(0.9);
+    border-radius: $arkan-radius-xl $arkan-radius-xl 0 0;
+    .fv-bottom-sheet-handle { background: var(--arkan-border); }
+}
+
+.fv-lightbox {
+    background: rgba(10, 15, 28, 0.9);
+    .fv-lightbox-content { border-radius: $arkan-radius-lg; }
+    .fv-lightbox-close { color: var(--arkan-text); }
+}
+
+.fv-popconfirm {
+    @include arkan-glass(0.9);
+    border-radius: $arkan-radius-md;
+    .fv-popconfirm-confirm { background: $arkan-gradient-primary; color: $arkan-deep-black; }
+    .fv-popconfirm-cancel  { color: var(--arkan-text-secondary); }
+}
+
+.fv-notification-stack {
+    .fv-notification {
+        @include arkan-glass(0.85);
+        border-radius: $arkan-radius-md;
+        border-inline-start: 3px solid var(--arkan-cyan);
+        &.success { border-inline-start-color: $arkan-green; }
+        &.warning { border-inline-start-color: $arkan-amber; }
+        &.error   { border-inline-start-color: $arkan-rose; }
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// APP MAP & RELATIONSHIP EXPLORER
+// ═══════════════════════════════════════════════════════════════════
+.fv-app-map {
+    background: var(--arkan-bg-deep);
+    border-radius: $arkan-radius-lg;
+    .fv-app-map-node {
+        fill: var(--arkan-bg-panel);
+        stroke: var(--arkan-cyan);
+    }
+    .fv-app-map-edge { stroke: rgba($arkan-purple, 0.4); }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// VISUAL CALENDAR & GANTT
+// ═══════════════════════════════════════════════════════════════════
+.fv-visual-calendar {
+    background: var(--arkan-bg-panel);
+    border-radius: $arkan-radius-lg;
+    .fv-cal-today { background: rgba($arkan-cyan, 0.08); }
+    .fv-cal-event { background: rgba($arkan-cyan, 0.15); border-inline-start: 2px solid var(--arkan-cyan); }
+}
+
+.fv-visual-gantt {
+    background: var(--arkan-bg-panel);
+    .fv-gantt-bar { background: $arkan-gradient-primary; border-radius: $arkan-radius-sm; }
+    .fv-gantt-label { color: var(--arkan-text-secondary); font-family: $arkan-font-body; }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// ICON SYSTEM (frappe.visual.icons.*)
+// ═══════════════════════════════════════════════════════════════════
+.fv-icon {
+    color: var(--arkan-text-secondary);
+    &.fv-icon-lg { font-size: 24px; }
+    &.fv-icon-primary { color: var(--arkan-cyan); }
+    &.fv-icon-accent  { color: var(--arkan-purple); }
+}
+
+.fv-status-badge {
+    font-family: $arkan-font-heading;
+    font-size: 11px;
+    border-radius: $arkan-radius-sm;
+    &.success { background: rgba($arkan-green, 0.12); color: $arkan-green; }
+    &.warning { background: rgba($arkan-amber, 0.12); color: $arkan-amber; }
+    &.danger  { background: rgba($arkan-rose, 0.12);  color: $arkan-rose; }
+    &.info    { background: rgba($arkan-cyan, 0.12);  color: $arkan-cyan; }
+}
+
+.fv-dash-card {
+    @include arkan-glass-card;
+    .fv-dash-card-icon { color: var(--arkan-cyan); }
+    .fv-dash-card-value { font-family: $arkan-font-heading; font-weight: 700; }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// MINIMAP
+// ═══════════════════════════════════════════════════════════════════
+.fv-minimap {
+    background: var(--arkan-bg-panel);
+    border: 1px solid rgba(0, 240, 255, 0.08);
+    border-radius: $arkan-radius-sm;
+    .fv-minimap-viewport { border: 1px solid var(--arkan-cyan); }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CONTEXT MENU
+// ═══════════════════════════════════════════════════════════════════
+.fv-context-menu {
+    @include arkan-glass(0.9);
+    border-radius: $arkan-radius-md;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+
+    .fv-context-item {
+        color: var(--arkan-text-secondary);
+        &:hover { background: rgba(0, 240, 255, 0.08); color: var(--arkan-text); }
+    }
+    .fv-context-separator { border-color: var(--arkan-border); }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// LIGHT MODE overrides — keep fv components legible in light theme
+// ═══════════════════════════════════════════════════════════════════
+body.arkan-light-mode {
+    .fv-form-stats-ribbon,
+    .fv-form-dashboard { background: #fff; border-color: rgba(0, 0, 0, 0.08); }
+    .fv-card-list .fv-card,
+    .fv-workspace-card,
+    .fv-doctype-card-list .fv-dt-card { background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.08); }
+    .fv-command-bar { background: #fff; border-color: rgba(0,0,0,0.1); }
+    .fv-floating-window { background: rgba(255,255,255,0.9); }
+    .fv-bottom-nav { background: #fff; border-top-color: rgba(0,0,0,0.08); }
+    .fv-context-menu { background: rgba(255,255,255,0.95); }
+    .fv-notification-stack .fv-notification { background: rgba(255,255,255,0.9); }
 }
