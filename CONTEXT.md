@@ -16,11 +16,11 @@
 | **Language**    | JavaScript (ES5-compatible IIFEs) + SCSS (compiled to CSS) + Python (hooks/boot only) |
 | **License**     | MIT                                                                                   |
 | **Publisher**   | Arkan Labs (info@arkanlabs.com)                                                       |
-| **Version**     | 16.2.0                                                                                |
+| **Version**     | 17.0.0                                                                                |
 | **Build**       | `pyproject.toml` with `flit_core` (no setup.py)                                       |
 | **Python**      | >=3.14                                                                                |
 | **Node**        | >=24                                                                                  |
-| **Total Lines** | ~913 JS + SCSS across 13 JS modules + 20 SCSS partials (post-fv redesign)             |
+| **Total Lines** | ~1138 JS + SCSS across 13 JS modules + 26 SCSS partials (post-fv v2.0 redesign)       |
 
 ---
 
@@ -49,9 +49,9 @@ It does **NOT**:
 Every Frappe app has a `hooks.py` file that tells Frappe what to load. Key hooks used by this app:
 
 ```python
-app_include_css = [...]   # CSS files loaded on every desk (app) page
-app_include_js = [...]    # JS files loaded on every desk (app) page
-web_include_css = [...]   # CSS files loaded on website/portal/login pages
+app_include_css = ["arkan_theme.bundle.css"]  # Esbuild-compiled SCSS bundle (desk)
+app_include_js = [...]    # JS bundle loaded on every desk page
+web_include_css = [f"/assets/arkan_theme/css/arkan.css?v={_v}"]  # Static CSS (web/login)
 web_include_js = [...]    # JS files loaded on website/portal/login pages
 boot_session = "..."      # Python function called during session boot
 ```
@@ -158,13 +158,14 @@ This theme uses a **sidebar-first, navbar-fallback** pattern:
 Purpose: Registers all CSS/JS assets with Frappe's hook system
 Key Config:
   - app_include_js: 1 file (arkan_theme.bundle.js — 13 modules concatenated)
-  - app_include_css: 2 files (arkan.bundle.css, arkan-theme.css)
-  - web_include_js: 2 files (login, skyline)
-  - web_include_css: 1 file (arkan.css)
+  - app_include_css: 1 file (arkan_theme.bundle.css — esbuild-compiled SCSS)
+  - web_include_js: 2 files (neural_grid, login)
+  - web_include_css: 1 file (arkan.css — static, includes fv overrides)
   - boot_session: points to boot.boot_session
   - website_context: brand_name + favicon
-  - required_apps: ["frappe", "frappe_visual"]
-  - Version: 16.2.0
+  - website_route_rules: about, onboarding, عن-arkan-theme
+  - required_apps: ["frappe", "frappe_visual", "arkan_help"]
+  - Version: 17.0.0
 ```
 
 #### `boot.py` (10 lines)
@@ -199,29 +200,34 @@ Exports:
 Note: Does NOT init darkmode, effects, loading, shortcuts, workspace — all delegated to fv_integration.js
 ```
 
-#### `fv_integration.js` (~230 lines) — FRAPPE_VISUAL BRIDGE
+#### `fv_integration.js` (~436 lines) — FRAPPE_VISUAL BRIDGE v2.0
 
 ```
 Namespace: arkan.darkmode, arkan.loading, arkan.workspace, arkan.forms
-Purpose: Central bridge between ARKAN theme and frappe_visual 307+ components
+Purpose: Central bridge v2.0 between ARKAN theme and frappe_visual 307+ components
 Exports:
   arkan.darkmode.isDark()    — Boolean: check current mode
-  arkan.darkmode.setMode(m)  — Set 'dark'/'light', persist localStorage, dispatch event
+  arkan.darkmode.setMode(m)  — Set 'dark'/'light', persist localStorage, dispatch event, sync ThemeManager
   arkan.darkmode.toggle()    — Toggle between modes
   arkan.loading.show(msg)    — Glass-effect loading overlay
   arkan.loading.remove()     — Remove loading overlay
-  arkan.workspace.init()     — Welcome banner + widget stagger
+  arkan.workspace.init()     — Welcome banner + widget stagger (fv-fx-glass + fv-fx-gradient-text)
   arkan.forms.enhanceTimeline() — IntersectionObserver reveal
 Auto-init on app_ready:
-  - Dark mode initialization (localStorage-backed)
-  - Workspace welcome banner
+  - Dark mode initialization (localStorage-backed) + ThemeManager bidirectional sync
+  - Workspace welcome banner with fv-fx-glass/gradient-text effects
   - Lazy-load frappe_visual.bundle.js
-  - Configure auto-enhancers (formEnhancer, listEnhancer, workspaceEnhancer)
-  - Register keyboard shortcuts via frappe.visual.shortcutManager
+  - Configure auto-enhancers (formEnhancer, workspaceEnhancer)
+  - Register keyboard shortcuts via frappe.visual.shortcutManager (4 shortcuts incl Ctrl+K)
+  - Setup commandBar with ARKAN theming
   - Setup mobile bottomNav via frappe.visual.bottomNav
+  - Inject Scene Engine workspace dashboard headers (scenePresetOffice)
   - Override frappe.dom.freeze/unfreeze
 page-change handler:
-  - Route to settings/reports generators
+  - Route-based visual rendering: about page (generator.aboutPage + fallback)
+  - Onboarding via FloatingWindow + storyboard
+  - Settings page, reports hub via frappe.visual.generator
+  - Workspace scene injection on ARKAN routes
 ```
 
 #### `arkan_navbar.js` (~93 lines) — SIDEBAR GLOW & DARK TOGGLE
@@ -268,28 +274,50 @@ Mixins:
   @include arkan-glass, arkan-card-elevated, arkan-focus-ring
 ```
 
-#### `_fv-overrides.scss` (NEW — 165 lines)
+#### `_fv-overrides.scss` (400+ lines — v2.0 comprehensive)
 
 ```
-Styles frappe_visual auto-enhancer output for ARKAN palette:
-  .fv-form-stats-ribbon, .fv-list-view-toggle, .fv-workspace-card
-  .fv-bilingual-tooltip, .fv-command-bar, .fv-bottom-nav
-  .fv-onboarding-tour, .fv-floating-window, .fv-storyboard
+Styles ALL 307+ frappe_visual components for ARKAN palette:
+  Auto-enhancers: .fv-form-stats-ribbon, .fv-list-view-toggle, .fv-workspace-card
+  UI Chrome: .fv-bilingual-tooltip, .fv-command-bar, .fv-bottom-nav
+  Overlays: .fv-onboarding-tour, .fv-floating-window, .fv-storyboard
+  Page Generators: .fv-about-page, .fv-settings-page, .fv-reports-hub, .fv-onboarding-wizard
+  DocType Visualizers: .fv-card-list, .fv-visual-form, .fv-quick-entry
+  Templates: .fv-dashboard, .fv-erd, .fv-workflow-viz
+  Data Viz: .fv-heatmap, .fv-sparkline, .fv-radar, .fv-funnel, .fv-treemap, .fv-donut, .fv-sankey
+  Navigation: .fv-nav-rail, .fv-speed-dial
+  Layout: .fv-masonry, .fv-grid-stack, .fv-bento
+  Feedback: .fv-bottom-sheet, .fv-lightbox, .fv-popconfirm, .fv-notification-stack
+  Other: .fv-app-map, .fv-visual-calendar, .fv-visual-gantt, .fv-minimap, .fv-context-menu
+  + Light mode overrides for all components
 ```
 
-#### `_fv-scene.scss` (NEW — 85 lines)
+#### `_fv-scene.scss` (250+ lines — v2.0 comprehensive)
 
 ```
-Scene Engine overrides: .fv-scene-frame, .fv-scene-label, .fv-scene-value
-Status colors + .fv-scene-navigator, .fv-scene-exporter
+Scene Engine overrides for ALL presets:
+  Container: .fv-scene-container, .fv-scene-background (wall/floor)
+  KPI Frames: .fv-scene-frame, .fv-scene-label, .fv-scene-value, status indicators
+  Surfaces: .fv-scene-desk (documents), .fv-scene-shelf (books), .fv-scene-board, .fv-scene-widget
+  Lighting: warm/cool/dark/blueprint modes with ARKAN colors
+  Controls: .fv-scene-navigator (zoom/pan), .fv-scene-exporter
+  Data: .fv-scene-data-binder (refresh indicator, stale state)
+  Presets: .fv-scene-preset-office, .fv-scene-preset-workshop, .fv-scene-preset-cafe, .fv-scene-preset-library
+  + Light mode overrides
 ```
 
-#### `_fv-effects.scss` (NEW — 120 lines)
+#### `_fv-effects.scss` (200+ lines — v2.0 all 19 effects)
 
 ```
 Customizes ALL .fv-fx-* classes for ARKAN colors:
-  .fv-fx-glass, .fv-fx-hover-lift, .fv-fx-mouse-glow
-  .fv-fx-gradient-animated, .fv-fx-gradient-text, .fv-fx-morph-blob
+  Core: .fv-fx-glass, .fv-fx-hover-lift, .fv-fx-page-enter, .fv-fx-mouse-glow
+  Gradients: .fv-fx-gradient-animated (custom @keyframe), .fv-fx-gradient-text, .fv-fx-hover-shine
+  Shapes: .fv-fx-morph-blob, .fv-fx-parallax-container, .fv-fx-dot-pattern
+  Numbers: .fv-fx-number-ticker, .fv-fx-glow-card
+  Text: .fv-fx-typewriter, .fv-fx-morphing-text, .fv-fx-text-loop, .fv-fx-vertical-text
+  Effects: .fv-fx-confetti, .fv-fx-ripple
+  Media: .fv-fx-lottie-container
+  + Light mode overrides for gradient-animated
 ```
 
 #### `_layout.scss` (~1,450 lines) — LARGEST SCSS
@@ -465,7 +493,7 @@ arkan.isLoginPage = function () {
 
 4. **Script load order** — `hooks.py` `app_include_js` array determines load order. `arkan_theme.js` must be first (sets up namespace). `arkan_skyline.js` must load before `arkan_splash.js` and `arkan_login.js` (they call `arkan.neuralGrid.create()`).
 
-5. **SCSS compilation** is NOT automatic. After editing `.scss` files, you must run `npx sass` manually, then `bench build`. The Frappe `bench watch` only watches for JS changes.
+5. **SCSS compilation** — Desk CSS now uses `arkan_theme.bundle.scss` (esbuild auto-compiles, including RTL). Static `arkan.css` for web pages requires manual compilation via `node -e "require('sass').compile(...)"`. `bench build --app arkan_theme` handles both.
 
 6. **Asset symlink** — `bench build` creates symlinks from `sites/assets/arkan_theme/` → `apps/arkan_theme/arkan_theme/public/`. Direct file edits in `public/` are immediately visible without rebuild for JS/CSS (but cache must be cleared).
 
@@ -504,4 +532,4 @@ bench --site dev.localhost clear-cache
 
 ---
 
-_Last updated: 2025 — Generated for AI model consumption_
+_Last updated: 2026-04-07 — v17.0.0 (frappe_visual v2.0 deep integration)_
