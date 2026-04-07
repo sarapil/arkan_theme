@@ -5,19 +5,43 @@
 // and the in-progress/success states.
 //
 // Frappe setup wizard DOM (v16):
-//   [data-page-name="setup-wizard"]
-//     .slides-progress > .slide-step (.active | .step-success)
-//     .slides-wrapper.setup-wizard-slide
-//       .slide-wrapper > .slide-body
-//         h1.slide-title + .slide-help
-//         .form-wrapper > .form
-//       .slide-footer > .prev-btn + .next-btn
-//     .toggle-theme-btn (absolute top-right)
-//     (in-progress): .setup-in-progress .state-icon-container .setup-message .progress .success-state
+//   body[data-route^="setup-wizard"]
+//     .main-section > #body
+//       #page-setup-wizard.content.page-container[data-page-route="setup-wizard"]
+//         .page-head (hidden)
+//         .slides-progress > .slide-step (.active | .step-success)
+//         .slides-wrapper.container.setup-wizard-slide.with-form
+//           .slide-container > .slide-wrapper > .slide-body
+//             h1.slide-title + .slide-help
+//             .form-wrapper > .form
+//           .slide-footer > .prev-btn + .next-btn
+//   .toggle-theme-btn (absolute top-right)
+//   (in-progress): .setup-in-progress .state-icon-container .setup-message .progress .success-state
 // ════════════════════════════════════════════════════════════════════
 
-// ── 1. Page-level background & centering ──
-[data-page-name="setup-wizard"] {
+// ── 1. Body-level: hide navbar, sidebar; set dark background ──
+body[data-route^="setup-wizard"] {
+    background: $arkan-deep-black !important;
+
+    // Hide main navbar and sidebar globally when wizard is active
+    header,
+    .navbar,
+    .col-lg-2.layout-side-section {
+        display: none !important;
+    }
+
+    // Make the #body container full-screen centered
+    #body {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 100vh !important;
+        padding: 0 !important;
+    }
+}
+
+// ── 2. Page Container ──
+#page-setup-wizard {
     background: $arkan-deep-black !important;
     min-height: 100vh;
     display: flex;
@@ -26,6 +50,9 @@
     justify-content: flex-start;
     position: relative;
     overflow-x: hidden;
+    width: 100%;
+    max-width: 100% !important;
+    padding: 0 !important;
 
     // Radial glow background
     &::before {
@@ -46,17 +73,21 @@
         z-index: 1;
     }
 
-    // Hide standard navbar when shown on wizard page
-    .navbar,
-    .page-head,
-    .page-breadcrumbs {
+    // Hide page-head (empty on wizard but takes space)
+    .page-head {
+        display: none !important;
+    }
+
+    // Hide page-body wrapper if rendered
+    > .page-body {
         display: none !important;
     }
 }
 
-// ── 2. Progress Dots ──
-[data-page-name="setup-wizard"] .slides-progress {
-    margin-top: 60px;
+// ── 3. Progress Dots ──
+#page-setup-wizard .slides-progress {
+    margin-top: 80px;
+    margin-bottom: var(--margin-lg);
 
     .slide-step {
         border-color: $arkan-border;
@@ -91,16 +122,16 @@
     }
 }
 
-// ── 3. Main Card — Glass morphism ──
-[data-page-name="setup-wizard"] .slides-wrapper {
+// ── 4. Main Card — Glass morphism ──
+#page-setup-wizard .slides-wrapper {
     @include arkan-glass(0.7);
-    border-radius: $arkan-radius-lg;
+    border-radius: $arkan-radius-lg !important;
     box-shadow:
         $arkan-shadow-card,
         0 0 40px rgba($arkan-cyan, 0.04);
-    border: 1px solid rgba($arkan-cyan, 0.10);
+    border: 1px solid rgba($arkan-cyan, 0.10) !important;
     max-width: 560px;
-    padding: var(--padding-xl) var(--padding-xl) var(--padding-lg);
+    padding: var(--padding-xl) var(--padding-xl) var(--padding-lg) !important;
     animation: arkan-wizard-enter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 
     // Subtle gradient border shimmer
@@ -109,18 +140,16 @@
         opacity: 0.25;
     }
 
-    // ── 3a. Slide Title ──
+    // ── 4a. Slide Title ──
     h1.slide-title {
         color: $arkan-text-primary;
         font-family: $arkan-font-heading;
         font-weight: 700;
         letter-spacing: -0.02em;
-
-        // Gradient accent on title
         @include arkan-gradient-text;
     }
 
-    // ── 3b. Help text ──
+    // ── 4b. Help text ──
     .slide-help,
     .lead {
         color: $arkan-text-secondary;
@@ -128,20 +157,20 @@
         line-height: 1.6;
     }
 
-    // ── 3c. Content/description area ──
+    // ── 4c. Content/description area ──
     .content {
         color: $arkan-text-secondary;
     }
 
-    // ── 3d. Image illustrations ──
+    // ── 4d. Image illustrations ──
     .slide-body img {
         border-radius: $arkan-radius-md;
         filter: brightness(0.95);
     }
 }
 
-// ── 4. Form Fields inside Wizard ──
-[data-page-name="setup-wizard"] .slides-wrapper .form-wrapper {
+// ── 5. Form Fields inside Wizard ──
+#page-setup-wizard .slides-wrapper .form-wrapper {
     .frappe-control {
         .control-label,
         .label-area label {
@@ -179,20 +208,18 @@
             color: $arkan-cyan;
         }
 
-        // Select2 / Awesomplete drop-downs
         .frappe-control[data-fieldtype="Select"] select {
-            background-image: none;  // Remove default arrow; theme handles
+            background-image: none;
         }
     }
 
-    // Checkbox
     .checkbox .label-area {
         color: $arkan-text-secondary;
     }
 }
 
-// ── 5. Slide Footer — Buttons ──
-[data-page-name="setup-wizard"] .slides-wrapper .slide-footer {
+// ── 6. Slide Footer — Buttons ──
+#page-setup-wizard .slides-wrapper .slide-footer {
     border-block-start: 1px solid rgba($arkan-border, 0.5);
     padding-block-start: var(--padding-md);
     margin-block-start: var(--margin-lg);
@@ -238,8 +265,8 @@
     }
 }
 
-// ── 6. In-Progress State ──
-[data-page-name="setup-wizard"] .slides-wrapper.setup-in-progress {
+// ── 7. In-Progress State ──
+#page-setup-wizard .slides-wrapper.setup-in-progress {
     .state-icon-container {
         .icon use {
             stroke: $arkan-cyan;
@@ -274,8 +301,8 @@
     }
 }
 
-// ── 7. Success State ──
-[data-page-name="setup-wizard"] .slides-wrapper .success-state {
+// ── 8. Success State ──
+#page-setup-wizard .slides-wrapper .success-state {
     .icon use {
         stroke: $arkan-green;
     }
@@ -286,9 +313,10 @@
     }
 }
 
-// ── 8. Theme Toggle Button ──
-[data-page-name="setup-wizard"] .toggle-theme-btn {
+// ── 9. Theme Toggle Button ──
+body[data-route^="setup-wizard"] .toggle-theme-btn {
     color: $arkan-text-muted;
+    z-index: 10;
     transition: color $arkan-transition-fast;
 
     &:hover {
@@ -296,8 +324,8 @@
     }
 }
 
-// ── 9. "Add More" rows (like adding users) ──
-[data-page-name="setup-wizard"] .slides-wrapper .add-more {
+// ── 10. "Add More" rows (like adding users) ──
+#page-setup-wizard .slides-wrapper .add-more {
     .btn {
         color: $arkan-cyan;
         border-color: rgba($arkan-cyan, 0.2);
@@ -308,7 +336,7 @@
     }
 }
 
-// ── 10. Entrance Animation ──
+// ── 11. Entrance Animation ──
 @keyframes arkan-wizard-enter {
     0% {
         opacity: 0;
@@ -321,7 +349,7 @@
 }
 
 // Slide transition
-[data-page-name="setup-wizard"] .slide-wrapper {
+#page-setup-wizard .slide-wrapper {
     animation: arkan-wizard-slide-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
@@ -336,8 +364,8 @@
     }
 }
 
-// ── 11. RTL Overrides ──
-[dir="rtl"] [data-page-name="setup-wizard"] .slide-wrapper {
+// ── 12. RTL Overrides ──
+[dir="rtl"] #page-setup-wizard .slide-wrapper {
     animation-name: arkan-wizard-slide-in-rtl;
 }
 
@@ -352,14 +380,19 @@
     }
 }
 
-// ── 12. Responsive ──
+// ── 13. Responsive ──
 @media (max-width: 576px) {
-    [data-page-name="setup-wizard"] .slides-wrapper {
+    #page-setup-wizard .slides-wrapper {
         margin-inline: var(--margin-sm);
-        padding: var(--padding-lg) var(--padding-md);
+        padding: var(--padding-lg) var(--padding-md) !important;
+        border-radius: $arkan-radius-md !important;
     }
 
-    [data-page-name="setup-wizard"] .slides-progress {
+    #page-setup-wizard .slides-progress {
         margin-top: 40px;
+    }
+
+    body[data-route^="setup-wizard"] #body {
+        padding: var(--padding-sm) !important;
     }
 }
