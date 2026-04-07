@@ -16,14 +16,13 @@
 @import 'darkmode';
 @import 'animations';
 @import 'transitions';
-@import 'mobile-nav';
 @import 'login';
 @import 'print';
 @import 'rtl';
 @import 'seasons';
-@import 'shortcuts';
-@import 'tour';
-@import 'presets';
-@import 'ambient';
 @import 'minigame';
-@import 'welcome-msg';
+
+// frappe_visual integration overrides
+@import 'fv-overrides';
+@import 'fv-scene';
+@import 'fv-effects';

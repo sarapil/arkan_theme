@@ -1,0 +1,123 @@
+// ARKAN Theme — frappe_visual CSS Effect Overrides
+// Customizes .fv-fx-* classes for ARKAN's dark cyber-tech palette
+
+// ── Glass effect — deeper background for ARKAN ──
+.fv-fx-glass {
+    background: rgba(17, 24, 39, 0.6) !important;
+    border: 1px solid rgba(0, 240, 255, 0.08) !important;
+    backdrop-filter: blur(12px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(150%) !important;
+}
+
+body.arkan-light-mode .fv-fx-glass {
+    background: rgba(255, 255, 255, 0.7) !important;
+    border-color: rgba(0, 240, 255, 0.12) !important;
+}
+
+// ── Hover lift — cyan glow on lift ──
+.fv-fx-hover-lift {
+    transition: transform $arkan-transition-normal, box-shadow $arkan-transition-normal !important;
+
+    &:hover {
+        box-shadow: $arkan-glow-cyan !important;
+    }
+}
+
+// ── Page enter — slide-up with ARKAN timing ──
+.fv-fx-page-enter {
+    animation-duration: 400ms !important;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+// ── Mouse glow — cyan color ──
+.fv-fx-mouse-glow {
+    --fv-glow-color: #{$arkan-cyan};
+    --fv-glow-size: 200px;
+    --fv-glow-opacity: 0.12;
+}
+
+// ── Gradient animated — ARKAN cyan→purple ──
+.fv-fx-gradient-animated {
+    background: linear-gradient(
+        -45deg,
+        $arkan-deep-black,
+        rgba($arkan-cyan, 0.15),
+        $arkan-deep-black,
+        rgba($arkan-purple, 0.15)
+    ) !important;
+    background-size: 400% 400% !important;
+}
+
+// ── Hover shine — cyan sweep ──
+.fv-fx-hover-shine {
+    &::before {
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba($arkan-cyan, 0.15),
+            transparent
+        ) !important;
+    }
+}
+
+// ── Gradient text — ARKAN branded ──
+.fv-fx-gradient-text {
+    background: $arkan-gradient-primary !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+
+// ── Morph blob — cyan/purple blobs ──
+.fv-fx-morph-blob {
+    &::before {
+        background: radial-gradient(circle, rgba($arkan-cyan, 0.08), transparent 70%) !important;
+    }
+    &::after {
+        background: radial-gradient(circle, rgba($arkan-purple, 0.06), transparent 70%) !important;
+    }
+}
+
+// ── Parallax container — ensured in ARKAN z-index ──
+.fv-fx-parallax-container {
+    z-index: $z-content;
+}
+
+// ── Dot pattern — subtle ARKAN grid ──
+.fv-fx-dot-pattern {
+    --fv-dot-color: #{rgba($arkan-cyan, 0.06)};
+    --fv-dot-size: 1px;
+    --fv-dot-spacing: 24px;
+}
+
+// ── Number ticker ──
+.fv-fx-number-ticker {
+    font-family: $arkan-font-heading;
+    color: var(--arkan-cyan);
+}
+
+// ── Glow card ──
+.fv-fx-glow-card {
+    --fv-glow-color: #{$arkan-cyan};
+    border-radius: $arkan-radius-lg;
+}
+
+// ── Typewriter ──
+.fv-fx-typewriter {
+    font-family: $arkan-font-mono;
+    color: var(--arkan-cyan);
+
+    &::after {
+        background-color: var(--arkan-cyan);
+    }
+}
+
+// ── Confetti colors ──
+.fv-fx-confetti {
+    --fv-confetti-colors: #{$arkan-cyan}, #{$arkan-purple}, #{$arkan-green}, #{$arkan-amber};
+}
+
+// ── Ripple ──
+.fv-fx-ripple {
+    --fv-ripple-color: #{rgba($arkan-cyan, 0.25)};
+}

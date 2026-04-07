@@ -535,7 +535,7 @@ html[dir="rtl"] body[data-path="login"],
 body[data-path="login"][dir="rtl"] {
     .page-card {
         direction: rtl;
-        text-align: right;
+        text-align: start;
     }
     .page-card-head {
         text-align: center !important;
@@ -548,9 +548,9 @@ body[data-path="login"][dir="rtl"] {
     input[type="email"],
     input[type="tel"],
     .form-control {
-        text-align: right !important;
+        text-align: start !important;
         direction: rtl;
-        &::placeholder { text-align: right !important; }
+        &::placeholder { text-align: start !important; }
     }
     .toggle-password {
         left: 9px !important;

@@ -1,8 +1,3 @@
-// Copyright (c) 2024, Moataz M Hassan (Arkan Lab)
-// Developer Website: https://arkan.it.com
-// License: MIT
-// For license information, please see license.txt
-
 // ═══════════════════════════════════════════════════════════════════
 // ARKAN Theme — Bundled Desk JS
 // AI & Technology Solutions — Futuristic Cyber-Tech
@@ -11,14 +6,20 @@
 // ═══════════════════════════════════════════════════════════════════
 
 // ── arkan_theme.js ──
-// ARKAN Theme — Main Coordinator
-// AI & Technology Solutions — Futuristic Cyber-Tech
+// Copyright (c) 2024, Moataz M Hassan (Arkan Lab)
+// Developer Website: https://arkan.it.com
+// License: MIT
+// For license information, please see license.txt
+
+// ARKAN Theme — Main Coordinator (Slim)
+// Delegates dark mode, shortcuts, mobile, workspace, forms, tour, effects,
+// cursor, loading, presets, desktop, welcome to fv_integration.js
 (function() {
     "use strict";
 
     window.arkan = window.arkan || {};
 
-    const DEFAULTS = {
+    var DEFAULTS = {
         brand_name: "ARKAN",
         primary_color: "#00F0FF",
         secondary_color: "#0A0F1C",
@@ -27,9 +28,9 @@
         enable_splash_screen: 1,
         enable_neural_grid: 1,
         enable_matrix_rain: 0,
-        enable_particles: 1,
+        enable_particles: 0,
         enable_glitch_effects: 1,
-        enable_cursor_effects: 1,
+        enable_cursor_effects: 0,
         enable_sounds: 0,
         enable_search_overlay: 1,
         default_dark_mode: 1,
@@ -50,15 +51,13 @@
     };
 
     arkan.init = function() {
-        console.log('[ARKAN] init() starting…');
-
         // Merge boot settings
         if (frappe.boot && frappe.boot.arkan_theme) {
             Object.assign(arkan.config, frappe.boot.arkan_theme);
         }
 
         // Apply CSS custom properties from config
-        const root = document.documentElement;
+        var root = document.documentElement;
         root.style.setProperty('--arkan-cyan', arkan.config.primary_color);
         root.style.setProperty('--arkan-bg-deep', arkan.config.secondary_color);
         root.style.setProperty('--arkan-purple', arkan.config.accent_color);
@@ -66,72 +65,49 @@
         // Set favicon
         arkan._setFavicon(arkan.config.favicon_url);
 
-        // Fix: remove stale body padding from other themes (arrowz_theme adds
-        // padding-top for a .navbar that does not exist on desk)
+        // Fix stale body padding from other themes
         if (!document.querySelector('.navbar')) {
             document.body.style.setProperty('padding-top', '0', 'important');
         }
 
-        // Ensure main-section fills remaining space in body flex-row
-        const mainSection = document.querySelector('.main-section');
+        // Ensure main-section fills remaining space
+        var mainSection = document.querySelector('.main-section');
         if (mainSection) {
             mainSection.style.setProperty('flex', '1 1 0%', 'important');
             mainSection.style.setProperty('min-width', '0');
         }
 
-        // Initialize dark mode FIRST (dark is default)
-        if (typeof arkan.darkmode !== 'undefined') {
-            arkan._initModule('darkmode', () => arkan.darkmode.init());
-        }
-
-        // Initialize topbar early so user sees branded bar immediately
-        if (typeof arkan.topbar !== 'undefined') {
-            arkan._initModule('topbar', () => arkan.topbar.init());
-        }
-
-        // Initialize modules — each wrapped so one failure cannot kill the rest
+        // Initialize kept modules (unique brand features only)
         if (arkan.config.enable_neural_grid && typeof arkan.neuralGrid !== 'undefined') {
-            arkan._initModule('neuralGrid', () => arkan.neuralGrid.init());
+            arkan._initModule('neuralGrid', function() { arkan.neuralGrid.init(); });
         }
         if (arkan.config.enable_splash_screen && typeof arkan.splash !== 'undefined') {
-            arkan._initModule('splash', () => arkan.splash.init());
-        }
-        if (arkan.config.enable_particles && typeof arkan.effects !== 'undefined') {
-            arkan._initModule('effects', () => arkan.effects.init());
-        }
-        if (arkan.config.enable_cursor_effects && typeof arkan.cursor !== 'undefined') {
-            arkan._initModule('cursor', () => arkan.cursor.init());
+            arkan._initModule('splash', function() { arkan.splash.init(); });
         }
         if (arkan.config.enable_matrix_rain && typeof arkan.matrix !== 'undefined') {
-            arkan._initModule('matrix', () => arkan.matrix.init());
+            arkan._initModule('matrix', function() { arkan.matrix.init(); });
         }
         if (arkan.config.enable_sounds && typeof arkan.sounds !== 'undefined') {
-            arkan._initModule('sounds', () => arkan.sounds.init());
-        }
-        if (typeof arkan.workspace !== 'undefined') {
-            arkan._initModule('workspace', () => arkan.workspace.init());
+            arkan._initModule('sounds', function() { arkan.sounds.init(); });
         }
         if (typeof arkan.navbar !== 'undefined') {
-            arkan._initModule('navbar', () => arkan.navbar.init());
+            arkan._initModule('navbar', function() { arkan.navbar.init(); });
         }
 
         // Apply custom CSS/JS from settings
         if (arkan.config.custom_css) {
-            const style = document.createElement('style');
+            var style = document.createElement('style');
             style.textContent = arkan.config.custom_css;
             document.head.appendChild(style);
         }
-        if (arkan.config.custom_js) {
-            try { new Function(arkan.config.custom_js)(); } catch(e) { console.warn('[ARKAN] Custom JS error:', e); }
-        }
 
-        console.log('%c⚡ ARKAN Theme v' + (arkan.config.version || '16.0.0') + ' initialized',
+        console.log('%c⚡ ARKAN Theme v' + (arkan.config.version || '16.2.0') + ' initialized',
             'color:#00F0FF;font-weight:bold;font-size:14px;text-shadow:0 0 10px #00F0FF');
     };
 
     arkan._setFavicon = function(url) {
         if (!url) return;
-        let link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+        var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
         link.type = 'image/x-icon';
         link.rel = 'shortcut icon';
         link.href = url;
@@ -147,8 +123,8 @@
     });
 
     // Fallback if app_ready already fired
-    if (frappe.boot) {
-        setTimeout(() => {
+    if (typeof frappe !== 'undefined' && frappe.boot) {
+        setTimeout(function() {
             if (!arkan._initialized) {
                 arkan._initialized = true;
                 arkan.init();
@@ -158,43 +134,39 @@
 })();
 
 
-// ── arkan_darkmode.js ──
-// ARKAN Dark Mode — Dark-first (default is ALWAYS dark)
-// ARKAN is a dark-first theme. We override Frappe's desk_theme to ensure
-// consistent dark styling. Users can manually toggle to light via the UI.
+// ── fv_integration.js ──
+// Copyright (c) 2024, Arkan Lab — https://arkan.it.com
+// License: MIT
+// frappe_visual Integration for ARKAN Theme
+// Central bridge: replaces arkan_darkmode, arkan_shortcuts, arkan_mobile,
+// arkan_workspace, arkan_forms, arkan_tour, arkan_effects, arkan_cursor,
+// arkan_loading, arkan_presets, arkan_desktop, arkan_topbar, arkan_ambient,
+// arkan_welcome_msg — all delegated to frappe_visual components.
+
 (function() {
     "use strict";
+
     window.arkan = window.arkan || {};
 
+    // ── Dark Mode — delegates to frappe.visual.ThemeManager ──
     const STORAGE_KEY = 'arkan-theme-mode';
 
     arkan.darkmode = {
+        currentMode: 'dark',
+
         init: function() {
             const saved = localStorage.getItem(STORAGE_KEY);
             const defaultDark = arkan.config ? arkan.config.default_dark_mode : 1;
-
-            if (saved) {
-                // User explicitly chose a mode — respect it
-                this.setMode(saved);
-            } else if (defaultDark) {
-                // ARKAN default: force dark mode regardless of Frappe's desk_theme
-                this.setMode('dark');
-            } else {
-                this.setMode('dark');
-            }
+            this.setMode(saved || (defaultDark ? 'dark' : 'dark'));
         },
 
         setMode: function(mode) {
-            // Set both data-theme and data-theme-mode so Frappe's theme
-            // system stays in sync with our choice
             document.documentElement.setAttribute('data-theme', mode);
             document.documentElement.setAttribute('data-theme-mode', mode);
             document.body.classList.toggle('arkan-light-mode', mode === 'light');
             document.body.classList.toggle('arkan-dark-mode', mode === 'dark');
             localStorage.setItem(STORAGE_KEY, mode);
             this.currentMode = mode;
-
-            // Dispatch event for other modules
             document.dispatchEvent(new CustomEvent('arkan-theme-change', { detail: { mode } }));
         },
 
@@ -206,203 +178,297 @@
             return this.currentMode === 'dark';
         }
     };
+
+    // ── Loading overlay (simple, fv-compatible) ──
+    arkan.loading = {
+        overlay: null,
+
+        show: function(message) {
+            if (this.overlay) return;
+            this.overlay = document.createElement('div');
+            this.overlay.className = 'fv-fx-glass';
+            this.overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(10,15,28,0.85);backdrop-filter:blur(4px);';
+            this.overlay.innerHTML =
+                '<div style="width:40px;height:40px;border:2px solid var(--arkan-border,#2D3A4F);border-top-color:var(--arkan-cyan,#00F0FF);border-radius:50%;animation:spin 0.8s linear infinite;"></div>' +
+                '<div style="color:var(--arkan-text,#E8ECF1);font-family:var(--arkan-font-heading);margin-top:16px;font-size:14px;">' + (message || __('Processing...')) + '</div>' +
+                '<style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
+            document.body.appendChild(this.overlay);
+        },
+
+        hide: function() {
+            if (this.overlay) {
+                this.overlay.style.opacity = '0';
+                setTimeout(() => { if (this.overlay) { this.overlay.remove(); this.overlay = null; } }, 300);
+            }
+        }
+    };
+
+    // ── Workspace welcome banner ──
+    arkan.workspace = {
+        init: function() {
+            if (typeof frappe !== 'undefined' && frappe.router && typeof frappe.router.on === 'function') {
+                frappe.router.on('change', () => this._onRoute());
+            }
+            this._onRoute();
+        },
+
+        _onRoute: function() {
+            setTimeout(() => {
+                const route = frappe.get_route_str();
+                if (route === '' || route.startsWith('Workspaces')) {
+                    this._enhance();
+                }
+            }, 300);
+        },
+
+        _enhance: function() {
+            const container = document.querySelector('.workspace-container .codex-editor, .desk-page .layout-main');
+            if (container && !document.querySelector('.arkan-welcome-banner')) {
+                const banner = document.createElement('div');
+                banner.className = 'arkan-welcome-banner fv-fx-page-enter';
+                const hour = new Date().getHours();
+                const greeting = hour < 12 ? __('Good Morning') : hour < 17 ? __('Good Afternoon') : __('Good Evening');
+                const user = frappe.session.user_fullname || __('User');
+                banner.innerHTML =
+                    '<div class="arkan-welcome-title">' + greeting + ', ' + user + '</div>' +
+                    '<div class="arkan-welcome-subtitle">// ' + (arkan.config.brand_name || 'ARKAN') + ' — ' + __('AI & Technology Solutions') + '</div>';
+                container.parentNode.insertBefore(banner, container);
+            }
+            // Animate workspace widgets with stagger
+            document.querySelectorAll('.widget:not(.arkan-animated)').forEach(function(w, i) {
+                w.classList.add('arkan-animated', 'fv-fx-page-enter');
+                w.style.animationDelay = (i * 0.05) + 's';
+            });
+        }
+    };
+
+    // ── Forms timeline reveal ──
+    arkan.forms = {
+        init: function() {
+            if (!('IntersectionObserver' in window)) return;
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(e) {
+                    if (e.isIntersecting) {
+                        e.target.classList.add('fv-fx-page-enter');
+                        observer.unobserve(e.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.timeline-item, .form-section').forEach(function(el) { observer.observe(el); });
+        }
+    };
+
+    $(document).on('form-render', function() { setTimeout(function() { arkan.forms.init(); }, 200); });
+
+    // ── frappe_visual integration on app_ready ──
+    $(document).on("app_ready", function() {
+        // Initialize dark mode
+        arkan.darkmode.init();
+
+        // Initialize workspace enhancer
+        arkan.workspace.init();
+
+        // Register app color
+        document.documentElement.style.setProperty("--arkan-theme-primary", "#1E40AF");
+
+        // Load frappe_visual lazy — configure auto-enhancers & register shortcuts
+        if (typeof frappe !== 'undefined' && frappe.require) {
+            frappe.require("frappe_visual.bundle.js", function() {
+                if (!frappe.visual) return;
+
+                // Theme sync — bridge ARKAN dark mode to fv ThemeManager
+                if (frappe.visual.ThemeManager && frappe.visual.ThemeManager.init) {
+                    try { frappe.visual.ThemeManager.init(); } catch(e) {}
+                }
+
+                // Configure auto-enhancers
+                if (frappe.visual.formEnhancer && frappe.visual.formEnhancer.configure) {
+                    try {
+                        frappe.visual.formEnhancer.configure({
+                            showGraph: true, showStats: true, showQuickLinks: true, animate: true,
+                        });
+                    } catch(e) {}
+                }
+                if (frappe.visual.workspaceEnhancer && frappe.visual.workspaceEnhancer.configure) {
+                    try {
+                        frappe.visual.workspaceEnhancer.configure({
+                            glassCards: true, sparklines: true, liveCounts: true,
+                        });
+                    } catch(e) {}
+                }
+
+                // Shortcuts — replaces arkan_shortcuts.js
+                if (frappe.visual.shortcutManager) {
+                    try {
+                        frappe.visual.shortcutManager({
+                            shortcuts: [
+                                { key: 'mod+shift+d', action: function() { arkan.darkmode.toggle(); }, label: __('Toggle Dark Mode') },
+                                { key: 'mod+shift+n', action: function() { if (arkan.neuralGrid) arkan.neuralGrid.toggle(); }, label: __('Toggle Neural Grid') },
+                                { key: 'mod+shift+s', action: function() { if (arkan.sounds) arkan.sounds.toggle(); }, label: __('Toggle Sounds') },
+                            ]
+                        });
+                    } catch(e) {
+                        // Fallback: register Ctrl+Shift+D manually
+                        document.addEventListener('keydown', function(e) {
+                            if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+                                e.preventDefault();
+                                arkan.darkmode.toggle();
+                            }
+                        });
+                    }
+                }
+
+                // Mobile bottom nav — replaces arkan_mobile.js
+                if (frappe.is_mobile && frappe.is_mobile() && frappe.visual.bottomNav) {
+                    try {
+                        frappe.visual.bottomNav({
+                            items: [
+                                { icon: 'home', label: __('Home'), route: '/desk' },
+                                { icon: 'search', label: __('Search'), action: function() { if (frappe.visual.commandBar) frappe.visual.commandBar.open(); } },
+                                { icon: 'plus', label: __('New'), action: function() { frappe.new_doc(); } },
+                                { icon: 'bell', label: __('Alerts'), route: '/desk#notifications' },
+                                { icon: 'settings', label: __('Settings'), route: '/app/arkan-settings' },
+                            ],
+                        });
+                    } catch(e) {}
+                }
+
+                console.log('%c⚡ ARKAN + frappe_visual integration active', 'color:#00F0FF;font-weight:bold;');
+            });
+        }
+    });
+
+    // ── Route-based visual page rendering ──
+    $(document).on("page-change", function() {
+        if (!frappe.visual || !frappe.visual.generator) return;
+
+        // Visual Settings Page
+        if (frappe.get_route_str() === 'arkan-theme-settings') {
+            var page = frappe.container.page;
+            if (page && page.main && frappe.visual.generator) {
+                frappe.visual.generator.settingsPage(
+                    page.main[0] || page.main,
+                    "ARKAN Settings"
+                );
+            }
+        }
+
+        // Visual Reports Hub
+        if (frappe.get_route_str() === 'arkan-theme-reports') {
+            var page = frappe.container.page;
+            if (page && page.main && frappe.visual.generator) {
+                frappe.visual.generator.reportsHub(
+                    page.main[0] || page.main,
+                    "ARKAN Theme"
+                );
+            }
+        }
+    });
 })();
 
 
-// ── arkan_topbar.js ──
-// ARKAN Topbar — Branded navigation bar
-// In Frappe v16 desk, there is no .navbar — the desk uses a sidebar + .page-head.
-// This script creates a visible ARKAN-branded topbar at the top of .main-section
-// containing brand, the Frappe desktop search module (AwesomeBar), and comm icons.
+// ── arkan_navbar.js ──
+// Copyright (c) 2024, Moataz M Hassan (Arkan Lab)
+// Developer Website: https://arkan.it.com
+// License: MIT
+// For license information, please see license.txt
+
+// ARKAN Navbar — Sidebar glow & dark mode toggle (slim)
+// Topbar creation moved to Frappe native. Dark mode delegated to fv_integration.
 (function() {
     "use strict";
     window.arkan = window.arkan || {};
 
-    var TOPBAR_HEIGHT = 40; // px
-    function _t(s) { return typeof __ === 'function' ? __(s) : s; }
-
-    // Communication channels kept in topbar (messages + chat only)
-    var COMM_CHANNELS = [
-        {
-            id: 'messages',
-            title: 'Messages',
-            icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
-            route: 'List/Communication'
-        },
-        {
-            id: 'chat',
-            title: 'Chat',
-            icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>',
-            action: function() {
-                if (window.arrowz && arrowz.omni_panel && arrowz.omni_panel.toggle_panel) {
-                    arrowz.omni_panel.toggle_panel();
-                } else if (typeof frappe !== 'undefined') {
-                    frappe.set_route('List/AZ Conversation Session');
-                }
-            }
-        }
-    ];
-
-    arkan.topbar = {
-        _awesomebarReady: false,
-
+    arkan.navbar = {
         init: function() {
-            if (document.querySelector('.arkan-topbar')) return;
-            this._createTopbar();
-            this._brandSidebar();
-            // Retry if main-section not ready
-            if (!document.querySelector('.main-section .arkan-topbar')) {
-                setTimeout(function() { arkan.topbar._createTopbar(); }, 500);
-                setTimeout(function() { arkan.topbar._createTopbar(); }, 1500);
+            // Web navbar glow line (login, portal pages)
+            var navbar = document.querySelector('.navbar');
+            if (navbar) {
+                this._enhanceWebNavbar(navbar);
             }
-            if (!document.querySelector('.body-sidebar')) {
-                setTimeout(function() { arkan.topbar._brandSidebar(); }, 500);
-                setTimeout(function() { arkan.topbar._brandSidebar(); }, 1500);
-            }
+
+            // Desk sidebar glow + dark mode toggle
+            this._tryDeskSidebar();
         },
 
-        _createTopbar: function() {
-            var mainSection = document.querySelector('.main-section');
-            if (!mainSection || mainSection.querySelector('.arkan-topbar')) return;
-
-            var bar = document.createElement('div');
-            bar.className = 'arkan-topbar';
-
-            // ── Left: ARKAN brand ──
-            var left = document.createElement('div');
-            left.className = 'arkan-topbar-left';
-
-            var logo = document.createElement('div');
-            logo.className = 'arkan-topbar-brand';
-            logo.innerHTML = '<img src="' + (arkan.config.logo_url || '/assets/arkan_theme/images/logo-header.png') + '" alt="ARKAN" class="arkan-topbar-logo">' +
-                '<span class="arkan-topbar-brand-text">ARKAN</span>';
-            logo.addEventListener('click', function() {
-                if (typeof frappe !== 'undefined') frappe.set_route('/');
-            });
-            left.appendChild(logo);
-            bar.appendChild(left);
-
-            // ── Center: Frappe desktop search module + comm icons ──
-            var center = document.createElement('div');
-            center.className = 'arkan-topbar-center';
-
-            // Replicate the exact Frappe desktop search wrapper structure
-            var searchWrapper = document.createElement('div');
-            searchWrapper.className = 'desktop-search-wrapper input-group search-bar arkan-search-bar';
-
-            var searchBtn = document.createElement('button');
-            searchBtn.id = 'arkan-topbar-search';
-            searchBtn.className = 'btn-reset flex justify-between desktop-navbar-modal-search';
-            searchBtn.title = _t('Search');
-
-            var searchIconSpan = document.createElement('span');
-            searchIconSpan.className = 'desktop-search-icon';
-            searchIconSpan.innerHTML = '<svg class="icon icon-sm"><use href="#icon-search"></use></svg> ' + _t('Search');
-            searchBtn.appendChild(searchIconSpan);
-
-            var kbdSpan = document.createElement('span');
-            kbdSpan.className = 'desktop-keyboard-shortcut';
-            if (!frappe.is_mobile()) {
-                kbdSpan.textContent = frappe.utils.is_mac() ? '\u2318K' : 'Ctrl+K';
-            }
-            searchBtn.appendChild(kbdSpan);
-
-            searchWrapper.appendChild(searchBtn);
-            center.appendChild(searchWrapper);
-
-            // ── Communication channel icons ──
-            var commGroup = document.createElement('div');
-            commGroup.className = 'arkan-topbar-comm-group';
-
-            for (var i = 0; i < COMM_CHANNELS.length; i++) {
-                var ch = COMM_CHANNELS[i];
-                var btn = document.createElement('button');
-                btn.className = 'arkan-topbar-comm-btn';
-                btn.setAttribute('data-channel', ch.id);
-                btn.title = _t(ch.title);
-                btn.innerHTML = ch.icon;
-                (function(channel) {
-                    btn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        if (channel.action) {
-                            channel.action();
-                        } else if (channel.route && typeof frappe !== 'undefined') {
-                            frappe.set_route(channel.route);
-                        }
-                    });
-                })(ch);
-                commGroup.appendChild(btn);
-            }
-
-            center.appendChild(commGroup);
-            bar.appendChild(center);
-
-            // Insert topbar and hide the empty <header> gap
-            mainSection.insertBefore(bar, mainSection.firstChild);
-            var header = mainSection.querySelector(':scope > header');
-            if (header) header.style.display = 'none';
-
-            console.log('[ARKAN] topbar created (' + TOPBAR_HEIGHT + 'px)');
-            document.documentElement.style.setProperty('--arkan-topbar-height', TOPBAR_HEIGHT + 'px');
-
-            // Initialize AwesomeBar on the search button
-            this._initAwesomeBar();
-        },
-
-        // ── AwesomeBar — hook Frappe search to our topbar button ──
-        _initAwesomeBar: function() {
-            if (this._awesomebarReady) return;
+        _tryDeskSidebar: function() {
             var self = this;
-            var selector = '.arkan-search-bar #arkan-topbar-search';
-
-            function doSetup() {
-                if (self._awesomebarReady) return;
-                try {
-                    if (typeof frappe !== 'undefined' && frappe.search && frappe.search.AwesomeBar && frappe.boot && frappe.boot.desk_settings && frappe.boot.desk_settings.search_bar) {
-                        var awesome = new frappe.search.AwesomeBar();
-                        awesome.setup(selector);
-                        self._awesomebarReady = true;
-                        console.log('[ARKAN] AwesomeBar bound to topbar search');
-
-                        // Also register keyboard shortcuts
-                        frappe.ui.keys.add_shortcut({
-                            shortcut: 'ctrl+k',
-                            action: function(e) {
-                                $(selector).click();
-                                e.preventDefault();
-                                return false;
-                            },
-                            description: __('Open Awesomebar')
-                        });
-                    } else {
-                        // Frappe not ready yet, retry
-                        setTimeout(doSetup, 500);
+            var sidebar = document.querySelector('.body-sidebar');
+            if (sidebar) {
+                this._enhanceDeskSidebar(sidebar);
+                this._addDarkModeToggle();
+            } else {
+                setTimeout(function() {
+                    var s = document.querySelector('.body-sidebar');
+                    if (s) {
+                        self._enhanceDeskSidebar(s);
+                        self._addDarkModeToggle();
                     }
-                } catch (e) {
-                    console.warn('[ARKAN] AwesomeBar setup deferred', e);
-                    setTimeout(doSetup, 1000);
-                }
+                }, 500);
             }
-
-            // Start trying — Frappe boot may not be complete yet
-            setTimeout(doSetup, 100);
         },
 
-        _brandSidebar: function() {
-            var sidebar = document.querySelector('.body-sidebar');
-            if (!sidebar || sidebar.querySelector('.arkan-sidebar-brand')) return;
-            var brand = document.createElement('div');
-            brand.className = 'arkan-sidebar-brand';
-            brand.innerHTML = '<span class="arkan-sidebar-brand-letter">A</span>';
-            brand.title = 'ARKAN';
-            sidebar.insertBefore(brand, sidebar.firstChild);
+        _enhanceWebNavbar: function(navbar) {
+            if (navbar.querySelector('.arkan-navbar-line')) return;
+            var line = document.createElement('div');
+            line.className = 'arkan-navbar-line';
+            line.style.cssText = 'position:absolute;bottom:0;inset-inline-start:0;width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--arkan-cyan,#00F0FF),transparent);opacity:0.5;';
+            navbar.style.position = 'relative';
+            navbar.appendChild(line);
+        },
+
+        _enhanceDeskSidebar: function(sidebar) {
+            if (sidebar.querySelector('.arkan-sidebar-glow')) return;
+            var glow = document.createElement('div');
+            glow.className = 'arkan-sidebar-glow';
+            glow.style.cssText = 'position:absolute;top:0;inset-inline-end:-1px;width:1px;height:100%;background:linear-gradient(180deg,transparent 10%,rgba(0,240,255,0.3) 50%,transparent 90%);pointer-events:none;z-index:1;';
+            sidebar.appendChild(glow);
+        },
+
+        _addDarkModeToggle: function() {
+            if (document.querySelector('.arkan-darkmode-toggle')) return;
+
+            var btn = document.createElement('button');
+            btn.className = 'arkan-darkmode-toggle';
+            btn.style.cssText = 'background:none;border:none;color:var(--arkan-text-secondary,#94A3B8);cursor:pointer;font-size:16px;padding:6px;margin:0;border-radius:8px;transition:all 150ms ease;display:flex;align-items:center;justify-content:center;';
+            btn.innerHTML = arkan.darkmode && arkan.darkmode.isDark() ? '\u2600\uFE0F' : '\uD83C\uDF19';
+            btn.title = __('Toggle dark/light mode');
+            btn.addEventListener('click', function() {
+                if (arkan.darkmode) {
+                    arkan.darkmode.toggle();
+                    btn.innerHTML = arkan.darkmode.isDark() ? '\u2600\uFE0F' : '\uD83C\uDF19';
+                }
+            });
+            btn.addEventListener('mouseenter', function() { btn.style.background = 'rgba(0,240,255,0.1)'; });
+            btn.addEventListener('mouseleave', function() { btn.style.background = 'none'; });
+
+            // Try desk sidebar bottom
+            var sidebarBottom = document.querySelector('.body-sidebar .body-sidebar-bottom');
+            if (sidebarBottom) {
+                var wrapper = document.createElement('div');
+                wrapper.style.cssText = 'display:flex;justify-content:center;padding:4px 0;';
+                wrapper.appendChild(btn);
+                sidebarBottom.insertBefore(wrapper, sidebarBottom.firstChild);
+                return;
+            }
+
+            // Fallback: web navbar
+            var actions = document.querySelector('.navbar-right, .navbar .navbar-collapse');
+            if (actions) {
+                btn.style.margin = '0 4px';
+                actions.prepend(btn);
+            }
         }
     };
 })();
 
 
 // ── arkan_neural_grid.js ──
+// Copyright (c) 2024, Moataz M Hassan (Arkan Lab)
+// Developer Website: https://arkan.it.com
+// License: MIT
+// For license information, please see license.txt
+
 // ARKAN Neural Grid — Animated neural network visualization
 (function() {
     "use strict";
@@ -520,70 +586,12 @@
 })();
 
 
-// ── arkan_effects.js ──
-// ARKAN Effects — Cyber particles
-(function() {
-    "use strict";
-    window.arkan = window.arkan || {};
-
-    arkan.effects = {
-        particles: [],
-        canvas: null,
-        ctx: null,
-
-        init: function() {
-            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-            this.canvas = document.createElement('canvas');
-            this.canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0.3;';
-            document.body.prepend(this.canvas);
-            this.ctx = this.canvas.getContext('2d');
-            this.resize();
-            this.spawn();
-            this.animate();
-            window.addEventListener('resize', () => this.resize());
-        },
-
-        resize: function() {
-            this.canvas.width = window.innerWidth;
-            this.canvas.height = window.innerHeight;
-        },
-
-        spawn: function() {
-            const count = Math.floor(this.canvas.width / 30);
-            for (let i = 0; i < count; i++) {
-                this.particles.push({
-                    x: Math.random() * this.canvas.width,
-                    y: Math.random() * this.canvas.height,
-                    size: Math.random() * 2 + 0.5,
-                    speedY: -(Math.random() * 0.3 + 0.1),
-                    speedX: (Math.random() - 0.5) * 0.2,
-                    opacity: Math.random() * 0.6 + 0.2,
-                    color: Math.random() > 0.5 ? '#00F0FF' : '#8B5CF6',
-                });
-            }
-        },
-
-        animate: function() {
-            const ctx = this.ctx;
-            ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            this.particles.forEach(p => {
-                p.y += p.speedY;
-                p.x += p.speedX;
-                if (p.y < -10) { p.y = this.canvas.height + 10; p.x = Math.random() * this.canvas.width; }
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fillStyle = p.color;
-                ctx.globalAlpha = p.opacity;
-                ctx.fill();
-            });
-            ctx.globalAlpha = 1;
-            requestAnimationFrame(() => this.animate());
-        }
-    };
-})();
-
-
 // ── arkan_splash.js ──
+// Copyright (c) 2024, Moataz M Hassan (Arkan Lab)
+// Developer Website: https://arkan.it.com
+// License: MIT
+// For license information, please see license.txt
+
 // ARKAN Splash Screen — Neural network formation
 (function() {
     "use strict";
@@ -654,38 +662,12 @@
 })();
 
 
-// ── arkan_loading.js ──
-// ARKAN Loading Overlay
-(function() {
-    "use strict";
-    window.arkan = window.arkan || {};
-
-    arkan.loading = {
-        overlay: null,
-
-        show: function(message) {
-            if (this.overlay) return;
-            this.overlay = document.createElement('div');
-            this.overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(10,15,28,0.85);display:flex;flex-direction:column;align-items:center;justify-content:center;backdrop-filter:blur(4px);';
-            this.overlay.innerHTML = `
-                <div style="width:40px;height:40px;border:2px solid #2D3A4F;border-top-color:#00F0FF;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
-                <div style="color:#E8ECF1;font-family:Space Grotesk,sans-serif;margin-top:16px;font-size:14px;">${message || 'Processing...'}</div>
-                <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
-            `;
-            document.body.appendChild(this.overlay);
-        },
-
-        hide: function() {
-            if (this.overlay) {
-                this.overlay.style.opacity = '0';
-                setTimeout(() => { if(this.overlay) { this.overlay.remove(); this.overlay = null; } }, 300);
-            }
-        }
-    };
-})();
-
-
 // ── arkan_matrix.js ──
+// Copyright (c) 2024, Moataz M Hassan (Arkan Lab)
+// Developer Website: https://arkan.it.com
+// License: MIT
+// For license information, please see license.txt
+
 // ARKAN Matrix Rain — Cyber data rain effect
 (function() {
     "use strict";
@@ -754,6 +736,11 @@
 
 
 // ── arkan_sounds.js ──
+// Copyright (c) 2024, Moataz M Hassan (Arkan Lab)
+// Developer Website: https://arkan.it.com
+// License: MIT
+// For license information, please see license.txt
+
 // ARKAN Sounds — Cyber notification tones via Web Audio API
 (function() {
     "use strict";
@@ -806,327 +793,12 @@
 })();
 
 
-// ── arkan_workspace.js ──
-// ARKAN Workspace — Welcome banner, quick actions, widgets
-(function() {
-    "use strict";
-    window.arkan = window.arkan || {};
-
-    arkan.workspace = {
-        init: function() {
-            // Observe route changes (guard .on in case it's not an emitter yet)
-            if (typeof frappe !== 'undefined' && frappe.router && typeof frappe.router.on === 'function') {
-                frappe.router.on('change', () => this.onRouteChange());
-            }
-            this.onRouteChange();
-        },
-
-        onRouteChange: function() {
-            setTimeout(() => {
-                if (frappe.get_route_str() === '' || frappe.get_route_str().startsWith('Workspaces')) {
-                    this.enhanceWorkspace();
-                }
-            }, 300);
-        },
-
-        enhanceWorkspace: function() {
-            // Add welcome banner if not exists
-            const container = document.querySelector('.workspace-container .codex-editor, .desk-page .layout-main');
-            if (container && !document.querySelector('.arkan-welcome-banner')) {
-                const banner = document.createElement('div');
-                banner.className = 'arkan-welcome-banner arkan-animate-in';
-                const hour = new Date().getHours();
-                const greeting = hour < 12 ? 'Good Morning' : hour < 17 ? 'Good Afternoon' : 'Good Evening';
-                const user = frappe.session.user_fullname || 'User';
-                banner.innerHTML = `
-                    <div class="arkan-welcome-title">${greeting}, ${user}</div>
-                    <div class="arkan-welcome-subtitle">// ${arkan.config.brand_name || 'ARKAN'} — AI & Technology Solutions</div>
-                `;
-                container.parentNode.insertBefore(banner, container);
-            }
-
-            // Animate widgets
-            document.querySelectorAll('.widget:not(.arkan-animated)').forEach((w, i) => {
-                w.classList.add('arkan-animated', 'arkan-animate-in', 'arkan-animate-delay-' + Math.min(i + 1, 10));
-            });
-        }
-    };
-})();
-
-
-// ── arkan_navbar.js ──
-// ARKAN Navbar — Search overlay, notification badges, brand topbar
-// Frappe v16: desk uses sidebar (.body-sidebar) not .navbar.
-// .navbar only exists on web/portal pages (login, website).
-// This script handles both scenarios.
-(function() {
-    "use strict";
-    window.arkan = window.arkan || {};
-
-    arkan.navbar = {
-        init: function() {
-            // Try web navbar first (login, portal pages)
-            const navbar = document.querySelector('.navbar');
-            if (navbar) {
-                this._enhanceWebNavbar(navbar);
-            }
-
-            // Try desk sidebar (app pages) — may need retry
-            this._tryDeskSidebar();
-            this.addDarkModeToggle();
-        },
-
-        _tryDeskSidebar: function() {
-            const sidebar = document.querySelector('.body-sidebar');
-            if (sidebar) {
-                this._enhanceDeskSidebar(sidebar);
-                console.log('[ARKAN] navbar: desk sidebar enhanced');
-            } else {
-                // Sidebar not in DOM yet — retry
-                setTimeout(() => {
-                    const s = document.querySelector('.body-sidebar');
-                    if (s) this._enhanceDeskSidebar(s);
-                }, 500);
-                setTimeout(() => {
-                    const s = document.querySelector('.body-sidebar');
-                    if (s) this._enhanceDeskSidebar(s);
-                }, 1500);
-            }
-        },
-
-        // ── Web-page navbar (login, portal) ──
-        _enhanceWebNavbar: function(navbar) {
-            if (navbar.querySelector('.arkan-navbar-line')) return;
-            const line = document.createElement('div');
-            line.className = 'arkan-navbar-line';
-            line.style.cssText = 'position:absolute;bottom:0;left:0;width:100%;height:1px;background:linear-gradient(90deg,transparent,#00F0FF,transparent);opacity:0.5;';
-            navbar.style.position = 'relative';
-            navbar.appendChild(line);
-        },
-
-        // ── Desk sidebar ──
-        _enhanceDeskSidebar: function(sidebar) {
-            if (sidebar.querySelector('.arkan-sidebar-glow')) return;
-            // Add a subtle glow line on the right edge of the sidebar
-            // NOTE: Do NOT set sidebar.style.position here — inline styles
-            // override Frappe's .expanded .body-sidebar { position: absolute }
-            // and break the collapse/expand mechanism. position: relative is
-            // applied via CSS in arkan.css instead (lower specificity).
-            const glow = document.createElement('div');
-            glow.className = 'arkan-sidebar-glow';
-            glow.style.cssText = 'position:absolute;top:0;right:-1px;width:1px;height:100%;background:linear-gradient(180deg,transparent 10%,rgba(0,240,255,0.3) 50%,transparent 90%);pointer-events:none;z-index:1;';
-            sidebar.appendChild(glow);
-        },
-
-        addDarkModeToggle: function() {
-            if (document.querySelector('.arkan-darkmode-toggle')) return;
-
-            const btn = document.createElement('button');
-            btn.className = 'arkan-darkmode-toggle';
-            btn.style.cssText = 'background:none;border:none;color:var(--arkan-text-secondary,#94A3B8);cursor:pointer;font-size:16px;padding:6px;margin:0;border-radius:8px;transition:all 150ms ease;display:flex;align-items:center;justify-content:center;';
-            btn.innerHTML = arkan.darkmode && arkan.darkmode.isDark() ? '☀️' : '🌙';
-            btn.title = 'Toggle dark/light mode';
-            btn.addEventListener('click', () => {
-                if (arkan.darkmode) {
-                    arkan.darkmode.toggle();
-                    btn.innerHTML = arkan.darkmode.isDark() ? '☀️' : '🌙';
-                }
-            });
-            btn.addEventListener('mouseenter', () => { btn.style.background = 'rgba(0,240,255,0.1)'; });
-            btn.addEventListener('mouseleave', () => { btn.style.background = 'none'; });
-
-            // Try desk sidebar bottom first
-            const sidebarBottom = document.querySelector('.body-sidebar .body-sidebar-bottom');
-            if (sidebarBottom) {
-                const wrapper = document.createElement('div');
-                wrapper.style.cssText = 'display:flex;justify-content:center;padding:4px 0;';
-                wrapper.appendChild(btn);
-                sidebarBottom.insertBefore(wrapper, sidebarBottom.firstChild);
-                return;
-            }
-
-            // Fallback: web navbar
-            const actions = document.querySelector('.navbar-right, .navbar .navbar-collapse');
-            if (actions) {
-                btn.style.margin = '0 4px';
-                actions.prepend(btn);
-            }
-        }
-    };
-})();
-
-
-// ── arkan_forms.js ──
-// ARKAN Forms — Timeline scroll reveal
-(function() {
-    "use strict";
-    window.arkan = window.arkan || {};
-
-    arkan.forms = {
-        init: function() {
-            this.observeTimeline();
-        },
-
-        observeTimeline: function() {
-            if (!('IntersectionObserver' in window)) return;
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(e => {
-                    if (e.isIntersecting) {
-                        e.target.classList.add('arkan-animate-in');
-                        observer.unobserve(e.target);
-                    }
-                });
-            }, { threshold: 0.1 });
-
-            // Observe form timeline items
-            document.querySelectorAll('.timeline-item, .form-section').forEach(el => observer.observe(el));
-        }
-    };
-
-    // Re-init on form render
-    $(document).on('form-render', () => { setTimeout(() => arkan.forms.init(), 200); });
-})();
-
-
-// ── arkan_mobile.js ──
-// ARKAN Mobile Bottom Navigation
-(function() {
-    "use strict";
-    window.arkan = window.arkan || {};
-
-    arkan.mobile = {
-        init: function() {
-            if (window.innerWidth > 768) return;
-            if (document.querySelector('.arkan-mobile-nav')) return;
-
-            const nav = document.createElement('nav');
-            nav.className = 'arkan-mobile-nav';
-            const items = [
-                { icon: '🏠', label: 'Home', route: '/desk' },
-                { icon: '📋', label: 'List', route: '/desk/todo' },
-                { icon: '🔔', label: 'Alerts', route: '/desk/notification-log' },
-                { icon: '⚙️', label: 'Settings', route: '/desk/user-settings' },
-            ];
-            nav.innerHTML = items.map(i =>
-                `<a class="arkan-nav-item" href="${i.route}">
-                    <span class="arkan-nav-icon">${i.icon}</span>
-                    <span>${i.label}</span>
-                </a>`
-            ).join('');
-            document.body.appendChild(nav);
-        }
-    };
-
-    // Init after theme
-    $(document).on('app_ready', () => arkan.mobile.init());
-})();
-
-
-// ── arkan_shortcuts.js ──
-// ARKAN Keyboard Shortcuts
-(function() {
-    "use strict";
-    window.arkan = window.arkan || {};
-    arkan.shortcuts = {
-        init: function() {
-            document.addEventListener('keydown', (e) => {
-                // Ctrl+Shift+D = toggle dark mode
-                if (e.ctrlKey && e.shiftKey && e.key === 'D') {
-                    e.preventDefault();
-                    if (arkan.darkmode) arkan.darkmode.toggle();
-                }
-            });
-        }
-    };
-    $(document).on('app_ready', () => arkan.shortcuts.init());
-})();
-
-
-// ── arkan_seasons.js ──
-// ARKAN Seasons — Cyber seasonal color variations
-(function() {
-    "use strict";
-    window.arkan = window.arkan || {};
-    arkan.seasons = {
-        init: function() {
-            const month = new Date().getMonth();
-            const body = document.body;
-            if (month === 0) body.classList.add('arkan-season-newyear');
-            if (month === 2 || month === 3) body.classList.add('arkan-season-ramadan');
-            if (month === 11) body.classList.add('arkan-season-national');
-        }
-    };
-    $(document).on('app_ready', () => arkan.seasons.init());
-})();
-
-
-// ── arkan_ambient.js ──
-// ARKAN Ambient
-(function() {
-    "use strict";
-    window.arkan = window.arkan || {};
-    arkan.ambient = { init: function() { /* Reserved for ambient sound/visual features */ } };
-})();
-
-
-// ── arkan_cursor.js ──
-// ARKAN Cursor — Neon glow trail
-(function() {
-    "use strict";
-    window.arkan = window.arkan || {};
-
-    arkan.cursor = {
-        trail: [],
-        maxTrail: 12,
-
-        init: function() {
-            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-            if ('ontouchstart' in window) return; // No cursor on touch devices
-
-            this.container = document.createElement('div');
-            this.container.className = 'arkan-cursor-trail';
-            this.container.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:99998;';
-            document.body.appendChild(this.container);
-
-            for (let i = 0; i < this.maxTrail; i++) {
-                const dot = document.createElement('div');
-                const size = Math.max(3, 12 - i * 0.8);
-                dot.style.cssText = `position:absolute;width:${size}px;height:${size}px;border-radius:50%;background:${i % 2 === 0 ? '#00F0FF' : '#8B5CF6'};opacity:${0.6 - i * 0.04};pointer-events:none;transition:transform 0.05s;filter:blur(${i * 0.3}px);`;
-                this.container.appendChild(dot);
-                this.trail.push({ el: dot, x: -100, y: -100 });
-            }
-
-            document.addEventListener('mousemove', (e) => this.onMove(e));
-        },
-
-        onMove: function(e) {
-            this.trail[0].x = e.clientX;
-            this.trail[0].y = e.clientY;
-
-            for (let i = this.trail.length - 1; i > 0; i--) {
-                this.trail[i].x += (this.trail[i-1].x - this.trail[i].x) * 0.4;
-                this.trail[i].y += (this.trail[i-1].y - this.trail[i].y) * 0.4;
-            }
-
-            this.trail.forEach(t => {
-                t.el.style.transform = `translate(${t.x - 6}px, ${t.y - 6}px)`;
-            });
-
-            requestAnimationFrame(() => this.render());
-        },
-
-        render: function() {
-            for (let i = this.trail.length - 1; i > 0; i--) {
-                this.trail[i].x += (this.trail[i-1].x - this.trail[i].x) * 0.3;
-                this.trail[i].y += (this.trail[i-1].y - this.trail[i].y) * 0.3;
-                this.trail[i].el.style.transform = `translate(${this.trail[i].x - 6}px, ${this.trail[i].y - 6}px)`;
-            }
-        }
-    };
-})();
-
-
 // ── arkan_interactive_grid.js ──
+// Copyright (c) 2024, Moataz M Hassan (Arkan Lab)
+// Developer Website: https://arkan.it.com
+// License: MIT
+// For license information, please see license.txt
+
 // ARKAN Interactive Grid — Click-to-highlight neural nodes
 (function() {
     "use strict";
@@ -1153,59 +825,12 @@
 })();
 
 
-// ── arkan_tour.js ──
-// ARKAN Tour — Onboarding tooltips
-(function() {
-    "use strict";
-    window.arkan = window.arkan || {};
-    arkan.tour = {
-        init: function() { /* Tour logic placeholder */ },
-        start: function(steps) {
-            console.log('[ARKAN] Tour with', steps.length, 'steps');
-        }
-    };
-})();
-
-
-// ── arkan_presets.js ──
-// ARKAN Presets — Color scheme presets
-(function() {
-    "use strict";
-    window.arkan = window.arkan || {};
-    arkan.presets = {
-        schemes: {
-            cyber: { primary: '#00F0FF', accent: '#8B5CF6', bg: '#0A0F1C' },
-            matrix: { primary: '#00FF41', accent: '#008F11', bg: '#0D0208' },
-            sunset: { primary: '#FF6B35', accent: '#F7C59F', bg: '#1A1423' },
-        },
-        apply: function(name) {
-            const s = this.schemes[name];
-            if (!s) return;
-            document.documentElement.style.setProperty('--arkan-cyan', s.primary);
-            document.documentElement.style.setProperty('--arkan-purple', s.accent);
-            document.documentElement.style.setProperty('--arkan-bg-deep', s.bg);
-        }
-    };
-})();
-
-
-// ── arkan_print_headers.js ──
-// ARKAN Print Headers
-(function() {
-    "use strict";
-    window.arkan = window.arkan || {};
-    arkan.printHeaders = {
-        init: function() {
-            // Inject brand header for print layouts
-            if (typeof frappe !== 'undefined') {
-                frappe.ui.form.on('Print Format', { refresh: function(frm) { /* Add ARKAN branding to print */ } });
-            }
-        }
-    };
-})();
-
-
 // ── arkan_minigame.js ──
+// Copyright (c) 2024, Moataz M Hassan (Arkan Lab)
+// Developer Website: https://arkan.it.com
+// License: MIT
+// For license information, please see license.txt
+
 // ARKAN Minigame — Easter egg
 (function() {
     "use strict";
@@ -1232,6 +857,11 @@
 
 
 // ── arkan_animated_favicon.js ──
+// Copyright (c) 2024, Moataz M Hassan (Arkan Lab)
+// Developer Website: https://arkan.it.com
+// License: MIT
+// For license information, please see license.txt
+
 // ARKAN Animated Favicon
 (function() {
     "use strict";
@@ -1258,6 +888,11 @@
 
 
 // ── arkan_pwa.js ──
+// Copyright (c) 2024, Moataz M Hassan (Arkan Lab)
+// Developer Website: https://arkan.it.com
+// License: MIT
+// For license information, please see license.txt
+
 // ARKAN PWA — Service Worker Registration
 (function() {
     "use strict";
@@ -1278,35 +913,46 @@
 })();
 
 
-// ── arkan_desktop.js ──
-// ARKAN Desktop — LCD-style wrapper
+// ── arkan_print_headers.js ──
+// Copyright (c) 2024, Moataz M Hassan (Arkan Lab)
+// Developer Website: https://arkan.it.com
+// License: MIT
+// For license information, please see license.txt
+
+// ARKAN Print Headers
 (function() {
     "use strict";
     window.arkan = window.arkan || {};
-
-    arkan.desktop = {
+    arkan.printHeaders = {
         init: function() {
-            // Add subtle scan lines overlay
-            if (document.querySelector('.arkan-scanlines')) return;
-            const scanlines = document.createElement('div');
-            scanlines.className = 'arkan-scanlines';
-            scanlines.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:99997;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,240,255,0.01) 2px,rgba(0,240,255,0.01) 4px);';
-            document.body.appendChild(scanlines);
+            // Inject brand header for print layouts
+            if (typeof frappe !== 'undefined') {
+                frappe.ui.form.on('Print Format', { refresh: function(frm) { /* Add ARKAN branding to print */ } });
+            }
         }
     };
-
-    $(document).on('app_ready', () => arkan.desktop.init());
 })();
 
 
-// ── arkan_welcome_msg.js ──
-// ARKAN Welcome Message
+// ── arkan_seasons.js ──
+// Copyright (c) 2024, Moataz M Hassan (Arkan Lab)
+// Developer Website: https://arkan.it.com
+// License: MIT
+// For license information, please see license.txt
+
+// ARKAN Seasons — Cyber seasonal color variations
 (function() {
     "use strict";
     window.arkan = window.arkan || {};
-    arkan.welcomeMsg = {
+    arkan.seasons = {
         init: function() {
-            // Additional welcome message logic if needed beyond workspace banner
+            const month = new Date().getMonth();
+            const body = document.body;
+            if (month === 0) body.classList.add('arkan-season-newyear');
+            if (month === 2 || month === 3) body.classList.add('arkan-season-ramadan');
+            if (month === 11) body.classList.add('arkan-season-national');
         }
     };
+    $(document).on('app_ready', () => arkan.seasons.init());
 })();
+

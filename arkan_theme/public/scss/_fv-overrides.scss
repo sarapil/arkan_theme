@@ -1,0 +1,180 @@
+// ARKAN Theme — frappe_visual Auto-Enhancer Overrides
+// Styles the formEnhancer, listEnhancer, workspaceEnhancer, bilingualTooltip
+// with ARKAN's dark cyber-tech palette.
+
+// ── Form Enhancer ──
+.fv-form-stats-ribbon {
+    background: var(--arkan-bg-panel);
+    border-color: rgba(0, 240, 255, 0.1);
+    border-radius: $arkan-radius-md;
+}
+
+.fv-form-stats-badge {
+    border-color: rgba(0, 240, 255, 0.15);
+    color: var(--arkan-text);
+    background: var(--arkan-bg-surface);
+}
+
+.fv-form-dashboard {
+    background: var(--arkan-bg-panel);
+    border-radius: $arkan-radius-lg;
+    border: 1px solid rgba(0, 240, 255, 0.08);
+}
+
+.fv-relationship-graph {
+    .cy-node {
+        border-color: var(--arkan-cyan);
+    }
+    .cy-edge {
+        stroke: var(--arkan-purple);
+    }
+}
+
+// ── List Enhancer ──
+.fv-list-view-toggle {
+    background: var(--arkan-bg-surface);
+    border-radius: $arkan-radius-sm;
+
+    .active {
+        color: var(--arkan-cyan);
+        background: rgba(0, 240, 255, 0.1);
+    }
+
+    button {
+        color: var(--arkan-text-secondary);
+        transition: color $arkan-transition-fast;
+
+        &:hover {
+            color: var(--arkan-text);
+        }
+    }
+}
+
+.fv-card-list .fv-card {
+    @include arkan-glass-card;
+}
+
+// ── Workspace Enhancer ──
+.fv-workspace-card {
+    @include arkan-glass-card;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: $arkan-glow-cyan;
+    }
+}
+
+.fv-workspace-sparkline {
+    --fv-sparkline-color: #{$arkan-cyan};
+    --fv-sparkline-fill: #{rgba($arkan-cyan, 0.1)};
+}
+
+.fv-workspace-count {
+    color: var(--arkan-cyan);
+    font-family: $arkan-font-heading;
+}
+
+// ── Bilingual Tooltip ──
+.fv-bilingual-tooltip {
+    background: var(--arkan-bg-panel);
+    border: 1px solid rgba(0, 240, 255, 0.1);
+    color: var(--arkan-text);
+    border-radius: $arkan-radius-sm;
+    backdrop-filter: blur(12px);
+    box-shadow: $arkan-shadow-card;
+}
+
+// ── Command Bar (replaces arkan_shortcuts.js) ──
+.fv-command-bar {
+    background: var(--arkan-bg-panel);
+    border: 1px solid rgba(0, 240, 255, 0.15);
+    border-radius: $arkan-radius-lg;
+    backdrop-filter: blur(16px);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+
+    input {
+        background: transparent;
+        color: var(--arkan-text);
+        font-family: $arkan-font-body;
+    }
+
+    .fv-command-item {
+        color: var(--arkan-text-secondary);
+
+        &:hover, &.active {
+            background: rgba(0, 240, 255, 0.08);
+            color: var(--arkan-text);
+        }
+
+        kbd {
+            background: var(--arkan-bg-surface);
+            color: var(--arkan-text-muted);
+            border-color: var(--arkan-border);
+        }
+    }
+}
+
+// ── Bottom Nav (replaces arkan_mobile.js) ──
+.fv-bottom-nav {
+    background: var(--arkan-bg-panel);
+    border-top: 1px solid rgba(0, 240, 255, 0.1);
+    backdrop-filter: blur(12px);
+
+    .fv-bottom-nav-item {
+        color: var(--arkan-text-muted);
+
+        &.active {
+            color: var(--arkan-cyan);
+        }
+    }
+}
+
+// ── Onboarding Tour (replaces arkan_tour.js) ──
+.fv-tour-overlay {
+    background: rgba(10, 15, 28, 0.7);
+}
+
+.fv-tour-tooltip {
+    @include arkan-glass-card;
+    color: var(--arkan-text);
+
+    .fv-tour-next {
+        background: $arkan-gradient-primary;
+        color: $arkan-deep-black;
+        border: none;
+
+        &:hover {
+            box-shadow: $arkan-glow-cyan;
+        }
+    }
+}
+
+// ── Floating Window ──
+.fv-floating-window {
+    @include arkan-glass(0.85);
+    border-radius: $arkan-radius-lg;
+    box-shadow: 0 8px 48px rgba(0, 0, 0, 0.6), 0 0 1px rgba(0, 240, 255, 0.2);
+
+    .fv-floating-header {
+        border-bottom: 1px solid rgba(0, 240, 255, 0.08);
+        color: var(--arkan-text);
+    }
+}
+
+// ── Storyboard (replaces about/onboarding slides) ──
+.fv-storyboard-slide {
+    background: var(--arkan-bg-panel);
+    border-radius: $arkan-radius-lg;
+    color: var(--arkan-text);
+}
+
+.fv-storyboard-nav {
+    .fv-storyboard-dot {
+        background: var(--arkan-border);
+
+        &.active {
+            background: var(--arkan-cyan);
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+        }
+    }
+}

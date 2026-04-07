@@ -1,45 +1,12 @@
 // ARKAN RTL Support — Full right-to-left layout overrides for Arabic
+// NOTE: Physical property overrides are used here because Frappe core CSS
+// uses physical properties. Our own ARKAN styles use CSS Logical Properties.
 [dir="rtl"] {
-    // ── Content sidebar ──
+    // ── Content sidebar (overrides Frappe core) ──
     .layout-side-section { border-right: none; border-left: 1px solid $arkan-border; }
     .form-timeline .timeline-item { border-left: none; border-right: 2px solid $arkan-border; }
 
-    // ── ARKAN Topbar ──
-    .arkan-topbar {
-        direction: rtl;
-        flex-direction: row-reverse;
-    }
-    .arkan-topbar-left {
-        flex-direction: row-reverse;
-    }
-    .arkan-topbar-brand {
-        flex-direction: row-reverse;
-    }
-    .arkan-topbar-center {
-        flex-direction: row-reverse;
-    }
-    .arkan-topbar .arkan-search-bar {
-        direction: rtl;
-        .desktop-navbar-modal-search {
-            flex-direction: row-reverse;
-        }
-        .desktop-keyboard-shortcut {
-            margin-left: 0;
-            margin-right: auto;
-        }
-    }
-
-    // ── Comm group RTL ──
-    .arkan-topbar-comm-group {
-        flex-direction: row-reverse;
-    }
-
-    // ── Sidebar brand ──
-    .arkan-sidebar-brand {
-        direction: rtl;
-    }
-
-    // ── Desk sidebar ──
+    // ── Desk sidebar (overrides Frappe core) ──
     .body-sidebar-container {
         .body-sidebar {
             border-right: none !important;
@@ -50,15 +17,15 @@
         box-shadow: -4px 0 24px rgba(0, 0, 0, 0.5);
     }
 
-    // ── Page head ──
+    // ── Page head (overrides Frappe core) ──
     .page-head {
         direction: rtl;
         .breadcrumb-container {
             .breadcrumb { direction: rtl; }
             .breadcrumb-item + .breadcrumb-item::before {
                 content: "\\";
-                padding-right: 0;
-                padding-left: 0.5rem;
+                padding-inline-start: 0;
+                padding-inline-end: 0.5rem;
             }
         }
         .page-actions {
@@ -66,25 +33,19 @@
         }
     }
 
-    // ── List/Form layout ──
-    .layout-side-section {
-        border-right: none;
-        border-left: 1px solid $arkan-border;
-    }
-
-    // ── Topbar search modal (Frappe AwesomeBar) ──
+    // ── Topbar search modal / AwesomeBar (overrides Frappe core) ──
     .navbar-modal-wrapper {
         direction: rtl;
         .modal-search-icon {
-            right: 0;
-            left: auto;
-            padding-right: 0.5rem;
-            padding-left: 0;
+            inset-inline-start: auto;
+            inset-inline-end: 0;
+            padding-inline-end: 0.5rem;
+            padding-inline-start: 0;
         }
         #navbar-search {
-            text-align: right;
-            padding-right: 36px;
-            padding-left: 0;
+            text-align: start;
+            padding-inline-start: 36px;
+            padding-inline-end: 0;
         }
     }
 }

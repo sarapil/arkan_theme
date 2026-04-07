@@ -25,9 +25,9 @@ body:not([data-path="login"]) {
     min-width: 0 !important;
 }
 
-// Override Frappe core margin-left:240px on .layout-main-section
+// Override Frappe core margin-inline-start:240px on .layout-main-section
 .layout-main-section {
-    margin-left: unset !important;
+    margin-inline-start: unset !important;
 }
 
 .body-sidebar-container {
@@ -195,7 +195,7 @@ body:not([data-path="login"]) {
     }
 
     .desktop-keyboard-shortcut {
-        margin-left: auto;
+        margin-inline-start: auto;
         flex-shrink: 0;
         font-size: 10px;
         font-family: $arkan-font-mono;

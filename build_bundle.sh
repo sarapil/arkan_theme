@@ -1,7 +1,7 @@
 #!/bin/bash
 # ARKAN Theme — JS Bundle Builder
 # Concatenates all desk JS files into a single arkan_theme.bundle.js
-# This reduces 26 HTTP requests to 1.
+# v2: Slim bundle — 14 modules removed (delegated to frappe_visual)
 #
 # Usage: bash build_bundle.sh
 
@@ -11,37 +11,24 @@ cd "$(dirname "$0")"
 JS_DIR="arkan_theme/public/js"
 BUNDLE="$JS_DIR/arkan_theme.bundle.js"
 
-echo "🔧 Building ARKAN desk JS bundle..."
+echo "🔧 Building ARKAN desk JS bundle (slim)..."
 
-# Order matters: arkan_theme.js (coordinator) must be first.
-# Then darkmode + topbar (init early). Rest can be in any order.
+# Order: arkan_theme.js (coordinator) first, then fv_integration (bridge),
+# then navbar, then unique brand features.
 FILES=(
     "$JS_DIR/arkan_theme.js"
-    "$JS_DIR/arkan_darkmode.js"
-    "$JS_DIR/arkan_topbar.js"
+    "$JS_DIR/fv_integration.js"
+    "$JS_DIR/arkan_navbar.js"
     "$JS_DIR/arkan_neural_grid.js"
-    "$JS_DIR/arkan_effects.js"
     "$JS_DIR/arkan_splash.js"
-    "$JS_DIR/arkan_loading.js"
     "$JS_DIR/arkan_matrix.js"
     "$JS_DIR/arkan_sounds.js"
-    "$JS_DIR/arkan_workspace.js"
-    "$JS_DIR/arkan_navbar.js"
-    "$JS_DIR/arkan_forms.js"
-    "$JS_DIR/arkan_mobile.js"
-    "$JS_DIR/arkan_shortcuts.js"
-    "$JS_DIR/arkan_seasons.js"
-    "$JS_DIR/arkan_ambient.js"
-    "$JS_DIR/arkan_cursor.js"
     "$JS_DIR/arkan_interactive_grid.js"
-    "$JS_DIR/arkan_tour.js"
-    "$JS_DIR/arkan_presets.js"
-    "$JS_DIR/arkan_print_headers.js"
     "$JS_DIR/arkan_minigame.js"
     "$JS_DIR/arkan_animated_favicon.js"
     "$JS_DIR/arkan_pwa.js"
-    "$JS_DIR/arkan_desktop.js"
-    "$JS_DIR/arkan_welcome_msg.js"
+    "$JS_DIR/arkan_print_headers.js"
+    "$JS_DIR/arkan_seasons.js"
 )
 
 # Build banner

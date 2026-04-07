@@ -64,6 +64,23 @@ $z-splash: 9999;
     --arkan-radius-sm: #{$arkan-radius-sm};
     --arkan-radius-md: #{$arkan-radius-md};
     --arkan-radius-lg: #{$arkan-radius-lg};
+
+    // frappe_visual ↔ ARKAN bridge variables
+    --fv-primary: #{$arkan-cyan};
+    --fv-primary-light: #{rgba($arkan-cyan, 0.15)};
+    --fv-accent: #{$arkan-purple};
+    --fv-bg-surface: #{$arkan-deep-black};
+    --fv-bg-card: #{$arkan-panel-dark};
+    --fv-text-primary: #{$arkan-text-primary};
+    --fv-border-default: #{rgba($arkan-cyan, 0.1)};
+    --fv-glass-bg: #{rgba($arkan-panel-dark, 0.6)};
+    --fv-glass-border: #{rgba($arkan-cyan, 0.1)};
+    --fv-scene-bg: #{$arkan-deep-black};
+    --fv-scene-accent: #{$arkan-cyan};
+    --fv-scene-secondary: #{$arkan-purple};
+    --fv-node-border: #{$arkan-cyan};
+    --fv-edge-color: #{$arkan-purple};
+    --fv-node-bg: #{$arkan-panel-dark};
 }
 
 // Override Frappe's native CSS variables for dark mode (ARKAN dark)
@@ -81,6 +98,15 @@ $z-splash: 9999;
     --heading-color: #{$arkan-text-primary};
     --text-muted: #{$arkan-text-muted};
     --text-light: #{$arkan-text-secondary};
+}
+
+// Light mode: update fv bridge variables
+body.arkan-light-mode {
+    --fv-bg-surface: #F1F5F9;
+    --fv-bg-card: #FFFFFF;
+    --fv-text-primary: #111827;
+    --fv-glass-bg: #{rgba(#FFFFFF, 0.7)};
+    --fv-glass-border: #{rgba($arkan-cyan, 0.15)};
 }
 
 @mixin arkan-glass($opacity: 0.6) {

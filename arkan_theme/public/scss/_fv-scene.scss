@@ -1,0 +1,97 @@
+// ARKAN Theme — Scene Engine Overrides
+// Styles Scene Engine presets (Office, Library, etc.) with ARKAN's cyber-tech palette
+
+.fv-scene-container {
+    border-radius: $arkan-radius-lg;
+    overflow: hidden;
+}
+
+.fv-scene-frame {
+    fill: var(--arkan-bg-panel);
+    stroke: rgba(0, 240, 255, 0.15);
+    stroke-width: 1;
+
+    &:hover {
+        stroke: var(--arkan-cyan);
+        filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.3));
+    }
+}
+
+.fv-scene-label {
+    fill: var(--arkan-text-secondary);
+    font-family: $arkan-font-body;
+    font-size: 11px;
+}
+
+.fv-scene-value {
+    fill: var(--arkan-text);
+    font-family: $arkan-font-heading;
+    font-weight: 700;
+}
+
+.fv-scene-status-success { fill: $arkan-green; }
+.fv-scene-status-warning { fill: $arkan-amber; }
+.fv-scene-status-danger  { fill: $arkan-rose; }
+.fv-scene-status-info    { fill: $arkan-cyan; }
+
+// Scene background
+.fv-scene-bg {
+    fill: var(--arkan-bg-deep);
+}
+
+// Scene navigator buttons
+.fv-scene-navigator {
+    background: var(--arkan-bg-panel);
+    border: 1px solid rgba(0, 240, 255, 0.08);
+    border-radius: $arkan-radius-md;
+
+    button {
+        color: var(--arkan-text-secondary);
+
+        &:hover {
+            color: var(--arkan-cyan);
+            background: rgba(0, 240, 255, 0.08);
+        }
+    }
+}
+
+// Scene exporter
+.fv-scene-exporter {
+    background: var(--arkan-bg-surface);
+    border-radius: $arkan-radius-sm;
+    color: var(--arkan-text-secondary);
+
+    &:hover {
+        color: var(--arkan-cyan);
+    }
+}
+
+// Documents on the desk
+.fv-scene-document {
+    fill: var(--arkan-bg-surface);
+    stroke: var(--arkan-border);
+
+    &:hover {
+        stroke: var(--arkan-purple);
+        filter: drop-shadow(0 0 6px rgba(139, 92, 246, 0.3));
+    }
+
+    .fv-scene-doc-count {
+        fill: var(--arkan-cyan);
+        font-family: $arkan-font-heading;
+        font-weight: 700;
+    }
+}
+
+// Books on the shelf
+.fv-scene-book {
+    &:hover {
+        filter: brightness(1.2);
+    }
+}
+
+// Data binder refresh indicator
+.fv-scene-refresh-indicator {
+    stroke: var(--arkan-cyan);
+    opacity: 0.6;
+}

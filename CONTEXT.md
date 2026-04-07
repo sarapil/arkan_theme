@@ -8,19 +8,19 @@
 
 ## 1. Project Identity
 
-| Field | Value |
-|-------|-------|
-| **Name** | ARKAN Theme (`arkan_theme`) |
-| **Type** | Frappe App (pure frontend theme — no DocTypes, no server models) |
-| **Framework** | Frappe v16 / ERPNext v16 |
-| **Language** | JavaScript (ES5-compatible IIFEs) + SCSS (compiled to CSS) + Python (hooks/boot only) |
-| **License** | MIT |
-| **Publisher** | Arkan Labs (info@arkanlabs.com) |
-| **Version** | 16.0.0 |
-| **Build** | `pyproject.toml` with `flit_core` (no setup.py) |
-| **Python** | >=3.14 |
-| **Node** | >=24 |
-| **Total Lines** | ~7,676 across 22 source files |
+| Field           | Value                                                                                 |
+| --------------- | ------------------------------------------------------------------------------------- |
+| **Name**        | ARKAN Theme (`arkan_theme`)                                                           |
+| **Type**        | Frappe App (pure frontend theme — no DocTypes, no server models)                      |
+| **Framework**   | Frappe v16 / ERPNext v16                                                              |
+| **Language**    | JavaScript (ES5-compatible IIFEs) + SCSS (compiled to CSS) + Python (hooks/boot only) |
+| **License**     | MIT                                                                                   |
+| **Publisher**   | Arkan Labs (info@arkanlabs.com)                                                       |
+| **Version**     | 16.2.0                                                                                |
+| **Build**       | `pyproject.toml` with `flit_core` (no setup.py)                                       |
+| **Python**      | >=3.14                                                                                |
+| **Node**        | >=24                                                                                  |
+| **Total Lines** | ~913 JS + SCSS across 13 JS modules + 20 SCSS partials (post-fv redesign)             |
 
 ---
 
@@ -28,11 +28,13 @@
 
 ARKAN Theme is a **client-side-only branding layer** for ERPNext. It:
 
-1. Injects CSS that overrides Frappe's default styles with luxury real estate aesthetics
-2. Injects JavaScript that adds visual features (skyline, splash, particles, search overlay)
-3. Provides boot session data (version, brand name, logo URLs) via Python
+1. Injects CSS that overrides Frappe's default styles with futuristic cyber-tech aesthetics
+2. Injects JavaScript that adds unique visual features (neural grid, splash, matrix rain, sounds)
+3. Bridges frappe_visual's 307+ components to the ARKAN color palette via CSS variable mapping
+4. Provides boot session data (version, brand name, logo URLs) via Python
 
 It does **NOT**:
+
 - Create any DocTypes or database tables
 - Define any REST API endpoints
 - Modify any Frappe or ERPNext core files
@@ -64,24 +66,26 @@ boot_session = "..."      # Python function called during session boot
 ### 3.3 Frappe JS Globals (Available at Runtime)
 
 ```javascript
-frappe.boot          // Boot data (user, site, all boot_session data)
-frappe.session       // Current session info
-frappe.router        // SPA router — frappe.router.on('change', fn)
-frappe.dom.freeze()  // Show loading overlay (overridden by arkan_loading.js)
-frappe.dom.unfreeze()// Hide loading overlay (overridden by arkan_loading.js)
-frappe.after_ajax()  // Run callback after current AJAX requests complete
-frappe.call()        // Make API call to server
-frappe.ready(fn)     // Execute when Frappe framework is ready
-frappe.realtime      // Real-time event system
+frappe.boot; // Boot data (user, site, all boot_session data)
+frappe.session; // Current session info
+frappe.router; // SPA router — frappe.router.on('change', fn)
+frappe.dom.freeze(); // Show loading overlay (overridden by arkan_loading.js)
+frappe.dom.unfreeze(); // Hide loading overlay (overridden by arkan_loading.js)
+frappe.after_ajax(); // Run callback after current AJAX requests complete
+frappe.call(); // Make API call to server
+frappe.ready(fn); // Execute when Frappe framework is ready
+frappe.realtime; // Real-time event system
 ```
 
 ### 3.4 Critical Frappe 16 Limitation
 
 **`frappe.request` is a plain object, NOT an event emitter.** Unlike some documentation suggests:
+
 - `frappe.request.on('before', fn)` → **DOES NOTHING** (silently fails)
 - `frappe.request.on('after', fn)` → **DOES NOTHING** (silently fails)
 
 For AJAX lifecycle, use:
+
 - `$(document).ajaxSend(fn)` — fires on every jQuery AJAX request (including heartbeat/polling)
 - `$(document).ajaxComplete(fn)` — fires after every jQuery AJAX completes
 - `frappe.after_ajax(fn)` — fires once when current pending requests complete
@@ -93,11 +97,13 @@ For AJAX lifecycle, use:
 Frappe v16 introduced radical frontend changes that affect how theme apps inject UI controls:
 
 ### Navbar is Gutted
+
 - The `<header.navbar>` is now **almost empty on desktop** — only renders an announcement widget
 - `.navbar-collapse`, `.navbar-nav`, `.standard-navbar-items`, `#navbar-breadcrumbs` are **GONE from desktop**
 - The navbar still renders fully on **mobile** as a hamburger menu
 
 ### Sidebar is Primary Navigation
+
 - New left sidebar: `.body-sidebar-container` → `.body-sidebar` → `.body-sidebar-top` + `.body-sidebar-bottom`
 - Sidebar width: `50px` collapsed (icon rail), `220px` expanded (`var(--sidebar-width)`)
 - Expanded state: `.body-sidebar-container.expanded` class
@@ -105,26 +111,32 @@ Frappe v16 introduced radical frontend changes that affect how theme apps inject
 - Active sidebar items use `.active-sidebar` class (not `.selected` like v15)
 
 ### Workspace Pages
+
 - `#page-Workspaces` is **GONE** — workspace pages use `.page-main-content` with dynamic IDs
 - `.desk-page` only exists on EditorJS containers (`#editorjs.desk-page.page-main-content`)
 - Widget content is inside `.main-section` or `.layout-main-section`
 
 ### Search
+
 - Search is now a **modal dialog** (`frappe.get_modal()`), with `#navbar-search` input inside the modal
 - The `.search-bar` element is a trigger that opens the modal
 
 ### URL Routing
+
 - Desk URL prefix is `/desk/` (not `/app/`)
 - Router handles backward compat by stripping both "desk" and "app" prefixes
 
 ### Dual-Target Injection Strategy
+
 This theme uses a **sidebar-first, navbar-fallback** pattern:
+
 - All theme controls (search trigger, dark mode, ambient sounds, PWA install) try to inject into `.body-sidebar-bottom` first
 - If sidebar not found, falls back to `.navbar-collapse .navbar-nav` for mobile/legacy
 - Sidebar-injected items use `.arkan-sidebar-action` class with `.item-anchor` + `.sidebar-item-icon` + `.sidebar-item-label` structure
 - When sidebar is collapsed, labels are hidden and icons are centered
 
 ### Key CSS Variables (v16)
+
 ```
 --navbar-height: 48px          (unchanged from v15)
 --page-head-height: 45px       (new in v16)
@@ -140,289 +152,210 @@ This theme uses a **sidebar-first, navbar-fallback** pattern:
 
 ### 4.1 Python Files
 
-#### `hooks.py` (47 lines)
+#### `hooks.py`
+
 ```
 Purpose: Registers all CSS/JS assets with Frappe's hook system
 Key Config:
-  - app_include_js: 6 files (theme, skyline, effects, splash, loading, navbar)
-  - app_include_css: 1 file (arkan.css)
+  - app_include_js: 1 file (arkan_theme.bundle.js — 13 modules concatenated)
+  - app_include_css: 2 files (arkan.bundle.css, arkan-theme.css)
   - web_include_js: 2 files (login, skyline)
   - web_include_css: 1 file (arkan.css)
   - boot_session: points to boot.boot_session
   - website_context: brand_name + favicon
-  - required_apps: ["frappe"]
+  - required_apps: ["frappe", "frappe_visual"]
+  - Version: 16.2.0
 ```
 
 #### `boot.py` (10 lines)
+
 ```
 Purpose: Adds arkan_theme data to frappe.boot during session initialization
 Exports: bootinfo.arkan_theme = { version, brand_name, logo_url, favicon_url }
 Access: frappe.boot.arkan_theme in browser JavaScript
 ```
 
-### 4.2 JavaScript Files
+### 4.2 JavaScript Files (13 modules → 1 bundle)
 
-All JS files use **IIFE pattern** (Immediately Invoked Function Expression) with `'use strict'`.
+All JS files use **IIFE pattern** with `'use strict'`.
 All modules attach to the `window.arkan` namespace.
+Build via `build_bundle.sh` → `arkan_theme.bundle.js` (38KB).
 
-#### `arkan_theme.js` (263 lines) — ENTRY POINT
+**Post-redesign (v16.2.0):** 14 modules were deleted and delegated to frappe_visual.
+
+#### `arkan_theme.js` (~126 lines) — ENTRY POINT
+
 ```
 Namespace: window.arkan (root)
 Initialization: DOMContentLoaded + frappe.ready()
 Exports:
   arkan.config           — { version, brandName, paths{}, colors{}, animations{} }
-  arkan.init()           — Main initialization
-  arkan.initFavicon()    — Replace browser favicons (5 sizes: 16/32/48/ico/192)
+  arkan.init()           — Main initialization (neural grid, splash, matrix, sounds, navbar)
+  arkan.initFavicon()    — Replace browser favicons
   arkan.initMetaTags()   — Title observer ("| ARKAN") + theme-color meta
-  arkan.initAccessibility() — Skip link + ARIA role="main"
-  arkan.initEventListeners() — Router change + reduced-motion + time updater
-  arkan.onPageChange()   — page-content-enter CSS animation trigger
-  arkan.updateTimeAwareTheme() — arkan-day/arkan-night body classes (6am–6pm)
-  arkan.showSuccessFlash(el) — Flash animation utility
-  arkan.initEasterEgg()  — Konami code → console log
-  arkan.isLoginPage()    — Boolean: checks body class + URL
-  arkan.prefersReducedMotion() — Boolean: checks config flag
-Dependencies: frappe.router, frappe.boot, frappe.ready
+  arkan.initEventListeners() — Router change + reduced-motion
+  arkan.onPageChange()   — page-content-enter CSS animation
+  arkan.updateTimeAwareTheme() — arkan-day/arkan-night body classes
+Note: Does NOT init darkmode, effects, loading, shortcuts, workspace — all delegated to fv_integration.js
 ```
 
-#### `arkan_skyline.js` (1,023 lines) — LARGEST MODULE
+#### `fv_integration.js` (~230 lines) — FRAPPE_VISUAL BRIDGE
+
 ```
-Namespace: arkan.neuralGrid
+Namespace: arkan.darkmode, arkan.loading, arkan.workspace, arkan.forms
+Purpose: Central bridge between ARKAN theme and frappe_visual 307+ components
 Exports:
-  arkan.neuralGrid.create(container, options) — Build full skyline SVG
-    Options: { fullScene, showStars, showWater, showReflections, animated }
-  arkan.neuralGrid.config — { viewBox, skyHeight, waterHeight, buildingColor, waterColor }
-Internal Methods:
-  createSVG()          — Base SVG element with viewBox="0 0 1920 600"
-  addDefs(svg)         — Gradient definitions (sky, water, gold glow)
-  addSky(svg)          — Sky background rectangle
-  addBuildings(svg)    — All building silhouettes
-  addBurjKhalifa(g)    — Needle at y=30, detailed spire
-  addBurjAlArab(g)     — Sail-shaped silhouette with helipad
-  addDubaiFrame(g)     — Rectangular frame with viewing deck
-  addCayanTower(g)     — Twisted tower silhouette
-  addGenericTowers(g)  — 15+ varied rectangular buildings
-  addBuildingWindows(g) — Gold window dots with <animate> opacity
-  addWater(svg, animated) — Water gradient + animated reflections
-  addReflections(svg)  — Building reflections in water
-  createLinearGradient() — Helper for SVG gradient creation
-  createRect() / createPath() — SVG shape helpers
-Used by: arkan_splash.js, arkan_login.js, _layout.scss (workspace background)
-Note: Defines arkan.isLoginPage and arkan.prefersReducedMotion fallbacks
-      for contexts where arkan_theme.js hasn't loaded (login/web pages)
+  arkan.darkmode.isDark()    — Boolean: check current mode
+  arkan.darkmode.setMode(m)  — Set 'dark'/'light', persist localStorage, dispatch event
+  arkan.darkmode.toggle()    — Toggle between modes
+  arkan.loading.show(msg)    — Glass-effect loading overlay
+  arkan.loading.remove()     — Remove loading overlay
+  arkan.workspace.init()     — Welcome banner + widget stagger
+  arkan.forms.enhanceTimeline() — IntersectionObserver reveal
+Auto-init on app_ready:
+  - Dark mode initialization (localStorage-backed)
+  - Workspace welcome banner
+  - Lazy-load frappe_visual.bundle.js
+  - Configure auto-enhancers (formEnhancer, listEnhancer, workspaceEnhancer)
+  - Register keyboard shortcuts via frappe.visual.shortcutManager
+  - Setup mobile bottomNav via frappe.visual.bottomNav
+  - Override frappe.dom.freeze/unfreeze
+page-change handler:
+  - Route to settings/reports generators
 ```
 
-#### `arkan_effects.js` (371 lines)
-```
-Namespace: arkan.effects
-Exports:
-  arkan.effects.init(container)    — Start canvas effects
-  arkan.effects.stop()             — Stop all animations, remove canvas
-  arkan.effects.enableGoldDust()   — Enable floating gold particles
-  arkan.effects.initWindowLights() — Building window glow effect
-Internal:
-  createCanvas()       — Canvas element with absolute positioning
-  resizeCanvas()       — Window resize handler
-  initStars()          — 80/50/25 stars (desktop/tablet/mobile)
-  initParticles()      — 20 gold dust particles
-  drawStars(timestamp) — Render with sine-wave shimmer (40% chance)
-  drawParticles(dt)    — Upward floating particles with wrap-around
-  createShootingStar() — Random spawn, gradient trail
-  drawShootingStars(dt) — Render with opacity fade
-  startAnimation()     — requestAnimationFrame loop
-Config: arkan.effects.config.stars.{count, tabletCount, mobileCount, ...}
-Auto-init: Only on login pages (checks arkan.isLoginPage())
-```
+#### `arkan_navbar.js` (~93 lines) — SIDEBAR GLOW & DARK TOGGLE
 
-#### `arkan_splash.js` (207 lines)
-```
-Namespace: arkan.splash
-Exports:
-  arkan.splash.init()       — Show splash (if conditions met)
-  arkan.splash.forceShow()  — Dev: bypass session check
-  arkan.splash.reset()      — Dev: clear session flag
-Internal:
-  create()            — Build overlay DOM (#arkan-splash-overlay)
-  animate()           — Sequenced animation (logo → underline → tagline)
-  fadeOut()            — Opacity transition + pointer-events: none
-  remove()            — Remove from DOM + clear safety timer
-  startSafetyTimer()  — 5s hard timeout (guaranteed removal)
-  _injectSkyline()    — Embed arkan.neuralGrid.create() as background
-Config: arkan.splash.config.{sessionKey, displayTime:2800, fadeOutTime:500, maxTimeout:5000}
-Session Key: 'arkan_splash_shown' in sessionStorage
-Skip Conditions: sessionStorage set, login page, non-desk page, reduced-motion
-Safety: Flag set BEFORE animation; try/catch around create/animate; 5s timeout
-```
-
-#### `arkan_loading.js` (145 lines)
-```
-Namespace: arkan.loading
-Exports:
-  arkan.loading.init()    — Override freeze/unfreeze, start cleanup
-  arkan.loading.show()    — Create and show loading overlay
-  arkan.loading.remove()  — Fade out and remove overlay
-Internal:
-  _cleanupFrappeFreeze()  — Remove stuck #freeze + orphaned .modal-backdrop
-  _safetyTimer             — 3s auto-remove timeout
-Boot: Polls for frappe.dom and frappe.after_ajax every 200ms
-Overrides:
-  frappe.dom.freeze(msg) → self.show()
-  frappe.dom.unfreeze()  → self.remove()
-Router: frappe.router.on('change') → show() + frappe.after_ajax → remove()
-Cleanup: setInterval(2000) removes stuck #freeze and excess .modal-backdrop
-CSS Dependency: #freeze { display: none !important } in _splash.scss
-DOM ID: #arkan-loading-overlay
-```
-
-#### `arkan_navbar.js` (341 lines)
 ```
 Namespace: arkan.navbar
 Exports:
-  arkan.navbar.init()        — Bootstrap navbar enhancements
-  arkan.navbar.openSearch()  — Open/toggle search overlay
-  arkan.navbar.closeSearch() — Close search overlay
+  arkan.navbar.init()   — Web navbar glow line + desk sidebar glow + dark toggle
 Internal:
-  wrapSearchBar()      — Hide .search-bar, inject SVG search icon
-  hideHelp()           — display:none on .dropdown-help
-  patchNotifications() — Add has-unseen class, poll every 3s
-  patchChat()          — Add arkan-chat class
-  _repositionDropdown() — Poll Awesomplete results every 200ms
-Boot: DOMContentLoaded + toolbar_setup event
-Keyboard: Ctrl+G (capture phase) opens search, ESC closes
-DOM IDs: #arkan-search-overlay, #arkan-search-input
-Proxy: Mirrors typing to #navbar-search (Frappe's hidden AwesomeBar)
+  _enhanceWebNavbar()   — Adds gradient glow line to .navbar (portal/login)
+  _enhanceDeskSidebar() — Adds vertical glow edge to .body-sidebar
+  _addDarkModeToggle()  — Injects ☀️/🌙 toggle button in sidebar bottom
 ```
 
-#### `arkan_login.js` (261 lines)
-```
-Namespace: arkan.login
-Exports:
-  arkan.login.init()       — Initialize login page enhancements
-Internal:
-  isLoginPage()        — Check body data-path + URL
-  injectSkyline()      — arkan.neuralGrid.create() or fallback SVG
-  createFallbackSkyline() — Inline SVG with landmarks
-  createWindowLights() — Random gold dots on building silhouettes
-  injectParticles()    — Canvas particle system (35 particles)
-  injectBrandFooter()  — "© 2026 Arkan. All rights reserved."
-  enhanceLogo()        — Replace login logo src + heading text
-DOM IDs: #arkan-login-skyline, #arkan-login-particles, #arkan-login-brand
-```
+#### Remaining Unique Modules (kept — not replaceable by frappe_visual):
 
-### 4.3 SCSS Files
+- `arkan_neural_grid.js` (120 lines) — SVG neural network animation
+- `arkan_splash.js` (73 lines) — One-time branded splash screen
+- `arkan_matrix.js` (70 lines) — Matrix rain canvas effect
+- `arkan_sounds.js` (55 lines) — Ambient sound system
+- `arkan_interactive_grid.js` (29 lines) — Interactive grid background
+- `arkan_minigame.js` (28 lines) — Easter egg minigame
+- `arkan_animated_favicon.js` (28 lines) — Animated favicon
+- `arkan_pwa.js` (23 lines) — PWA installation prompt
+- `arkan_print_headers.js` (18 lines) — Print header customization
+- `arkan_seasons.js` (20 lines) — Seasonal themes
+
+### 4.3 SCSS Files (20 partials → arkan.css)
 
 All SCSS files use `$arkan-*` variables and `var(--arkan-*)` custom properties.
 Import order matters — defined in `arkan.scss`.
 
-#### `_variables.scss` (125 lines)
+#### `_variables.scss`
+
 ```
 Defines:
-  SCSS Variables: $arkan-gold, $arkan-navy, $arkan-cream + variants
-  Semantic: $arkan-success (#2D6A4F), $arkan-danger (#9B1B30)
+  SCSS Variables: $arkan-cyan (#00F0FF), $arkan-purple (#8B5CF6), $arkan-deep-black (#0A0F1C)
+  Semantic: $arkan-success, $arkan-danger, $arkan-warning
   Transitions: $arkan-transition-fast (150ms), -base (250ms), -slow (400ms)
-  Shadows: $arkan-shadow-sm/md/lg
-  Radii: $arkan-radius-sm (3px) / md (4px) / lg (6px) / full (9999px)
-  CSS Custom Properties: All above exposed as --arkan-* on :root
-  Component tokens: --navbar-height (48px), --sidebar-width (220px)
+  CSS Custom Properties: All above as --arkan-* on :root
+  frappe_visual Bridge: 15 --fv-* variables mapped from ARKAN tokens
+  Light Mode: body.arkan-light-mode overrides for --fv-* variables
 Mixins:
-  @include arkan-glass     → rgba(29,41,57,0.8) + blur(20px)
-  @include arkan-card-elevated → cream bg + shadow + radius
-  @include arkan-gold-glow → box-shadow gold 0.3 opacity
-  @include arkan-focus-ring → gold border + 3px ring
-Media Query: prefers-reduced-motion: reduce → disables all animations
+  @include arkan-glass, arkan-card-elevated, arkan-focus-ring
+```
+
+#### `_fv-overrides.scss` (NEW — 165 lines)
+
+```
+Styles frappe_visual auto-enhancer output for ARKAN palette:
+  .fv-form-stats-ribbon, .fv-list-view-toggle, .fv-workspace-card
+  .fv-bilingual-tooltip, .fv-command-bar, .fv-bottom-nav
+  .fv-onboarding-tour, .fv-floating-window, .fv-storyboard
+```
+
+#### `_fv-scene.scss` (NEW — 85 lines)
+
+```
+Scene Engine overrides: .fv-scene-frame, .fv-scene-label, .fv-scene-value
+Status colors + .fv-scene-navigator, .fv-scene-exporter
+```
+
+#### `_fv-effects.scss` (NEW — 120 lines)
+
+```
+Customizes ALL .fv-fx-* classes for ARKAN colors:
+  .fv-fx-glass, .fv-fx-hover-lift, .fv-fx-mouse-glow
+  .fv-fx-gradient-animated, .fv-fx-gradient-text, .fv-fx-morph-blob
 ```
 
 #### `_layout.scss` (~1,450 lines) — LARGEST SCSS
+
 ```
-Sections:
-  Navbar:              rgba(17,24,39,0.8) + backdrop-filter blur(20px) (mobile only in v16)
-  Sidebar (v15):       .layout-side-section — Linear gradient navy-deep to navy-light (form/list sidebars)
-  Sidebar (v16):       .body-sidebar-container — Primary nav sidebar with gold accents, .active-sidebar states
-  Sidebar Actions:     .arkan-sidebar-action — Theme controls (search, darkmode, ambient, PWA) in sidebar bottom
-  Page Head:           Glassmorphism (0.82 opacity) + subtle border-bottom
-  Workspace:           .page-main-content + #page-Workspaces (dual selector for v15/v16 compat)
-  Layout Main:         0.92 opacity cream background
-  Search Overlay:      Glassmorphism panel styling for arkan_navbar.js
-  Notifications:       Bell swing animation, unseen indicator
-  Mobile (<768px):     Responsive sidebar, collapsed navbar
-  Sidebar Toggle:      Custom button with gold hover
-Important Rules:
-  .navbar { position: sticky; top: 0; z-index: 1030; }
-  .body-sidebar { v16 primary nav with dark gradient + gold accents }
-  .page-head { position: sticky; top: var(--navbar-height); }
+Sidebar, Page Head, Workspace, Search, Mobile.
+All directional properties use CSS Logical Properties.
 ```
 
-#### `_splash.scss` (188 lines)
-```
-Contains:
-  #arkan-splash-overlay — Full-screen fixed overlay z-index: 99999
-  .arkan-loading-overlay — Loading indicator z-index: 99998
-  .arkan-loading-ring — Gold spinning ring animation
-  .arkan-loading-visible — Opacity transition
-  .arkan-loading-fadeout — Exit animation
-  #freeze { display: none !important } — CRITICAL: hides Frappe's native freeze
-  .modal-backdrop orphan protection
-```
+#### `_splash.scss` — Splash overlay + loading + #freeze hide
+#### `_login.scss` — Login page (RTL-safe via logical properties)
+#### `_rtl.scss` — RTL overrides for Frappe core physical-property CSS
 
 ---
 
-## 5. Module Interaction Diagram
+## 5. Module Interaction Diagram (v16.2.0 — post frappe_visual redesign)
 
 ```
 ┌─────────────────────────────────────────────────────┐
 │                    Frappe 16 Core                     │
 │  frappe.router.on('change')  frappe.dom.freeze()     │
 │  frappe.after_ajax()         frappe.ready()           │
-│  frappe.boot                 $(document).ajaxSend()   │
 └──────────┬───────────────────────────┬───────────────┘
            │                           │
      ┌─────▼─────┐              ┌─────▼─────┐
      │  hooks.py  │              │  boot.py   │
-     │ (includes) │              │ (session)  │
+     │ (1 bundle) │              │ (session)  │
      └─────┬──────┘              └────────────┘
            │
     ┌──────┴──────────────────────────────────────┐
-    │           Desk Pages (app_include_*)         │
+    │    arkan_theme.bundle.js (13 modules)        │
     ├─────────────────────────────────────────────┤
     │                                              │
     │  arkan_theme.js ◄── ENTRY POINT             │
-    │       │  Sets up namespace, config            │
-    │       │  Initializes favicon, meta, a11y      │
+    │       │  Config, favicon, meta, router        │
     │       │                                       │
-    │       ├── arkan_skyline.js                    │
-    │       │     Creates SVG skyline (used by       │
-    │       │     splash, login, and workspace)      │
-    │       │                                        │
-    │       ├── arkan_effects.js                    │
-    │       │     Canvas stars & particles            │
-    │       │     (auto-init on login only)           │
-    │       │                                        │
+    │       ├── fv_integration.js ◄── FV BRIDGE    │
+    │       │     Dark mode, loading, workspace     │
+    │       │     Lazy-loads frappe_visual.bundle.js│
+    │       │     Configures auto-enhancers         │
+    │       │     Registers shortcuts, bottomNav    │
+    │       │     Settings/reports generators       │
+    │       │                                       │
+    │       ├── arkan_navbar.js                     │
+    │       │     Sidebar glow + dark mode toggle   │
+    │       │                                       │
+    │       ├── arkan_neural_grid.js                │
+    │       │     SVG neural network animation      │
+    │       │                                       │
     │       ├── arkan_splash.js                     │
-    │       │     One-time branded splash             │
-    │       │     Uses arkan.neuralGrid.create()        │
-    │       │                                        │
-    │       ├── arkan_loading.js                    │
-    │       │     Overrides frappe.dom.freeze/unfreeze│
-    │       │     Cleans up stuck #freeze elements    │
-    │       │                                        │
-    │       └── arkan_navbar.js                     │
-    │             Custom search overlay               │
-    │             Proxies to Frappe AwesomeBar        │
-    │                                                │
+    │       │     One-time branded splash            │
+    │       │                                       │
+    │       ├── arkan_matrix.js                     │
+    │       │     Matrix rain canvas effect          │
+    │       │                                       │
+    │       ├── arkan_sounds.js                     │
+    │       │     Ambient sound system               │
+    │       │                                       │
+    │       └── 6 smaller modules                   │
+    │           (grid, minigame, favicon, pwa,       │
+    │            print_headers, seasons)              │
     ├─────────────────────────────────────────────┤
-    │           Web/Login (web_include_*)           │
-    │                                                │
-    │  arkan_login.js                               │
-    │       Uses arkan.neuralGrid.create()             │
-    │       Has its own fallback SVG                 │
-    │                                                │
-    │  arkan_skyline.js                             │
-    │       Loaded on web pages too for login use    │
-    ├─────────────────────────────────────────────┤
-    │                                                │
-    │  arkan.css  (compiled from arkan.scss)        │
-    │       All 12 SCSS partials merged               │
-    │       Loaded on ALL pages (desk + web)          │
+    │        frappe_visual (lazy-loaded)            │
+    │  307+ components, auto-enhancers, icons       │
+    │  formEnhancer, listEnhancer, workspaceEnhancer│
+    │  ThemeManager, SceneEngine, CSS effects        │
     └─────────────────────────────────────────────┘
 ```
 
@@ -430,73 +363,91 @@ Contains:
 
 ## 6. Naming Conventions
 
-| Element | Convention | Examples |
-|---------|-----------|----------|
-| JS Namespace | `arkan.<module>.<method>` | `arkan.neuralGrid.create()`, `arkan.loading.show()` |
-| CSS Custom Properties | `--arkan-<token>` | `--arkan-gold`, `--arkan-navy-deep` |
-| SCSS Variables | `$arkan-<token>` | `$arkan-gold`, `$arkan-transition-base` |
-| SCSS Mixins | `arkan-<name>` | `arkan-glass`, `arkan-focus-ring` |
-| DOM IDs | `arkan-<feature>-<element>` | `#arkan-splash-overlay`, `#arkan-search-input` |
-| CSS Classes | `arkan-<feature>-<modifier>` | `.arkan-loading-visible`, `.arkan-search-btn` |
-| Body Classes | `arkan-<state>` | `.arkan-day`, `.arkan-night` |
-| JS Files | `arkan_<module>.js` | `arkan_theme.js`, `arkan_skyline.js` |
-| SCSS Files | `_<feature>.scss` | `_variables.scss`, `_layout.scss` |
-| Image Files | Descriptive lowercase | `logo-header.png`, `favicon-32x32.png` |
+| Element               | Convention                   | Examples                                            |
+| --------------------- | ---------------------------- | --------------------------------------------------- |
+| JS Namespace          | `arkan.<module>.<method>`    | `arkan.neuralGrid.create()`, `arkan.loading.show()` |
+| CSS Custom Properties | `--arkan-<token>`            | `--arkan-gold`, `--arkan-navy-deep`                 |
+| SCSS Variables        | `$arkan-<token>`             | `$arkan-gold`, `$arkan-transition-base`             |
+| SCSS Mixins           | `arkan-<name>`               | `arkan-glass`, `arkan-focus-ring`                   |
+| DOM IDs               | `arkan-<feature>-<element>`  | `#arkan-splash-overlay`, `#arkan-search-input`      |
+| CSS Classes           | `arkan-<feature>-<modifier>` | `.arkan-loading-visible`, `.arkan-search-btn`       |
+| Body Classes          | `arkan-<state>`              | `.arkan-day`, `.arkan-night`                        |
+| JS Files              | `arkan_<module>.js`          | `arkan_theme.js`, `arkan_skyline.js`                |
+| SCSS Files            | `_<feature>.scss`            | `_variables.scss`, `_layout.scss`                   |
+| Image Files           | Descriptive lowercase        | `logo-header.png`, `favicon-32x32.png`              |
 
 ---
 
 ## 7. Common Patterns
 
 ### 7.1 Module Registration
+
 ```javascript
-(function() {
-    'use strict';
-    window.arkan = window.arkan || {};
-    arkan.myModule = {
-        init: function() { /* ... */ },
-        // ...
-    };
-    // Boot logic at bottom
+(function () {
+  "use strict";
+  window.arkan = window.arkan || {};
+  arkan.myModule = {
+    init: function () {
+      /* ... */
+    },
+    // ...
+  };
+  // Boot logic at bottom
 })();
 ```
 
 ### 7.2 Frappe API Check Before Use
+
 ```javascript
-if (typeof frappe !== 'undefined' && frappe.router && frappe.router.on) {
-    frappe.router.on('change', function() { /* ... */ });
+if (typeof frappe !== "undefined" && frappe.router && frappe.router.on) {
+  frappe.router.on("change", function () {
+    /* ... */
+  });
 }
 ```
 
 ### 7.3 Safety Timers
+
 All overlays have hard timeouts to guarantee removal:
+
 ```javascript
-this._safetyTimer = setTimeout(function() { self.remove(); }, 3000);
+this._safetyTimer = setTimeout(function () {
+  self.remove();
+}, 3000);
 ```
 
 ### 7.4 Reduced Motion Respect
+
 ```javascript
 if (arkan.prefersReducedMotion && arkan.prefersReducedMotion()) return;
 ```
+
 ```scss
 @media (prefers-reduced-motion: reduce) {
-  * { animation-duration: 0.01ms !important; }
+  * {
+    animation-duration: 0.01ms !important;
+  }
 }
 ```
 
 ### 7.5 Login Page Detection
+
 ```javascript
-arkan.isLoginPage = function() {
-    return document.body.getAttribute('data-path') === 'login' ||
-           window.location.pathname.includes('/login');
+arkan.isLoginPage = function () {
+  return (
+    document.body.getAttribute("data-path") === "login" ||
+    window.location.pathname.includes("/login")
+  );
 };
 ```
 
 ### 7.6 SCSS Mixin Usage
+
 ```scss
 .my-element {
-    @include arkan-glass;       // Glassmorphism background
-    @include arkan-gold-glow;   // Gold glow shadow
-    @include arkan-focus-ring;  // Focus accessibility ring
+  @include arkan-glass; // Glassmorphism background
+  @include arkan-gold-glow; // Gold glow shadow
+  @include arkan-focus-ring; // Focus accessibility ring
 }
 ```
 
@@ -551,4 +502,4 @@ bench --site dev.localhost clear-cache
 
 ---
 
-*Last updated: 2025 — Generated for AI model consumption*
+_Last updated: 2025 — Generated for AI model consumption_
