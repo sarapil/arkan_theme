@@ -5,7 +5,7 @@
 
 """
 ARKAN Theme — Custom Exception Hierarchy
-ثيم أركان
+Arkan Theme Exceptions
 """
 
 import frappe
