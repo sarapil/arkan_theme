@@ -30,8 +30,9 @@ app_include_css = [
     "arkan_theme.bundle.css",
 ]
 
-# JS — single bundled file (13 modules → 1 HTTP request, v2: frappe_visual bridge)
+# JS — GSAP animation library + bundled theme (v18: 3D effects require GSAP)
 app_include_js = [
+    f"/assets/arkan_theme/js/vendor/gsap.min.js?v={_v}",
     f"/assets/arkan_theme/js/arkan_theme.bundle.js?v={_v}",
 ]
 
