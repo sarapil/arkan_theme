@@ -25,7 +25,7 @@
         enable_cursor_glow: 0,
         enable_sounds: 0,
         default_dark_mode: 1,
-        splash_duration: 2800,
+        splash_duration: 4000,
         logo_url: "/assets/arkan_theme/images/logo-header.png",
         favicon_url: "/assets/arkan_theme/images/favicon.ico",
         // v18 3D defaults

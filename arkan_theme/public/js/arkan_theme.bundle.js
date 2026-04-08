@@ -33,7 +33,7 @@
         enable_cursor_glow: 0,
         enable_sounds: 0,
         default_dark_mode: 1,
-        splash_duration: 2800,
+        splash_duration: 4000,
         logo_url: "/assets/arkan_theme/images/logo-header.png",
         favicon_url: "/assets/arkan_theme/images/favicon.ico",
         // v18 3D defaults
@@ -1187,7 +1187,7 @@
                 return;
             }
 
-            var duration = (arkan.config && arkan.config.splash_duration) || 2800;
+            var duration = (arkan.config && arkan.config.splash_duration) || 4000;
 
             // Check if the server-rendered template splash already exists
             var splash = document.getElementById('arkan-splash');
@@ -1225,14 +1225,14 @@
                 setTimeout(function() { if (splash.parentNode) splash.remove(); }, 800);
             }, duration);
 
-            // FAILSAFE: force-remove after 5 seconds
+            // FAILSAFE: force-remove after 7 seconds
             setTimeout(function() {
                 var el = document.querySelector('.arkan-splash-screen');
                 if (el) {
                     el.style.cssText += 'opacity:0 !important;visibility:hidden !important;pointer-events:none !important;';
                     setTimeout(function() { if (el.parentNode) el.remove(); }, 300);
                 }
-            }, 5000);
+            }, 7000);
 
             sessionStorage.setItem('arkan-splash-shown', '1');
         }
@@ -1250,9 +1250,9 @@
 
     window.arkan = window.arkan || {};
 
-    var SPLASH_DURATIONS = { Quick: 1500, Normal: 2800, Cinematic: 5000 };
+    var SPLASH_DURATIONS = { Quick: 2500, Normal: 4000, Cinematic: 6000 };
     var SESSION_KEY = "arkan-splash-shown";
-    var FAILSAFE_MS = 8000;
+    var FAILSAFE_MS = 10000;
 
     // Per-app gradient themes
     var APP_THEMES = {
@@ -1286,7 +1286,7 @@
             var appName = arkan.appRouter ? arkan.appRouter.getCurrentApp() : null;
             var media = arkan.mediaSwitcher ? arkan.mediaSwitcher.getCurrentMedia() : {};
             var style = config.splash_style || "Normal";
-            var duration = SPLASH_DURATIONS[style] || 2800;
+            var duration = SPLASH_DURATIONS[style] || 4000;
 
             this.show(appName, media, duration);
         },

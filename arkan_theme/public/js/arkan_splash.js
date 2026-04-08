@@ -18,7 +18,7 @@
                 return;
             }
 
-            var duration = (arkan.config && arkan.config.splash_duration) || 2800;
+            var duration = (arkan.config && arkan.config.splash_duration) || 4000;
 
             // Check if the server-rendered template splash already exists
             var splash = document.getElementById('arkan-splash');
@@ -56,14 +56,14 @@
                 setTimeout(function() { if (splash.parentNode) splash.remove(); }, 800);
             }, duration);
 
-            // FAILSAFE: force-remove after 5 seconds
+            // FAILSAFE: force-remove after 7 seconds
             setTimeout(function() {
                 var el = document.querySelector('.arkan-splash-screen');
                 if (el) {
                     el.style.cssText += 'opacity:0 !important;visibility:hidden !important;pointer-events:none !important;';
                     setTimeout(function() { if (el.parentNode) el.remove(); }, 300);
                 }
-            }, 5000);
+            }, 7000);
 
             sessionStorage.setItem('arkan-splash-shown', '1');
         }

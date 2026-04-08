@@ -7,9 +7,9 @@
 
     window.arkan = window.arkan || {};
 
-    var SPLASH_DURATIONS = { Quick: 1500, Normal: 2800, Cinematic: 5000 };
+    var SPLASH_DURATIONS = { Quick: 2500, Normal: 4000, Cinematic: 6000 };
     var SESSION_KEY = "arkan-splash-shown";
-    var FAILSAFE_MS = 8000;
+    var FAILSAFE_MS = 10000;
 
     // Per-app gradient themes
     var APP_THEMES = {
@@ -43,7 +43,7 @@
             var appName = arkan.appRouter ? arkan.appRouter.getCurrentApp() : null;
             var media = arkan.mediaSwitcher ? arkan.mediaSwitcher.getCurrentMedia() : {};
             var style = config.splash_style || "Normal";
-            var duration = SPLASH_DURATIONS[style] || 2800;
+            var duration = SPLASH_DURATIONS[style] || 4000;
 
             this.show(appName, media, duration);
         },
