@@ -401,7 +401,7 @@
             if (!frappe.visual) return;
 
             var steps = [
-                { title: __('Welcome to ARKAN'), content: '<p class="fv-fx-gradient-text" style="font-size:24px;">&lt; ARKAN /&gt;</p><p>' + __('A futuristic cyber-tech theme for Frappe ERP') + '</p>' },
+                { title: "Welcome to ARKAN", content: '<p class="fv-fx-gradient-text" style="font-size:24px;">&lt; ARKAN /&gt;</p><p>' + __('A futuristic cyber-tech theme for Frappe ERP') + '</p>' },
                 { title: __('Dark Mode'), content: '<p>' + __('Toggle with Ctrl+Shift+D or the sidebar button. Your preference is saved.') + '</p>' },
                 { title: __('Neural Grid'), content: '<p>' + __('The animated neural network background is our brand signature. Toggle with Ctrl+Shift+N.') + '</p>' },
                 { title: __('Theme Colors'), content: '<p>' + __('Cyan (#00F0FF) + Purple (#8B5CF6) — the ARKAN DNA. Customizable in Settings.') + '</p>' },
