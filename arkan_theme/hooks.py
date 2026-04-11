@@ -26,15 +26,15 @@ add_to_apps_screen = [
 ]
 
 # CSS — esbuild-compiled SCSS bundle (loads on every desk page)
-app_include_css = [
-    "arkan_theme.bundle.css",
-]
+# MEGA: app_include_css = [
+# MEGA:     "arkan_theme.bundle.css",
+# MEGA: ]
 
 # JS — GSAP animation library + bundled theme (v18: 3D effects require GSAP)
-app_include_js = [
-    f"/assets/arkan_theme/js/vendor/gsap.min.js?v={_v}",
-    f"/assets/arkan_theme/js/arkan_theme.bundle.js?v={_v}",
-]
+# MEGA: app_include_js = [
+# MEGA:     f"/assets/arkan_theme/js/vendor/gsap.min.js?v={_v}",
+# MEGA:     f"/assets/arkan_theme/js/arkan_theme.bundle.js?v={_v}",
+# MEGA: ]
 
 # Website / Portal pages (includes login)
 web_include_css = [
