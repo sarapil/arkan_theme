@@ -27,9 +27,20 @@
         // ─── Page Transitions (Route Change) ────────────────────
         _initPageTransitions: function() {
             var self = this;
+
+            function getRouteSafe() {
+                try {
+                    return (typeof frappe !== "undefined" && frappe && typeof frappe.get_route_str === "function")
+                        ? (frappe.get_route_str() || "")
+                        : "";
+                } catch (e) {
+                    return "";
+                }
+            }
+
             // Hook into Frappe's page-change event
             $(document).on("page-change", function() {
-                var newRoute = frappe.get_route_str();
+                var newRoute = getRouteSafe();
                 if (self._lastRoute && self._lastRoute !== newRoute) {
                     self._playTransition();
                 }

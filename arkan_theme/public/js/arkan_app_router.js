@@ -32,12 +32,40 @@
             $(document).on("page-change", function() {
                 self._onRouteChange();
             });
-            // Initial detection
-            this._onRouteChange();
+            // Initial detection (defer to avoid null route during startup)
+            setTimeout(function() {
+                self._onRouteChange();
+            }, 0);
+        },
+
+        _safeGetRouteStr: function() {
+            try {
+                if (typeof frappe !== "undefined" && frappe && typeof frappe.get_route_str === "function") {
+                    return frappe.get_route_str() || "";
+                }
+            } catch (e) {
+                // Route is not ready yet
+            }
+
+            try {
+                if (typeof frappe !== "undefined" && frappe && frappe.router && Array.isArray(frappe.router.current_route)) {
+                    return frappe.router.current_route.join("/");
+                }
+            } catch (e2) {
+                // Ignore and fallback to empty route
+            }
+
+            return "";
         },
 
         _onRouteChange: function() {
-            var detected = this.detectApp();
+            var detected = null;
+            try {
+                detected = this.detectApp();
+            } catch (e) {
+                console.warn("[ARKAN] appRouter route detection skipped:", e);
+                detected = null;
+            }
             if (detected !== this._currentApp) {
                 this._currentApp = detected;
                 // Notify media switcher
@@ -48,7 +76,7 @@
         },
 
         detectApp: function() {
-            var route = (frappe.get_route_str() || "").toLowerCase();
+            var route = this._safeGetRouteStr().toLowerCase();
             var doctype = "";
 
             // Get DocType from current form or list
