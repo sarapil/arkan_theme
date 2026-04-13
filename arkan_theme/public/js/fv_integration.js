@@ -20,7 +20,7 @@
 //   arkan_welcome_msg→ scene engine workspace header
 // ═══════════════════════════════════════════════════════════════════
 
-(function() {
+(function () {
     "use strict";
 
     window.arkan = window.arkan || {};
@@ -33,13 +33,13 @@
     arkan.darkmode = {
         currentMode: 'dark',
 
-        init: function() {
+        init: function () {
             const saved = localStorage.getItem(STORAGE_KEY);
             const defaultDark = arkan.config ? arkan.config.default_dark_mode : 1;
             this.setMode(saved || (defaultDark ? 'dark' : 'light'));
         },
 
-        setMode: function(mode) {
+        setMode: function (mode) {
             document.documentElement.setAttribute('data-theme', mode);
             document.documentElement.setAttribute('data-theme-mode', mode);
             document.body.classList.toggle('arkan-light-mode', mode === 'light');
@@ -49,11 +49,11 @@
             document.dispatchEvent(new CustomEvent('arkan-theme-change', { detail: { mode } }));
         },
 
-        toggle: function() {
+        toggle: function () {
             this.setMode(this.currentMode === 'dark' ? 'light' : 'dark');
         },
 
-        isDark: function() {
+        isDark: function () {
             return this.currentMode === 'dark';
         }
     };
@@ -64,7 +64,7 @@
     arkan.loading = {
         overlay: null,
 
-        show: function(message) {
+        show: function (message) {
             if (this.overlay) return;
             this.overlay = document.createElement('div');
             this.overlay.className = 'fv-fx-glass';
@@ -76,7 +76,7 @@
             document.body.appendChild(this.overlay);
         },
 
-        hide: function() {
+        hide: function () {
             if (this.overlay) {
                 this.overlay.style.opacity = '0';
                 setTimeout(() => { if (this.overlay) { this.overlay.remove(); this.overlay = null; } }, 300);
@@ -88,14 +88,14 @@
     // WORKSPACE — welcome banner + widget animation
     // ══════════════════════════════════════════════════════════════
     arkan.workspace = {
-        init: function() {
+        init: function () {
             if (typeof frappe !== 'undefined' && frappe.router && typeof frappe.router.on === 'function') {
                 frappe.router.on('change', () => this._onRoute());
             }
             this._onRoute();
         },
 
-        _onRoute: function() {
+        _onRoute: function () {
             setTimeout(() => {
                 let route = "";
                 try {
@@ -109,7 +109,7 @@
             }, 300);
         },
 
-        _enhance: function() {
+        _enhance: function () {
             const container = document.querySelector('.workspace-container .codex-editor, .desk-page .layout-main');
             if (container && !document.querySelector('.arkan-welcome-banner')) {
                 const banner = document.createElement('div');
@@ -123,7 +123,7 @@
                 container.parentNode.insertBefore(banner, container);
             }
             // Animate workspace widgets with stagger
-            document.querySelectorAll('.widget:not(.arkan-animated)').forEach(function(w, i) {
+            document.querySelectorAll('.widget:not(.arkan-animated)').forEach(function (w, i) {
                 w.classList.add('arkan-animated', 'fv-fx-page-enter', 'fv-fx-hover-lift');
                 w.style.animationDelay = (i * 0.05) + 's';
             });
@@ -134,21 +134,21 @@
     // FORMS — timeline + section reveal via IntersectionObserver
     // ══════════════════════════════════════════════════════════════
     arkan.forms = {
-        init: function() {
+        init: function () {
             if (!('IntersectionObserver' in window)) return;
-            var observer = new IntersectionObserver(function(entries) {
-                entries.forEach(function(e) {
+            var observer = new IntersectionObserver(function (entries) {
+                entries.forEach(function (e) {
                     if (e.isIntersecting) {
                         e.target.classList.add('fv-fx-page-enter');
                         observer.unobserve(e.target);
                     }
                 });
             }, { threshold: 0.1 });
-            document.querySelectorAll('.timeline-item, .form-section').forEach(function(el) { observer.observe(el); });
+            document.querySelectorAll('.timeline-item, .form-section').forEach(function (el) { observer.observe(el); });
         }
     };
 
-    $(document).on('form-render', function() { setTimeout(function() { arkan.forms.init(); }, 200); });
+    $(document).on('form-render', function () { setTimeout(function () { arkan.forms.init(); }, 200); });
 
     // ══════════════════════════════════════════════════════════════
     // SCENE ENGINE — workspace dashboard header
@@ -156,7 +156,7 @@
     arkan.scene = {
         _rendered: false,
 
-        renderWorkspaceScene: function(container) {
+        renderWorkspaceScene: function (container) {
             if (this._rendered || !container || !frappe.visual) return;
             this._rendered = true;
 
@@ -176,7 +176,7 @@
                     books: [
                         { label: __('Help'), href: '/app/arkan-theme-about', color: '#8B5CF6' },
                     ],
-                }).catch(function() {});
+                }).catch(function () { });
             }
         }
     };
@@ -184,7 +184,7 @@
     // ══════════════════════════════════════════════════════════════
     // FRAPPE_VISUAL INTEGRATION — app_ready event
     // ══════════════════════════════════════════════════════════════
-    $(document).on("app_ready", function() {
+    $(document).on("app_ready", function () {
         // Initialize dark mode
         arkan.darkmode.init();
 
@@ -197,7 +197,7 @@
         // Load frappe_visual lazy — configure auto-enhancers, register shortcuts,
         // setup command bar, mobile nav, and theme sync
         if (typeof frappe !== 'undefined' && frappe.require) {
-            frappe.require("frappe_visual.bundle.js", function() {
+            frappe.require("frappe_visual.bundle.js", function () {
                 if (!frappe.visual) return;
 
                 // ── ThemeManager sync ──
@@ -205,11 +205,11 @@
                     try {
                         if (frappe.visual.ThemeManager.init) frappe.visual.ThemeManager.init();
                         if (frappe.visual.ThemeManager.on) {
-                            frappe.visual.ThemeManager.on('change', function(theme) {
+                            frappe.visual.ThemeManager.on('change', function (theme) {
                                 arkan.darkmode.setMode(theme === 'dark' ? 'dark' : 'light');
                             });
                         }
-                    } catch(e) {}
+                    } catch (e) { }
                 }
 
                 // ── Auto-Enhancer Configuration ──
@@ -220,14 +220,14 @@
                         frappe.visual.formEnhancer.configure({
                             showGraph: true, showStats: true, showQuickLinks: true, animate: true,
                         });
-                    } catch(e) {}
+                    } catch (e) { }
                 }
                 if (frappe.visual.workspaceEnhancer && frappe.visual.workspaceEnhancer.configure) {
                     try {
                         frappe.visual.workspaceEnhancer.configure({
                             glassCards: true, sparklines: true, liveCounts: true,
                         });
-                    } catch(e) {}
+                    } catch (e) { }
                 }
 
                 // ── Shortcuts — replaces arkan_shortcuts.js ──
@@ -235,15 +235,15 @@
                     try {
                         frappe.visual.shortcutManager({
                             shortcuts: [
-                                { key: 'mod+shift+d', action: function() { arkan.darkmode.toggle(); }, label: __('Toggle Dark Mode') },
-                                { key: 'mod+shift+n', action: function() { if (arkan.neuralGrid) arkan.neuralGrid.toggle ? arkan.neuralGrid.toggle() : null; }, label: __('Toggle Neural Grid') },
-                                { key: 'mod+shift+s', action: function() { if (arkan.sounds && arkan.sounds.toggle) arkan.sounds.toggle(); }, label: __('Toggle Sounds') },
-                                { key: 'mod+k', action: function() { if (frappe.visual.commandBar) frappe.visual.commandBar.open(); }, label: __('Command Palette') },
+                                { key: 'mod+shift+d', action: function () { arkan.darkmode.toggle(); }, label: __('Toggle Dark Mode') },
+                                { key: 'mod+shift+n', action: function () { if (arkan.neuralGrid) arkan.neuralGrid.toggle ? arkan.neuralGrid.toggle() : null; }, label: __('Toggle Neural Grid') },
+                                { key: 'mod+shift+s', action: function () { if (arkan.sounds && arkan.sounds.toggle) arkan.sounds.toggle(); }, label: __('Toggle Sounds') },
+                                { key: 'mod+k', action: function () { if (frappe.visual.commandBar) frappe.visual.commandBar.open(); }, label: __('Command Palette') },
                             ]
                         });
-                    } catch(e) {
+                    } catch (e) {
                         // Fallback: register Ctrl+Shift+D manually
-                        document.addEventListener('keydown', function(e) {
+                        document.addEventListener('keydown', function (e) {
                             if (e.ctrlKey && e.shiftKey && e.key === 'D') {
                                 e.preventDefault();
                                 arkan.darkmode.toggle();
@@ -258,7 +258,7 @@
                         frappe.visual.commandBar({
                             theme: { bg: 'var(--arkan-bg-panel)', accent: 'var(--arkan-cyan)' },
                         });
-                    } catch(e) {}
+                    } catch (e) { }
                 }
 
                 // ── Mobile Bottom Nav — replaces arkan_mobile.js ──
@@ -268,14 +268,14 @@
                         frappe.visual.bottomNav({
                             items: [
                                 { icon: 'home', label: __('Home'), route: '/desk' },
-                                { icon: 'search', label: __('Search'), action: function() { if (frappe.visual.commandBar) frappe.visual.commandBar.open(); } },
-                                { icon: 'plus', label: __('New'), action: function() { frappe.new_doc(); } },
+                                { icon: 'search', label: __('Search'), action: function () { if (frappe.visual.commandBar) frappe.visual.commandBar.open(); } },
+                                { icon: 'plus', label: __('New'), action: function () { frappe.new_doc(); } },
                                 { icon: 'bell', label: __('Alerts'), route: '/desk#notifications' },
                                 { icon: 'settings', label: __('Settings'), route: '/app/arkan-settings' },
                             ],
                             theme: { activeColor: 'var(--arkan-cyan)' },
                         });
-                    } catch(e) {}
+                    } catch (e) { }
                 }
 
                 console.log('%c⚡ ARKAN + frappe_visual v2.0 bridge active', 'color:#00F0FF;font-weight:bold;');
@@ -286,7 +286,7 @@
     // ══════════════════════════════════════════════════════════════
     // ROUTE-BASED VISUAL PAGE RENDERING
     // ══════════════════════════════════════════════════════════════
-    $(document).on("page-change", function() {
+    $(document).on("page-change", function () {
         var route = "";
         try {
             route = typeof frappe !== "undefined" && frappe && typeof frappe.get_route_str === "function"
@@ -330,7 +330,7 @@
 
         // ── ARKAN Settings Workspace — inject scene header ──
         if (route.startsWith('Workspaces/arkan') || route === 'Workspaces/ARKAN Theme') {
-            setTimeout(function() {
+            setTimeout(function () {
                 var header = document.querySelector('.workspace-container .codex-editor');
                 if (header) {
                     var sceneContainer = document.createElement('div');
@@ -338,7 +338,7 @@
                     sceneContainer.className = 'fv-fx-page-enter';
                     sceneContainer.style.cssText = 'margin-block-end:24px;min-height:180px;';
                     header.parentNode.insertBefore(sceneContainer, header);
-                    frappe.require("frappe_visual.bundle.js", function() {
+                    frappe.require("frappe_visual.bundle.js", function () {
                         arkan.scene.renderWorkspaceScene(sceneContainer);
                     });
                 }
@@ -350,7 +350,7 @@
     // ABOUT PAGE RENDERER — uses frappe.visual.generator.aboutPage
     // ══════════════════════════════════════════════════════════════
     function _renderAboutPage() {
-        frappe.require("frappe_visual.bundle.js", function() {
+        frappe.require("frappe_visual.bundle.js", function () {
             if (!frappe.visual || !frappe.visual.generator) return;
 
             var page = frappe.container.page;
@@ -409,7 +409,7 @@
     // ONBOARDING — uses frappe.visual.storyboard inside floatingWindow
     // ══════════════════════════════════════════════════════════════
     function _renderOnboarding() {
-        frappe.require("frappe_visual.bundle.js", function() {
+        frappe.require("frappe_visual.bundle.js", function () {
             if (!frappe.visual) return;
 
             var steps = [

@@ -15,7 +15,7 @@
 // Handles: config defaults, CSS variable injection, favicon,
 // app router, media switcher, 3D modules, and kept brand-unique modules.
 // fv-related features handled by fv_integration.js.
-(function() {
+(function () {
     "use strict";
 
     window.arkan = window.arkan || {};
@@ -51,13 +51,13 @@
     arkan.config = Object.assign({}, DEFAULTS);
 
     // Detect reduced motion preference
-    arkan._prefersReducedMotion = function() {
+    arkan._prefersReducedMotion = function () {
         return window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
-               arkan.config.reduce_motion;
+            arkan.config.reduce_motion;
     };
 
     // Safe module initializer — never let one module kill the rest
-    arkan._initModule = function(name, fn) {
+    arkan._initModule = function (name, fn) {
         try {
             fn();
         } catch (e) {
@@ -65,7 +65,7 @@
         }
     };
 
-    arkan.init = function() {
+    arkan.init = function () {
         // 1. Merge boot settings
         if (frappe.boot && frappe.boot.arkan_theme) {
             Object.assign(arkan.config, frappe.boot.arkan_theme);
@@ -113,42 +113,42 @@
 
         // 6. Initialize App Router + Media Switcher (v18)
         if (typeof arkan.mediaSwitcher !== 'undefined') {
-            arkan._initModule('mediaSwitcher', function() { arkan.mediaSwitcher.init(); });
+            arkan._initModule('mediaSwitcher', function () { arkan.mediaSwitcher.init(); });
         }
         if (typeof arkan.appRouter !== 'undefined') {
-            arkan._initModule('appRouter', function() { arkan.appRouter.init(); });
+            arkan._initModule('appRouter', function () { arkan.appRouter.init(); });
         }
 
         // 7. Initialize 3D modules (v18)
         if (arkan.config.enable_3d_splash && typeof arkan.splash3d !== 'undefined') {
-            arkan._initModule('splash3d', function() { arkan.splash3d.init(); });
+            arkan._initModule('splash3d', function () { arkan.splash3d.init(); });
         } else if (arkan.config.enable_splash_screen && typeof arkan.splash !== 'undefined') {
             // Fallback to 2D splash
-            arkan._initModule('splash', function() { arkan.splash.init(); });
+            arkan._initModule('splash', function () { arkan.splash.init(); });
         }
 
         if (arkan.config.bg_preset !== 'None' && typeof arkan.bg3d !== 'undefined') {
-            arkan._initModule('bg3d', function() { arkan.bg3d.init(); });
+            arkan._initModule('bg3d', function () { arkan.bg3d.init(); });
         } else {
             // Fallback to classic neural grid + matrix
             if (arkan.config.enable_neural_grid && typeof arkan.neuralGrid !== 'undefined') {
-                arkan._initModule('neuralGrid', function() { arkan.neuralGrid.init(); });
+                arkan._initModule('neuralGrid', function () { arkan.neuralGrid.init(); });
             }
             if (arkan.config.enable_matrix_rain && typeof arkan.matrix !== 'undefined') {
-                arkan._initModule('matrix', function() { arkan.matrix.init(); });
+                arkan._initModule('matrix', function () { arkan.matrix.init(); });
             }
         }
 
         if (arkan.config.enable_page_transitions && typeof arkan.loading3d !== 'undefined') {
-            arkan._initModule('loading3d', function() { arkan.loading3d.init(); });
+            arkan._initModule('loading3d', function () { arkan.loading3d.init(); });
         }
 
         // 8. Initialize kept modules
         if (arkan.config.enable_sounds && typeof arkan.sounds !== 'undefined') {
-            arkan._initModule('sounds', function() { arkan.sounds.init(); });
+            arkan._initModule('sounds', function () { arkan.sounds.init(); });
         }
         if (typeof arkan.navbar !== 'undefined') {
-            arkan._initModule('navbar', function() { arkan.navbar.init(); });
+            arkan._initModule('navbar', function () { arkan.navbar.init(); });
         }
 
         // 9. Apply custom CSS from settings
@@ -167,7 +167,7 @@
             'color:#00F0FF;font-weight:bold;font-size:14px;text-shadow:0 0 10px #00F0FF');
     };
 
-    arkan._setFavicon = function(url) {
+    arkan._setFavicon = function (url) {
         if (!url) return;
         var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
         link.type = 'image/x-icon';
@@ -176,7 +176,7 @@
         document.head.appendChild(link);
     };
 
-    arkan._addWatermark = function() {
+    arkan._addWatermark = function () {
         if (document.querySelector('.arkan-watermark')) return;
         var wm = document.createElement('div');
         wm.className = 'arkan-watermark';
@@ -184,7 +184,7 @@
     };
 
     // Auto-init on frappe ready
-    $(document).on('app_ready', function() {
+    $(document).on('app_ready', function () {
         if (!arkan._initialized) {
             arkan._initialized = true;
             arkan.init();
@@ -193,7 +193,7 @@
 
     // Fallback if app_ready already fired
     if (typeof frappe !== 'undefined' && frappe.boot) {
-        setTimeout(function() {
+        setTimeout(function () {
             if (!arkan._initialized) {
                 arkan._initialized = true;
                 arkan.init();
@@ -226,7 +226,7 @@
 //   arkan_welcome_msg→ scene engine workspace header
 // ═══════════════════════════════════════════════════════════════════
 
-(function() {
+(function () {
     "use strict";
 
     window.arkan = window.arkan || {};
@@ -239,13 +239,13 @@
     arkan.darkmode = {
         currentMode: 'dark',
 
-        init: function() {
+        init: function () {
             const saved = localStorage.getItem(STORAGE_KEY);
             const defaultDark = arkan.config ? arkan.config.default_dark_mode : 1;
             this.setMode(saved || (defaultDark ? 'dark' : 'light'));
         },
 
-        setMode: function(mode) {
+        setMode: function (mode) {
             document.documentElement.setAttribute('data-theme', mode);
             document.documentElement.setAttribute('data-theme-mode', mode);
             document.body.classList.toggle('arkan-light-mode', mode === 'light');
@@ -255,11 +255,11 @@
             document.dispatchEvent(new CustomEvent('arkan-theme-change', { detail: { mode } }));
         },
 
-        toggle: function() {
+        toggle: function () {
             this.setMode(this.currentMode === 'dark' ? 'light' : 'dark');
         },
 
-        isDark: function() {
+        isDark: function () {
             return this.currentMode === 'dark';
         }
     };
@@ -270,7 +270,7 @@
     arkan.loading = {
         overlay: null,
 
-        show: function(message) {
+        show: function (message) {
             if (this.overlay) return;
             this.overlay = document.createElement('div');
             this.overlay.className = 'fv-fx-glass';
@@ -282,7 +282,7 @@
             document.body.appendChild(this.overlay);
         },
 
-        hide: function() {
+        hide: function () {
             if (this.overlay) {
                 this.overlay.style.opacity = '0';
                 setTimeout(() => { if (this.overlay) { this.overlay.remove(); this.overlay = null; } }, 300);
@@ -294,14 +294,14 @@
     // WORKSPACE — welcome banner + widget animation
     // ══════════════════════════════════════════════════════════════
     arkan.workspace = {
-        init: function() {
+        init: function () {
             if (typeof frappe !== 'undefined' && frappe.router && typeof frappe.router.on === 'function') {
                 frappe.router.on('change', () => this._onRoute());
             }
             this._onRoute();
         },
 
-        _onRoute: function() {
+        _onRoute: function () {
             setTimeout(() => {
                 let route = "";
                 try {
@@ -317,7 +317,7 @@
             }, 300);
         },
 
-        _enhance: function() {
+        _enhance: function () {
             const container = document.querySelector('.workspace-container .codex-editor, .desk-page .layout-main');
             if (container && !document.querySelector('.arkan-welcome-banner')) {
                 const banner = document.createElement('div');
@@ -331,7 +331,7 @@
                 container.parentNode.insertBefore(banner, container);
             }
             // Animate workspace widgets with stagger
-            document.querySelectorAll('.widget:not(.arkan-animated)').forEach(function(w, i) {
+            document.querySelectorAll('.widget:not(.arkan-animated)').forEach(function (w, i) {
                 w.classList.add('arkan-animated', 'fv-fx-page-enter', 'fv-fx-hover-lift');
                 w.style.animationDelay = (i * 0.05) + 's';
             });
@@ -342,21 +342,21 @@
     // FORMS — timeline + section reveal via IntersectionObserver
     // ══════════════════════════════════════════════════════════════
     arkan.forms = {
-        init: function() {
+        init: function () {
             if (!('IntersectionObserver' in window)) return;
-            var observer = new IntersectionObserver(function(entries) {
-                entries.forEach(function(e) {
+            var observer = new IntersectionObserver(function (entries) {
+                entries.forEach(function (e) {
                     if (e.isIntersecting) {
                         e.target.classList.add('fv-fx-page-enter');
                         observer.unobserve(e.target);
                     }
                 });
             }, { threshold: 0.1 });
-            document.querySelectorAll('.timeline-item, .form-section').forEach(function(el) { observer.observe(el); });
+            document.querySelectorAll('.timeline-item, .form-section').forEach(function (el) { observer.observe(el); });
         }
     };
 
-    $(document).on('form-render', function() { setTimeout(function() { arkan.forms.init(); }, 200); });
+    $(document).on('form-render', function () { setTimeout(function () { arkan.forms.init(); }, 200); });
 
     // ══════════════════════════════════════════════════════════════
     // SCENE ENGINE — workspace dashboard header
@@ -364,7 +364,7 @@
     arkan.scene = {
         _rendered: false,
 
-        renderWorkspaceScene: function(container) {
+        renderWorkspaceScene: function (container) {
             if (this._rendered || !container || !frappe.visual) return;
             this._rendered = true;
 
@@ -384,7 +384,7 @@
                     books: [
                         { label: __('Help'), href: '/app/arkan-theme-about', color: '#8B5CF6' },
                     ],
-                }).catch(function() {});
+                }).catch(function () { });
             }
         }
     };
@@ -392,7 +392,7 @@
     // ══════════════════════════════════════════════════════════════
     // FRAPPE_VISUAL INTEGRATION — app_ready event
     // ══════════════════════════════════════════════════════════════
-    $(document).on("app_ready", function() {
+    $(document).on("app_ready", function () {
         // Initialize dark mode
         arkan.darkmode.init();
 
@@ -405,7 +405,7 @@
         // Load frappe_visual lazy — configure auto-enhancers, register shortcuts,
         // setup command bar, mobile nav, and theme sync
         if (typeof frappe !== 'undefined' && frappe.require) {
-            frappe.require("frappe_visual.bundle.js", function() {
+            frappe.require("frappe_visual.bundle.js", function () {
                 if (!frappe.visual) return;
 
                 // ── ThemeManager sync ──
@@ -413,11 +413,11 @@
                     try {
                         if (frappe.visual.ThemeManager.init) frappe.visual.ThemeManager.init();
                         if (frappe.visual.ThemeManager.on) {
-                            frappe.visual.ThemeManager.on('change', function(theme) {
+                            frappe.visual.ThemeManager.on('change', function (theme) {
                                 arkan.darkmode.setMode(theme === 'dark' ? 'dark' : 'light');
                             });
                         }
-                    } catch(e) {}
+                    } catch (e) { }
                 }
 
                 // ── Auto-Enhancer Configuration ──
@@ -428,14 +428,14 @@
                         frappe.visual.formEnhancer.configure({
                             showGraph: true, showStats: true, showQuickLinks: true, animate: true,
                         });
-                    } catch(e) {}
+                    } catch (e) { }
                 }
                 if (frappe.visual.workspaceEnhancer && frappe.visual.workspaceEnhancer.configure) {
                     try {
                         frappe.visual.workspaceEnhancer.configure({
                             glassCards: true, sparklines: true, liveCounts: true,
                         });
-                    } catch(e) {}
+                    } catch (e) { }
                 }
 
                 // ── Shortcuts — replaces arkan_shortcuts.js ──
@@ -443,15 +443,15 @@
                     try {
                         frappe.visual.shortcutManager({
                             shortcuts: [
-                                { key: 'mod+shift+d', action: function() { arkan.darkmode.toggle(); }, label: __('Toggle Dark Mode') },
-                                { key: 'mod+shift+n', action: function() { if (arkan.neuralGrid) arkan.neuralGrid.toggle ? arkan.neuralGrid.toggle() : null; }, label: __('Toggle Neural Grid') },
-                                { key: 'mod+shift+s', action: function() { if (arkan.sounds && arkan.sounds.toggle) arkan.sounds.toggle(); }, label: __('Toggle Sounds') },
-                                { key: 'mod+k', action: function() { if (frappe.visual.commandBar) frappe.visual.commandBar.open(); }, label: __('Command Palette') },
+                                { key: 'mod+shift+d', action: function () { arkan.darkmode.toggle(); }, label: __('Toggle Dark Mode') },
+                                { key: 'mod+shift+n', action: function () { if (arkan.neuralGrid) arkan.neuralGrid.toggle ? arkan.neuralGrid.toggle() : null; }, label: __('Toggle Neural Grid') },
+                                { key: 'mod+shift+s', action: function () { if (arkan.sounds && arkan.sounds.toggle) arkan.sounds.toggle(); }, label: __('Toggle Sounds') },
+                                { key: 'mod+k', action: function () { if (frappe.visual.commandBar) frappe.visual.commandBar.open(); }, label: __('Command Palette') },
                             ]
                         });
-                    } catch(e) {
+                    } catch (e) {
                         // Fallback: register Ctrl+Shift+D manually
-                        document.addEventListener('keydown', function(e) {
+                        document.addEventListener('keydown', function (e) {
                             if (e.ctrlKey && e.shiftKey && e.key === 'D') {
                                 e.preventDefault();
                                 arkan.darkmode.toggle();
@@ -466,7 +466,7 @@
                         frappe.visual.commandBar({
                             theme: { bg: 'var(--arkan-bg-panel)', accent: 'var(--arkan-cyan)' },
                         });
-                    } catch(e) {}
+                    } catch (e) { }
                 }
 
                 // ── Mobile Bottom Nav — replaces arkan_mobile.js ──
@@ -476,14 +476,14 @@
                         frappe.visual.bottomNav({
                             items: [
                                 { icon: 'home', label: __('Home'), route: '/desk' },
-                                { icon: 'search', label: __('Search'), action: function() { if (frappe.visual.commandBar) frappe.visual.commandBar.open(); } },
-                                { icon: 'plus', label: __('New'), action: function() { frappe.new_doc(); } },
+                                { icon: 'search', label: __('Search'), action: function () { if (frappe.visual.commandBar) frappe.visual.commandBar.open(); } },
+                                { icon: 'plus', label: __('New'), action: function () { frappe.new_doc(); } },
                                 { icon: 'bell', label: __('Alerts'), route: '/desk#notifications' },
                                 { icon: 'settings', label: __('Settings'), route: '/app/arkan-settings' },
                             ],
                             theme: { activeColor: 'var(--arkan-cyan)' },
                         });
-                    } catch(e) {}
+                    } catch (e) { }
                 }
 
                 console.log('%c⚡ ARKAN + frappe_visual v2.0 bridge active', 'color:#00F0FF;font-weight:bold;');
@@ -494,7 +494,7 @@
     // ══════════════════════════════════════════════════════════════
     // ROUTE-BASED VISUAL PAGE RENDERING
     // ══════════════════════════════════════════════════════════════
-    $(document).on("page-change", function() {
+    $(document).on("page-change", function () {
         var route = "";
         try {
             route = typeof frappe !== "undefined" && frappe && typeof frappe.get_route_str === "function"
@@ -538,7 +538,7 @@
 
         // ── ARKAN Settings Workspace — inject scene header ──
         if (route.startsWith('Workspaces/arkan') || route === 'Workspaces/ARKAN Theme') {
-            setTimeout(function() {
+            setTimeout(function () {
                 var header = document.querySelector('.workspace-container .codex-editor');
                 if (header) {
                     var sceneContainer = document.createElement('div');
@@ -546,7 +546,7 @@
                     sceneContainer.className = 'fv-fx-page-enter';
                     sceneContainer.style.cssText = 'margin-block-end:24px;min-height:180px;';
                     header.parentNode.insertBefore(sceneContainer, header);
-                    frappe.require("frappe_visual.bundle.js", function() {
+                    frappe.require("frappe_visual.bundle.js", function () {
                         arkan.scene.renderWorkspaceScene(sceneContainer);
                     });
                 }
@@ -558,7 +558,7 @@
     // ABOUT PAGE RENDERER — uses frappe.visual.generator.aboutPage
     // ══════════════════════════════════════════════════════════════
     function _renderAboutPage() {
-        frappe.require("frappe_visual.bundle.js", function() {
+        frappe.require("frappe_visual.bundle.js", function () {
             if (!frappe.visual || !frappe.visual.generator) return;
 
             var page = frappe.container.page;
@@ -617,7 +617,7 @@
     // ONBOARDING — uses frappe.visual.storyboard inside floatingWindow
     // ══════════════════════════════════════════════════════════════
     function _renderOnboarding() {
-        frappe.require("frappe_visual.bundle.js", function() {
+        frappe.require("frappe_visual.bundle.js", function () {
             if (!frappe.visual) return;
 
             var steps = [
@@ -661,7 +661,7 @@
 // License: MIT
 // ARKAN Theme — App Router: route-based Arkan app detection
 
-(function() {
+(function () {
     "use strict";
 
     window.arkan = window.arkan || {};
@@ -669,33 +669,33 @@
     arkan.appRouter = {
         // Static registry — Arkan apps and their route/DocType prefixes
         APP_REGISTRY: {
-            arrowz:       { prefix: ["arrowz", "az-", "az "], color: "#6366F1", label: "Arrowz" },
-            arkspace:     { prefix: ["arkspace", "as-", "as "], color: "#1B365D", label: "ARKSpace" },
-            auracrm:      { prefix: ["auracrm", "ac-", "ac_"], color: "#6366F1", label: "AuraCRM" },
-            candela:      { prefix: ["candela", "cd-", "cd "], color: "#F59E0B", label: "Candela" },
-            velara:       { prefix: ["velara", "vl-", "vl "], color: "#C9A84C", label: "Velara" },
-            vertex:       { prefix: ["vertex", "vx-", "vx "], color: "#E8590C", label: "Vertex" },
-            masar:        { prefix: ["masar", "ms-", "ms "], color: "#8B5CF6", label: "Masar" },
-            caps:         { prefix: ["caps", "caps_"], color: "#10B981", label: "CAPS" },
-            arkan_help:   { prefix: ["arkan-help", "arkan_help"], color: "#06B6D4", label: "Arkan Help" },
-            frappe_visual:{ prefix: ["frappe-visual", "frappe_visual", "fv-"], color: "#6366F1", label: "Frappe Visual" },
-            arkan_theme:  { prefix: ["arkan-theme", "arkan_theme", "arkan-settings"], color: "#1E40AF", label: "ARKAN Theme" },
+            arrowz: { prefix: ["arrowz", "az-", "az "], color: "#6366F1", label: "Arrowz" },
+            arkspace: { prefix: ["arkspace", "as-", "as "], color: "#1B365D", label: "ARKSpace" },
+            auracrm: { prefix: ["auracrm", "ac-", "ac_"], color: "#6366F1", label: "AuraCRM" },
+            candela: { prefix: ["candela", "cd-", "cd "], color: "#F59E0B", label: "Candela" },
+            velara: { prefix: ["velara", "vl-", "vl "], color: "#C9A84C", label: "Velara" },
+            vertex: { prefix: ["vertex", "vx-", "vx "], color: "#E8590C", label: "Vertex" },
+            masar: { prefix: ["masar", "ms-", "ms "], color: "#8B5CF6", label: "Masar" },
+            caps: { prefix: ["caps", "caps_"], color: "#10B981", label: "CAPS" },
+            arkan_help: { prefix: ["arkan-help", "arkan_help"], color: "#06B6D4", label: "Arkan Help" },
+            frappe_visual: { prefix: ["frappe-visual", "frappe_visual", "fv-"], color: "#6366F1", label: "Frappe Visual" },
+            arkan_theme: { prefix: ["arkan-theme", "arkan_theme", "arkan-settings"], color: "#1E40AF", label: "ARKAN Theme" },
         },
 
         _currentApp: null,
         _listeners: [],
 
-        init: function() {
+        init: function () {
             var self = this;
             // Listen for Frappe route changes
-            $(document).on("page-change", function() {
+            $(document).on("page-change", function () {
                 self._onRouteChange();
             });
             // Initial detection
             this._onRouteChange();
         },
 
-        _onRouteChange: function() {
+        _onRouteChange: function () {
             var detected = this.detectApp();
             if (detected !== this._currentApp) {
                 this._currentApp = detected;
@@ -706,7 +706,7 @@
             }
         },
 
-        detectApp: function() {
+        detectApp: function () {
             var route = "";
             try {
                 route = (frappe.get_route_str() || "").toLowerCase();
@@ -761,11 +761,11 @@
             return null; // No Arkan app detected → use defaults
         },
 
-        getCurrentApp: function() {
+        getCurrentApp: function () {
             return this._currentApp;
         },
 
-        getAppConfig: function(appName) {
+        getAppConfig: function (appName) {
             return this.APP_REGISTRY[appName] || null;
         },
     };
@@ -777,7 +777,7 @@
 // License: MIT
 // ARKAN Theme — Media Switcher: dynamic favicon/logo/color switching per app
 
-(function() {
+(function () {
     "use strict";
 
     window.arkan = window.arkan || {};
@@ -787,11 +787,11 @@
         _currentMedia: null,
         _gsapAvailable: false,
 
-        init: function() {
+        init: function () {
             this._gsapAvailable = (typeof gsap !== "undefined");
         },
 
-        switchToApp: function(appName) {
+        switchToApp: function (appName) {
             if (appName === this._currentApp) return;
             this._currentApp = appName;
 
@@ -809,7 +809,7 @@
             }));
         },
 
-        _resolveMedia: function(appName) {
+        _resolveMedia: function (appName) {
             // Use pre-resolved data from boot
             var bootData = frappe.boot && frappe.boot.arkan_theme;
             if (!bootData) return this._getDefaults();
@@ -833,7 +833,7 @@
             };
         },
 
-        _getDefaults: function() {
+        _getDefaults: function () {
             return {
                 favicon: "/assets/arkan_theme/images/favicon.ico",
                 logo: "/assets/arkan_theme/images/logo-header.png",
@@ -848,11 +848,11 @@
             };
         },
 
-        _switchFavicon: function(faviconUrl) {
+        _switchFavicon: function (faviconUrl) {
             if (!faviconUrl) return;
             var links = document.querySelectorAll('link[rel*="icon"]');
             if (links.length) {
-                links.forEach(function(link) {
+                links.forEach(function (link) {
                     link.href = faviconUrl;
                 });
             } else {
@@ -864,7 +864,7 @@
             }
         },
 
-        _switchColors: function(media) {
+        _switchColors: function (media) {
             var root = document.documentElement;
             if (media.primary_color) {
                 root.style.setProperty("--arkan-app-primary", media.primary_color);
@@ -878,7 +878,7 @@
             }
         },
 
-        _switchTopbarLogo: function(logoUrl) {
+        _switchTopbarLogo: function (logoUrl) {
             if (!logoUrl) return;
             var logo = document.querySelector(".arkan-nav-logo, .navbar-brand img");
             if (!logo) return;
@@ -888,7 +888,7 @@
                     opacity: 0,
                     scale: 0.8,
                     duration: 0.2,
-                    onComplete: function() {
+                    onComplete: function () {
                         logo.src = logoUrl;
                         gsap.to(logo, {
                             opacity: 1,
@@ -903,7 +903,7 @@
             }
         },
 
-        _updateDocTitle: function(brandName) {
+        _updateDocTitle: function (brandName) {
             if (!brandName) return;
             // Only update the brand portion of title — respect Frappe's page title
             var title = document.title || "";
@@ -915,11 +915,11 @@
             }
         },
 
-        getCurrentMedia: function() {
+        getCurrentMedia: function () {
             return this._currentMedia || this._getDefaults();
         },
 
-        getCurrentApp: function() {
+        getCurrentApp: function () {
             return this._currentApp;
         },
     };
@@ -935,12 +935,12 @@
 // ARKAN Navbar — Brand-specific: sidebar glow & dark mode toggle button.
 // Topbar/navigation structure handled by Frappe + frappe_visual auto-enhancers.
 // Dark mode logic lives in fv_integration.js (arkan.darkmode).
-(function() {
+(function () {
     "use strict";
     window.arkan = window.arkan || {};
 
     arkan.navbar = {
-        init: function() {
+        init: function () {
             // Web navbar glow line (login, portal pages)
             var navbar = document.querySelector('.navbar');
             if (navbar) {
@@ -952,7 +952,7 @@
 
             // Listen for per-app switching to update topbar logo
             var self = this;
-            document.addEventListener('arkan:app-switched', function(e) {
+            document.addEventListener('arkan:app-switched', function (e) {
                 var media = e.detail && e.detail.media;
                 if (media && media.topbar_logo) {
                     self._switchTopbarLogo(media.topbar_logo);
@@ -960,14 +960,14 @@
             });
         },
 
-        _switchTopbarLogo: function(logoUrl) {
+        _switchTopbarLogo: function (logoUrl) {
             if (!logoUrl) return;
             var logo = document.querySelector('.arkan-nav-logo, .navbar-brand img');
             if (!logo) return;
             if (typeof gsap !== 'undefined') {
                 gsap.to(logo, {
                     opacity: 0, scale: 0.8, duration: 0.2,
-                    onComplete: function() {
+                    onComplete: function () {
                         logo.src = logoUrl;
                         gsap.to(logo, { opacity: 1, scale: 1, duration: 0.3, ease: 'back.out' });
                     }
@@ -977,14 +977,14 @@
             }
         },
 
-        _tryDeskSidebar: function() {
+        _tryDeskSidebar: function () {
             var self = this;
             var sidebar = document.querySelector('.body-sidebar');
             if (sidebar) {
                 this._enhanceDeskSidebar(sidebar);
                 this._addDarkModeToggle();
             } else {
-                setTimeout(function() {
+                setTimeout(function () {
                     var s = document.querySelector('.body-sidebar');
                     if (s) {
                         self._enhanceDeskSidebar(s);
@@ -994,7 +994,7 @@
             }
         },
 
-        _enhanceWebNavbar: function(navbar) {
+        _enhanceWebNavbar: function (navbar) {
             if (navbar.querySelector('.arkan-navbar-line')) return;
             var line = document.createElement('div');
             line.className = 'arkan-navbar-line';
@@ -1003,7 +1003,7 @@
             navbar.appendChild(line);
         },
 
-        _enhanceDeskSidebar: function(sidebar) {
+        _enhanceDeskSidebar: function (sidebar) {
             if (sidebar.querySelector('.arkan-sidebar-glow')) return;
             var glow = document.createElement('div');
             glow.className = 'arkan-sidebar-glow';
@@ -1011,7 +1011,7 @@
             sidebar.appendChild(glow);
         },
 
-        _addDarkModeToggle: function() {
+        _addDarkModeToggle: function () {
             if (document.querySelector('.arkan-darkmode-toggle')) return;
 
             var btn = document.createElement('button');
@@ -1020,7 +1020,7 @@
             btn.title = __('Toggle dark/light mode');
 
             // Use frappe.visual.icons if available, fallback to text
-            var _updateIcon = function() {
+            var _updateIcon = function () {
                 var isDark = arkan.darkmode && arkan.darkmode.isDark();
                 if (typeof frappe !== 'undefined' && frappe.visual && frappe.visual.icons && frappe.visual.icons.render) {
                     btn.innerHTML = frappe.visual.icons.render(isDark ? 'sun' : 'moon', { size: 'md', color: 'var(--arkan-text-secondary)' });
@@ -1030,17 +1030,17 @@
             };
             _updateIcon();
 
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function () {
                 if (arkan.darkmode) {
                     arkan.darkmode.toggle();
                     _updateIcon();
                 }
             });
-            btn.addEventListener('mouseenter', function() { btn.style.background = 'rgba(0,240,255,0.1)'; });
-            btn.addEventListener('mouseleave', function() { btn.style.background = 'none'; });
+            btn.addEventListener('mouseenter', function () { btn.style.background = 'rgba(0,240,255,0.1)'; });
+            btn.addEventListener('mouseleave', function () { btn.style.background = 'none'; });
 
             // Listen for theme changes from other sources (keyboard shortcut, fv ThemeManager)
-            document.addEventListener('arkan-theme-change', function() { _updateIcon(); });
+            document.addEventListener('arkan-theme-change', function () { _updateIcon(); });
 
             // Try desk sidebar bottom
             var sidebarBottom = document.querySelector('.body-sidebar .body-sidebar-bottom');
@@ -1070,14 +1070,14 @@
 // For license information, please see license.txt
 
 // ARKAN Neural Grid — Animated neural network visualization
-(function() {
+(function () {
     "use strict";
     window.arkan = window.arkan || {};
 
     arkan.neuralGrid = {
         canvas: null, ctx: null, nodes: [], animId: null, mouse: { x: -1000, y: -1000 },
 
-        init: function() {
+        init: function () {
             if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
             this.canvas = document.createElement('canvas');
@@ -1094,12 +1094,12 @@
             document.addEventListener('mousemove', (e) => { this.mouse.x = e.clientX; this.mouse.y = e.clientY; });
         },
 
-        resize: function() {
+        resize: function () {
             this.canvas.width = window.innerWidth;
             this.canvas.height = window.innerHeight;
         },
 
-        createNodes: function() {
+        createNodes: function () {
             // Fewer nodes — capped at 35 max for performance
             const count = Math.min(35, Math.floor((this.canvas.width * this.canvas.height) / 60000));
             this.nodes = [];
@@ -1115,7 +1115,7 @@
             }
         },
 
-        animate: function() {
+        animate: function () {
             const ctx = this.ctx;
             const w = this.canvas.width;
             const h = this.canvas.height;
@@ -1178,7 +1178,7 @@
             this.animId = requestAnimationFrame(() => this.animate());
         },
 
-        destroy: function() {
+        destroy: function () {
             if (this.animId) cancelAnimationFrame(this.animId);
             if (this.canvas) this.canvas.remove();
         }
@@ -1194,12 +1194,12 @@
 
 // ARKAN Splash Screen — Neural network formation
 // Uses .fv-fx-gradient-animated and .fv-fx-gradient-text from frappe_visual
-(function() {
+(function () {
     "use strict";
     window.arkan = window.arkan || {};
 
     arkan.splash = {
-        init: function() {
+        init: function () {
             // Only show once per session
             if (sessionStorage.getItem('arkan-splash-shown')) {
                 var leftover = document.querySelector('.arkan-splash-screen');
@@ -1240,17 +1240,17 @@
             }
 
             // Animate fade-out
-            setTimeout(function() {
+            setTimeout(function () {
                 splash.classList.add('arkan-splash-hidden');
-                setTimeout(function() { if (splash.parentNode) splash.remove(); }, 800);
+                setTimeout(function () { if (splash.parentNode) splash.remove(); }, 800);
             }, duration);
 
             // FAILSAFE: force-remove after 7 seconds
-            setTimeout(function() {
+            setTimeout(function () {
                 var el = document.querySelector('.arkan-splash-screen');
                 if (el) {
                     el.style.cssText += 'opacity:0 !important;visibility:hidden !important;pointer-events:none !important;';
-                    setTimeout(function() { if (el.parentNode) el.remove(); }, 300);
+                    setTimeout(function () { if (el.parentNode) el.remove(); }, 300);
                 }
             }, 7000);
 
@@ -1265,7 +1265,7 @@
 // License: MIT
 // ARKAN Theme — 3D Splash Screen with GSAP + Lottie + CSS 3D
 
-(function() {
+(function () {
     "use strict";
 
     window.arkan = window.arkan || {};
@@ -1277,21 +1277,21 @@
     // Per-app gradient themes
     var APP_THEMES = {
         arkan_theme: { bg: "radial-gradient(ellipse at center, #0A0F1C 0%, #000510 50%, #00F0FF08 100%)", particle: "#00F0FF" },
-        vertex:      { bg: "radial-gradient(ellipse at center, #1A0A00 0%, #0D0500 50%, #E8590C08 100%)", particle: "#E8590C" },
-        velara:      { bg: "radial-gradient(ellipse at center, #1A1000 0%, #0D0800 50%, #C9A84C08 100%)", particle: "#C9A84C" },
-        arrowz:      { bg: "radial-gradient(ellipse at center, #0A001A 0%, #050010 50%, #6366F108 100%)", particle: "#6366F1" },
-        auracrm:     { bg: "radial-gradient(ellipse at center, #0A001A 0%, #050010 50%, #6366F108 100%)", particle: "#6366F1" },
-        candela:     { bg: "radial-gradient(ellipse at center, #1A0800 0%, #0D0400 50%, #F59E0B08 100%)", particle: "#F59E0B" },
-        arkspace:    { bg: "radial-gradient(ellipse at center, #000A1A 0%, #000510 50%, #1B365D08 100%)", particle: "#1B365D" },
-        masar:       { bg: "radial-gradient(ellipse at center, #0A001A 0%, #050010 50%, #8B5CF608 100%)", particle: "#8B5CF6" },
-        caps:        { bg: "radial-gradient(ellipse at center, #001A10 0%, #000D08 50%, #10B98108 100%)", particle: "#10B981" },
+        vertex: { bg: "radial-gradient(ellipse at center, #1A0A00 0%, #0D0500 50%, #E8590C08 100%)", particle: "#E8590C" },
+        velara: { bg: "radial-gradient(ellipse at center, #1A1000 0%, #0D0800 50%, #C9A84C08 100%)", particle: "#C9A84C" },
+        arrowz: { bg: "radial-gradient(ellipse at center, #0A001A 0%, #050010 50%, #6366F108 100%)", particle: "#6366F1" },
+        auracrm: { bg: "radial-gradient(ellipse at center, #0A001A 0%, #050010 50%, #6366F108 100%)", particle: "#6366F1" },
+        candela: { bg: "radial-gradient(ellipse at center, #1A0800 0%, #0D0400 50%, #F59E0B08 100%)", particle: "#F59E0B" },
+        arkspace: { bg: "radial-gradient(ellipse at center, #000A1A 0%, #000510 50%, #1B365D08 100%)", particle: "#1B365D" },
+        masar: { bg: "radial-gradient(ellipse at center, #0A001A 0%, #050010 50%, #8B5CF608 100%)", particle: "#8B5CF6" },
+        caps: { bg: "radial-gradient(ellipse at center, #001A10 0%, #000D08 50%, #10B98108 100%)", particle: "#10B981" },
     };
 
     arkan.splash3d = {
         _overlay: null,
         _timeline: null,
 
-        init: function() {
+        init: function () {
             // Session gate — only show once per browser session
             if (sessionStorage.getItem(SESSION_KEY)) return;
             sessionStorage.setItem(SESSION_KEY, "1");
@@ -1311,7 +1311,7 @@
             this.show(appName, media, duration);
         },
 
-        show: function(appName, media, duration) {
+        show: function (appName, media, duration) {
             var self = this;
             var overlay = this._createOverlay(appName, media);
             this._overlay = overlay;
@@ -1321,7 +1321,7 @@
             overlay.offsetHeight;
 
             var tl = gsap.timeline({
-                onComplete: function() {
+                onComplete: function () {
                     self._exit(overlay);
                 }
             });
@@ -1391,12 +1391,12 @@
             tl.duration(Math.max(tl.duration(), duration / 1000));
 
             // Failsafe
-            setTimeout(function() {
+            setTimeout(function () {
                 if (self._overlay) self._exit(self._overlay);
             }, FAILSAFE_MS);
         },
 
-        _createOverlay: function(appName, media) {
+        _createOverlay: function (appName, media) {
             var theme = APP_THEMES[appName] || APP_THEMES.arkan_theme;
             var primaryColor = (media && media.primary_color) || theme.particle;
             var brandName = (media && media.brand_name) || arkan.config.brand_name || "ARKAN";
@@ -1497,7 +1497,7 @@
             return overlay;
         },
 
-        _exit: function(overlay) {
+        _exit: function (overlay) {
             if (!overlay || !overlay.parentNode) return;
             this._overlay = null;
 
@@ -1506,21 +1506,21 @@
                 gsap.to(children ? [children] : overlay.children, {
                     z: 500, opacity: 0, filter: "blur(20px)",
                     stagger: 0.1, duration: 0.6, ease: "power3.in",
-                    onComplete: function() {
+                    onComplete: function () {
                         if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
                     }
                 });
             } else {
                 overlay.style.transition = "opacity 0.5s ease";
                 overlay.style.opacity = "0";
-                setTimeout(function() {
+                setTimeout(function () {
                     if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
                 }, 500);
             }
         },
 
         // Allow manual skip (e.g., on click)
-        skip: function() {
+        skip: function () {
             if (this._timeline) this._timeline.progress(1);
             if (this._overlay) this._exit(this._overlay);
         }
@@ -1533,7 +1533,7 @@
 // License: MIT
 // ARKAN Theme — 3D Multi-Layer Parallax Background with GSAP
 
-(function() {
+(function () {
     "use strict";
 
     window.arkan = window.arkan || {};
@@ -1541,33 +1541,33 @@
     // Preset definitions: each preset defines layer visuals
     var PRESETS = {
         "Neural 3D": {
-            deep:    { gradient: "radial-gradient(ellipse at 30% 70%, rgba(0,240,255,0.04) 0%, transparent 70%)" },
-            mid:     { useNeuralGrid: true },
-            near:    { type: "dots", color: "rgba(139,92,246,0.08)", count: 12 },
+            deep: { gradient: "radial-gradient(ellipse at 30% 70%, rgba(0,240,255,0.04) 0%, transparent 70%)" },
+            mid: { useNeuralGrid: true },
+            near: { type: "dots", color: "rgba(139,92,246,0.08)", count: 12 },
             surface: { gradient: "linear-gradient(180deg, transparent, rgba(10,15,28,0.3))" }
         },
         "Starfield": {
-            deep:    { gradient: "radial-gradient(ellipse at 50% 50%, rgba(0,5,16,1) 0%, rgba(0,0,0,1) 100%)" },
-            mid:     { type: "stars", color: "rgba(255,255,255,0.6)", count: 40 },
-            near:    { type: "stars", color: "rgba(0,240,255,0.4)", count: 15 },
+            deep: { gradient: "radial-gradient(ellipse at 50% 50%, rgba(0,5,16,1) 0%, rgba(0,0,0,1) 100%)" },
+            mid: { type: "stars", color: "rgba(255,255,255,0.6)", count: 40 },
+            near: { type: "stars", color: "rgba(0,240,255,0.4)", count: 15 },
             surface: { gradient: "none" }
         },
         "Matrix 3D": {
-            deep:    { gradient: "radial-gradient(ellipse at 50% 30%, rgba(16,185,129,0.05) 0%, transparent 70%)" },
-            mid:     { useMatrix: true },
-            near:    { type: "dots", color: "rgba(16,185,129,0.1)", count: 8 },
+            deep: { gradient: "radial-gradient(ellipse at 50% 30%, rgba(16,185,129,0.05) 0%, transparent 70%)" },
+            mid: { useMatrix: true },
+            near: { type: "dots", color: "rgba(16,185,129,0.1)", count: 8 },
             surface: { gradient: "linear-gradient(180deg, transparent 80%, rgba(10,15,28,0.5))" }
         },
         "Gradient Mesh": {
-            deep:    { gradient: "conic-gradient(from 180deg at 50% 70%, rgba(0,240,255,0.06), rgba(139,92,246,0.06), rgba(245,158,11,0.04), rgba(0,240,255,0.06))" },
-            mid:     { gradient: "radial-gradient(ellipse at 30% 30%, rgba(139,92,246,0.04) 0%, transparent 50%)" },
-            near:    { gradient: "radial-gradient(ellipse at 70% 60%, rgba(0,240,255,0.03) 0%, transparent 50%)" },
+            deep: { gradient: "conic-gradient(from 180deg at 50% 70%, rgba(0,240,255,0.06), rgba(139,92,246,0.06), rgba(245,158,11,0.04), rgba(0,240,255,0.06))" },
+            mid: { gradient: "radial-gradient(ellipse at 30% 30%, rgba(139,92,246,0.04) 0%, transparent 50%)" },
+            near: { gradient: "radial-gradient(ellipse at 70% 60%, rgba(0,240,255,0.03) 0%, transparent 50%)" },
             surface: { gradient: "none" }
         },
         "Minimal": {
-            deep:    { gradient: "none" },
-            mid:     { gradient: "none" },
-            near:    { gradient: "none" },
+            deep: { gradient: "none" },
+            mid: { gradient: "none" },
+            near: { gradient: "none" },
             surface: { gradient: "none" }
         },
         "None": null
@@ -1580,7 +1580,7 @@
         _mouseY: 0.5,
         _rafId: null,
 
-        init: function() {
+        init: function () {
             var config = arkan.config || {};
             var preset = config.bg_preset || "Neural 3D";
 
@@ -1602,7 +1602,7 @@
             }
         },
 
-        _createLayers: function(presetDef) {
+        _createLayers: function (presetDef) {
             var container = document.createElement("div");
             container.className = "arkan-bg-3d";
             this._container = container;
@@ -1648,7 +1648,7 @@
             }
         },
 
-        _populateParticles: function(layer, def) {
+        _populateParticles: function (layer, def) {
             var count = def.count || 10;
             var color = def.color || "rgba(255,255,255,0.3)";
             var isStar = (def.type === "stars");
@@ -1664,15 +1664,15 @@
             }
         },
 
-        _bindMouse: function() {
+        _bindMouse: function () {
             var self = this;
-            document.addEventListener("mousemove", function(e) {
+            document.addEventListener("mousemove", function (e) {
                 self._mouseX = e.clientX / window.innerWidth;
                 self._mouseY = e.clientY / window.innerHeight;
             }, { passive: true });
         },
 
-        _startParallax: function(intensityPercent) {
+        _startParallax: function (intensityPercent) {
             var self = this;
             var intensity = (intensityPercent || 50) / 100;
             var depthScale = { deep: 30 * intensity, mid: 15 * intensity, near: 5 * intensity, surface: 0 };
@@ -1707,7 +1707,7 @@
             tick();
         },
 
-        destroy: function() {
+        destroy: function () {
             if (this._rafId) cancelAnimationFrame(this._rafId);
             if (this._container && this._container.parentNode) {
                 this._container.parentNode.removeChild(this._container);
@@ -1715,7 +1715,7 @@
             this._layers = {};
         },
 
-        setPreset: function(presetName) {
+        setPreset: function (presetName) {
             this.destroy();
             if (presetName === "None" || !PRESETS[presetName]) return;
             this._createLayers(PRESETS[presetName]);
@@ -1733,7 +1733,7 @@
 // License: MIT
 // ARKAN Theme — 3D Page Transitions + Loading Indicators
 
-(function() {
+(function () {
     "use strict";
 
     window.arkan = window.arkan || {};
@@ -1742,7 +1742,7 @@
         _lastRoute: null,
         _overlay: null,
 
-        init: function() {
+        init: function () {
             var config = arkan.config || {};
             if (!config.enable_page_transitions && !config.enable_3d_loading) return;
 
@@ -1756,10 +1756,10 @@
         },
 
         // ─── Page Transitions (Route Change) ────────────────────
-        _initPageTransitions: function() {
+        _initPageTransitions: function () {
             var self = this;
             // Hook into Frappe's page-change event
-            $(document).on("page-change", function() {
+            $(document).on("page-change", function () {
                 var newRoute = "";
                 try {
                     newRoute = typeof frappe !== "undefined" && frappe && typeof frappe.get_route_str === "function"
@@ -1775,7 +1775,7 @@
             });
         },
 
-        _playTransition: function() {
+        _playTransition: function () {
             if (typeof gsap === "undefined") return;
 
             var pageContainer = document.querySelector(".main-section") || document.querySelector("#page-container");
@@ -1791,20 +1791,20 @@
         },
 
         // ─── Form Save Progress Indicator ────────────────────────
-        _initFormSaveIndicator: function() {
+        _initFormSaveIndicator: function () {
             var self = this;
             // Hook before form save
-            $(document).on("form-refresh", function() {
+            $(document).on("form-refresh", function () {
                 if (typeof cur_frm === "undefined" || !cur_frm) return;
 
                 var originalSave = cur_frm.save;
                 if (originalSave && !originalSave._arkan_wrapped) {
-                    cur_frm.save = function() {
+                    cur_frm.save = function () {
                         self._showSaveRing(cur_frm.wrapper);
-                        return originalSave.apply(this, arguments).then(function(r) {
+                        return originalSave.apply(this, arguments).then(function (r) {
                             self._showSaveSuccess();
                             return r;
-                        }).catch(function(e) {
+                        }).catch(function (e) {
                             self._hideSaveRing();
                             throw e;
                         });
@@ -1814,7 +1814,7 @@
             });
         },
 
-        _showSaveRing: function(wrapper) {
+        _showSaveRing: function (wrapper) {
             if (this._overlay) this._hideSaveRing();
 
             var overlay = document.createElement("div");
@@ -1866,7 +1866,7 @@
             }
         },
 
-        _showSaveSuccess: function() {
+        _showSaveSuccess: function () {
             if (!this._overlay) return;
 
             var ring = this._overlay.querySelector(".save-progress-ring");
@@ -1877,7 +1877,7 @@
                     strokeDashoffset: 0,
                     stroke: "var(--arkan-green, #10B981)",
                     duration: 0.3, ease: "power2.out",
-                    onComplete: function() {
+                    onComplete: function () {
                         // Draw checkmark
                         if (svg) {
                             var svgNS = "http://www.w3.org/2000/svg";
@@ -1901,10 +1901,10 @@
 
             // Auto-dismiss after 1.2s
             var self = this;
-            setTimeout(function() { self._hideSaveRing(); }, 1200);
+            setTimeout(function () { self._hideSaveRing(); }, 1200);
         },
 
-        _hideSaveRing: function() {
+        _hideSaveRing: function () {
             if (!this._overlay) return;
             var overlay = this._overlay;
             this._overlay = null;
@@ -1913,7 +1913,7 @@
                 gsap.to(overlay, {
                     opacity: 0, scale: 0.8,
                     duration: 0.3, ease: "power2.in",
-                    onComplete: function() {
+                    onComplete: function () {
                         if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
                     }
                 });
@@ -1932,14 +1932,14 @@
 // For license information, please see license.txt
 
 // ARKAN Matrix Rain — Cyber data rain effect
-(function() {
+(function () {
     "use strict";
     window.arkan = window.arkan || {};
 
     arkan.matrix = {
         canvas: null, ctx: null, columns: [], animId: null,
 
-        init: function() {
+        init: function () {
             if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
             this.canvas = document.createElement('canvas');
@@ -1953,7 +1953,7 @@
             window.addEventListener('resize', () => this.resize());
         },
 
-        resize: function() {
+        resize: function () {
             this.canvas.width = window.innerWidth;
             this.canvas.height = window.innerHeight;
             const colWidth = 14;
@@ -1961,7 +1961,7 @@
             this.columns = new Array(numCols).fill(0).map(() => Math.random() * this.canvas.height);
         },
 
-        animate: function() {
+        animate: function () {
             const ctx = this.ctx;
             const w = this.canvas.width;
             const h = this.canvas.height;
@@ -1990,7 +1990,7 @@
             this.animId = requestAnimationFrame(() => this.animate());
         },
 
-        destroy: function() {
+        destroy: function () {
             if (this.animId) cancelAnimationFrame(this.animId);
             if (this.canvas) this.canvas.remove();
         }
@@ -2005,14 +2005,14 @@
 // For license information, please see license.txt
 
 // ARKAN Sounds — Cyber notification tones via Web Audio API
-(function() {
+(function () {
     "use strict";
     window.arkan = window.arkan || {};
 
     arkan.sounds = {
         ctx: null,
 
-        init: function() {
+        init: function () {
             // Lazy init AudioContext on first user gesture
             document.addEventListener('click', () => {
                 if (!this.ctx) {
@@ -2021,7 +2021,7 @@
             }, { once: true });
         },
 
-        play: function(type) {
+        play: function (type) {
             if (!this.ctx) return;
             const osc = this.ctx.createOscillator();
             const gain = this.ctx.createGain();
@@ -2029,7 +2029,7 @@
             gain.connect(this.ctx.destination);
             gain.gain.value = 0.08;
 
-            switch(type) {
+            switch (type) {
                 case 'success':
                     osc.frequency.setValueAtTime(523, this.ctx.currentTime);
                     osc.frequency.setValueAtTime(659, this.ctx.currentTime + 0.1);
@@ -2063,12 +2063,12 @@
 // For license information, please see license.txt
 
 // ARKAN Interactive Grid — Click-to-highlight neural nodes
-(function() {
+(function () {
     "use strict";
     window.arkan = window.arkan || {};
 
     arkan.interactiveGrid = {
-        init: function() {
+        init: function () {
             document.addEventListener('click', (e) => {
                 if (!arkan.neuralGrid || !arkan.neuralGrid.nodes) return;
                 const x = e.clientX, y = e.clientY;
@@ -2095,13 +2095,13 @@
 // For license information, please see license.txt
 
 // ARKAN Minigame — Easter egg
-(function() {
+(function () {
     "use strict";
     window.arkan = window.arkan || {};
     arkan.minigame = {
         code: [],
-        secret: ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'],
-        init: function() {
+        secret: ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'],
+        init: function () {
             document.addEventListener('keydown', (e) => {
                 this.code.push(e.key);
                 if (this.code.length > this.secret.length) this.code.shift();
@@ -2110,7 +2110,7 @@
                 }
             });
         },
-        activate: function() {
+        activate: function () {
             frappe.show_alert({ message: '⚡ ARKAN Matrix Mode Activated!', indicator: 'blue' });
             if (arkan.matrix) arkan.matrix.init();
         }
@@ -2126,13 +2126,13 @@
 // For license information, please see license.txt
 
 // ARKAN Animated Favicon — v3.0: per-app favicon awareness
-(function() {
+(function () {
     "use strict";
     window.arkan = window.arkan || {};
     arkan.animatedFavicon = {
         _baseFavicon: null,
 
-        init: function() {
+        init: function () {
             var self = this;
             // Store base favicon
             var link = document.querySelector("link[rel*='icon']");
@@ -2140,11 +2140,11 @@
 
             // Pulse on notifications
             if (typeof frappe !== 'undefined' && frappe.realtime) {
-                frappe.realtime.on('notification', function() { self.pulse(); });
+                frappe.realtime.on('notification', function () { self.pulse(); });
             }
 
             // Listen for app-switch to update base favicon reference
-            document.addEventListener('arkan:app-switched', function(e) {
+            document.addEventListener('arkan:app-switched', function (e) {
                 var media = e.detail && e.detail.media;
                 if (media && media.favicon) {
                     self._baseFavicon = media.favicon;
@@ -2152,17 +2152,17 @@
             });
         },
 
-        pulse: function() {
+        pulse: function () {
             var title = document.title || '';
             if (title.indexOf('⚡ ') !== 0) {
                 document.title = '⚡ ' + title;
-                setTimeout(function() {
+                setTimeout(function () {
                     document.title = document.title.replace('⚡ ', '');
                 }, 3000);
             }
         }
     };
-    $(document).on('app_ready', function() { arkan.animatedFavicon.init(); });
+    $(document).on('app_ready', function () { arkan.animatedFavicon.init(); });
 })();
 
 
@@ -2173,12 +2173,20 @@
 // For license information, please see license.txt
 
 // ARKAN PWA — Service Worker Registration
-(function() {
+(function () {
     "use strict";
     window.arkan = window.arkan || {};
 
     arkan.pwa = {
-        init: function() {
+        init: function () {
+            // Inject manifest link tag if not already present
+            if (!document.querySelector('link[rel="manifest"]')) {
+                var link = document.createElement('link');
+                link.rel = 'manifest';
+                link.href = '/assets/arkan_theme/manifest.json';
+                document.head.appendChild(link);
+            }
+
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('/assets/arkan_theme/sw.js')
                     .then(reg => console.log('[ARKAN] SW registered:', reg.scope))
@@ -2199,14 +2207,14 @@
 // For license information, please see license.txt
 
 // ARKAN Print Headers
-(function() {
+(function () {
     "use strict";
     window.arkan = window.arkan || {};
     arkan.printHeaders = {
-        init: function() {
+        init: function () {
             // Inject brand header for print layouts
             if (typeof frappe !== 'undefined') {
-                frappe.ui.form.on('Print Format', { refresh: function(frm) { /* Add ARKAN branding to print */ } });
+                frappe.ui.form.on('Print Format', { refresh: function (frm) { /* Add ARKAN branding to print */ } });
             }
         }
     };
@@ -2220,11 +2228,11 @@
 // For license information, please see license.txt
 
 // ARKAN Seasons — Cyber seasonal color variations
-(function() {
+(function () {
     "use strict";
     window.arkan = window.arkan || {};
     arkan.seasons = {
-        init: function() {
+        init: function () {
             const month = new Date().getMonth();
             const body = document.body;
             if (month === 0) body.classList.add('arkan-season-newyear');

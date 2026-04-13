@@ -1,7 +1,9 @@
 {
   "name": "ARKAN \u2014 AI & Technology Solutions ERP",
   "short_name": "ARKAN ERP",
-  "start_url": "/",
+  "id": "/",
+  "scope": "/",
+  "start_url": "/desk",
   "display": "standalone",
   "background_color": "#0A0F1C",
   "theme_color": "#00F0FF",

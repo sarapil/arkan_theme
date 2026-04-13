@@ -10,6 +10,14 @@
 
     arkan.pwa = {
         init: function() {
+            // Inject manifest link tag if not already present
+            if (!document.querySelector('link[rel="manifest"]')) {
+                var link = document.createElement('link');
+                link.rel = 'manifest';
+                link.href = '/assets/arkan_theme/manifest.json';
+                document.head.appendChild(link);
+            }
+
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('/assets/arkan_theme/sw.js')
                     .then(reg => console.log('[ARKAN] SW registered:', reg.scope))

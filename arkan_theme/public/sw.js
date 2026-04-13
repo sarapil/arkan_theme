@@ -7,7 +7,7 @@
  * ARKAN Theme — Service Worker
  * Minimal offline caching for PWA support
  */
-var CACHE_NAME = 'arkan-v2';
+var CACHE_NAME = 'arkan-v3';
 var PRECACHE_URLS = [
     '/desk',
     '/assets/arkan_theme/css/arkan.css'
