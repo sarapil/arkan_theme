@@ -303,7 +303,14 @@
 
         _onRoute: function() {
             setTimeout(() => {
-                const route = frappe.get_route_str();
+                let route = "";
+                try {
+                    route = typeof frappe !== "undefined" && frappe && typeof frappe.get_route_str === "function"
+                        ? (frappe.get_route_str() || "")
+                        : "";
+                } catch (e) {
+                    route = "";
+                }
                 if (route === '' || route.startsWith('Workspaces')) {
                     this._enhance();
                 }
@@ -488,7 +495,14 @@
     // ROUTE-BASED VISUAL PAGE RENDERING
     // ══════════════════════════════════════════════════════════════
     $(document).on("page-change", function() {
-        var route = frappe.get_route_str();
+        var route = "";
+        try {
+            route = typeof frappe !== "undefined" && frappe && typeof frappe.get_route_str === "function"
+                ? (frappe.get_route_str() || "")
+                : "";
+        } catch (e) {
+            route = "";
+        }
 
         // ── About Page — /arkan-theme-about ──
         if (route === 'arkan-theme-about' || route === 'عن-arkan-theme') {
@@ -693,7 +707,13 @@
         },
 
         detectApp: function() {
-            var route = (frappe.get_route_str() || "").toLowerCase();
+            var route = "";
+            try {
+                route = (frappe.get_route_str() || "").toLowerCase();
+            } catch (e) {
+                // frappe.get_route() may be null during early load
+                route = "";
+            }
             var doctype = "";
 
             // Get DocType from current form or list
@@ -1740,7 +1760,14 @@
             var self = this;
             // Hook into Frappe's page-change event
             $(document).on("page-change", function() {
-                var newRoute = frappe.get_route_str();
+                var newRoute = "";
+                try {
+                    newRoute = typeof frappe !== "undefined" && frappe && typeof frappe.get_route_str === "function"
+                        ? (frappe.get_route_str() || "")
+                        : "";
+                } catch (e) {
+                    newRoute = "";
+                }
                 if (self._lastRoute && self._lastRoute !== newRoute) {
                     self._playTransition();
                 }

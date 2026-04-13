@@ -97,7 +97,12 @@
 
         _onRoute: function() {
             setTimeout(() => {
-                const route = frappe.get_route_str();
+                let route = "";
+                try {
+                    route = frappe.get_route_str() || "";
+                } catch (e) {
+                    route = "";
+                }
                 if (route === '' || route.startsWith('Workspaces')) {
                     this._enhance();
                 }
@@ -282,7 +287,14 @@
     // ROUTE-BASED VISUAL PAGE RENDERING
     // ══════════════════════════════════════════════════════════════
     $(document).on("page-change", function() {
-        var route = frappe.get_route_str();
+        var route = "";
+        try {
+            route = typeof frappe !== "undefined" && frappe && typeof frappe.get_route_str === "function"
+                ? (frappe.get_route_str() || "")
+                : "";
+        } catch (e) {
+            route = "";
+        }
 
         // ── About Page — /arkan-theme-about ──
         if (route === 'arkan-theme-about' || route === 'عن-arkan-theme') {
