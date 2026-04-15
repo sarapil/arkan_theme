@@ -427,3 +427,10 @@ MIT License — see [license.txt](license.txt)
 ---
 
 *Built with ❤️ by Arkan Labs — ARKAN: Luxury Living, Refined* 🏙️
+
+## Contact
+
+For support and inquiries:
+- Phone: +201508268982
+- WhatsApp: https://wa.me/201508268982
+
