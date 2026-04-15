@@ -1,4 +1,5 @@
 # Developer — Usage Scenarios
+
 # سيناريوهات المطور
 
 ## Role Overview
@@ -17,6 +18,7 @@
 - **Pre-conditions**: arkan_theme is installed
 - **Steps**:
   1. In your app's SCSS/CSS file:
+
      ```css
      .my-component {
        background: var(--at-bg-subtle);
@@ -26,7 +28,7 @@
        padding: var(--at-space-md);
        box-shadow: var(--at-shadow-sm);
      }
-     
+
      .my-button {
        background: var(--at-primary);
        color: white;
@@ -34,7 +36,9 @@
        padding: var(--at-space-sm) var(--at-space-md);
      }
      ```
+
   2. Styles automatically adapt to dark mode
+
 - **Screen**: N/A (code-level)
 - **Error scenarios**: Variable not defined (check spelling, prefix)
 
@@ -66,22 +70,25 @@
 - **Pre-conditions**: Component uses custom styles
 - **Steps**:
   1. Use CSS variables for all colors:
+
      ```css
      /* ✅ Correct */
      .my-element {
        background: var(--at-bg);
        color: var(--at-text);
      }
-     
+
      /* ❌ Avoid hardcoded colors */
      .my-element {
        background: white;
        color: #333;
      }
      ```
+
   2. Test in both modes:
      - Toggle dark mode in ARKAN Settings
      - Or use browser DevTools to toggle `[data-theme="dark"]`
+
 - **Screen**: Visual testing
 - **Error scenarios**: Hardcoded colors not adaptive
 
@@ -95,28 +102,30 @@
 - **Pre-conditions**: GSAP is loaded (arkan_theme includes it)
 - **Steps**:
   1. Create animation in JavaScript:
+
      ```javascript
-     frappe.require(['/assets/arkan_theme/js/vendor/gsap.min.js'], () => {
+     frappe.require(["/assets/arkan_theme/js/vendor/gsap.min.js"], () => {
        // Entrance animation
-       gsap.from('.my-cards', {
+       gsap.from(".my-cards", {
          opacity: 0,
          y: 30,
          duration: 0.5,
          stagger: 0.1,
-         ease: 'power2.out'
+         ease: "power2.out",
        });
-       
+
        // Hover animation
-       document.querySelectorAll('.my-card').forEach(card => {
-         card.addEventListener('mouseenter', () => {
+       document.querySelectorAll(".my-card").forEach((card) => {
+         card.addEventListener("mouseenter", () => {
            gsap.to(card, { scale: 1.02, duration: 0.2 });
          });
-         card.addEventListener('mouseleave', () => {
+         card.addEventListener("mouseleave", () => {
            gsap.to(card, { scale: 1, duration: 0.2 });
          });
        });
      });
      ```
+
 - **Screen**: Animated components
 - **Error scenarios**: GSAP not loaded, animation conflict
 
@@ -126,6 +135,7 @@
 - **Pre-conditions**: Component uses custom positioning
 - **Steps**:
   1. Use CSS Logical Properties:
+
      ```css
      /* ✅ Correct - works in both LTR and RTL */
      .my-sidebar {
@@ -134,7 +144,7 @@
        border-inline-start: 2px solid var(--at-primary);
        text-align: start;
      }
-     
+
      /* ❌ Avoid physical properties */
      .my-sidebar {
        margin-left: 16px;
@@ -143,9 +153,11 @@
        text-align: left;
      }
      ```
+
   2. Test with Arabic language:
      - Change user language to Arabic
      - Or add `dir="rtl"` to `<html>`
+
 - **Screen**: RTL testing
 - **Error scenarios**: Physical properties causing mirroring issues
 
@@ -159,23 +171,26 @@
 - **Pre-conditions**: Need different branding for a client
 - **Steps**:
   1. Create override CSS file in your app:
+
      ```css
      /* my_app/public/css/theme-override.css */
      :root {
-       --at-primary: #8B5CF6;  /* Purple instead of blue */
-       --at-primary-light: #8B5CF622;
-       --at-accent: #F59E0B;   /* Amber accent */
+       --at-primary: #8b5cf6; /* Purple instead of blue */
+       --at-primary-light: #8b5cf622;
+       --at-accent: #f59e0b; /* Amber accent */
      }
-     
+
      [data-theme="dark"] {
-       --at-bg: #1A1A2E;      /* Custom dark background */
+       --at-bg: #1a1a2e; /* Custom dark background */
      }
      ```
+
   2. Include in your app's hooks.py:
      ```python
      app_include_css = ["/assets/my_app/css/theme-override.css"]
      ```
   3. CSS loads after arkan_theme, overriding variables
+
 - **Screen**: Full app with new colors
 - **Error scenarios**: Specificity issues, load order problems
 
@@ -231,7 +246,7 @@
      ```
   2. Check localStorage:
      ```javascript
-     console.log(localStorage.getItem('arkan_theme_mode'));
+     console.log(localStorage.getItem("arkan_theme_mode"));
      ```
   3. Check ARKAN Settings → Dark Mode value
   4. Clear localStorage and reload

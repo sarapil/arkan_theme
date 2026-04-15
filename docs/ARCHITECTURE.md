@@ -1,4 +1,5 @@
 # ARKAN Theme — Architecture
+
 # ثيم أركان — الهيكلية
 
 > Modern Glassmorphism Theme with Dark Mode and RTL Support
@@ -6,6 +7,7 @@
 ## Overview — نظرة عامة
 
 ARKAN Theme provides a premium visual experience for Frappe applications:
+
 - **Glassmorphism design** — Frosted glass effect with backdrop blur
 - **Dark mode** — Automatic or manual dark/light toggle
 - **RTL support** — Full Arabic/RTL layout support
@@ -56,26 +58,26 @@ All variables use the `--at-` prefix (ARKAN Theme).
 ```css
 :root {
   /* Primary Brand Colors */
-  --at-primary: #1E40AF;          /* Main brand color (blue) */
-  --at-primary-light: #1E40AF22;  /* Light variant (with alpha) */
-  --at-primary-dark: #1E40AFDD;   /* Dark variant */
-  
+  --at-primary: #1e40af; /* Main brand color (blue) */
+  --at-primary-light: #1e40af22; /* Light variant (with alpha) */
+  --at-primary-dark: #1e40afdd; /* Dark variant */
+
   /* Secondary & Accent */
-  --at-secondary: #64748B;        /* Secondary color (slate) */
-  --at-accent: #1E40AF;           /* Accent for highlights */
-  
+  --at-secondary: #64748b; /* Secondary color (slate) */
+  --at-accent: #1e40af; /* Accent for highlights */
+
   /* Semantic Colors */
-  --at-success: #10B981;          /* Success/positive (emerald) */
-  --at-warning: #F59E0B;          /* Warning/caution (amber) */
-  --at-danger: #EF4444;           /* Error/danger (red) */
-  --at-info: #3B82F6;             /* Information (blue) */
-  
+  --at-success: #10b981; /* Success/positive (emerald) */
+  --at-warning: #f59e0b; /* Warning/caution (amber) */
+  --at-danger: #ef4444; /* Error/danger (red) */
+  --at-info: #3b82f6; /* Information (blue) */
+
   /* Surface Colors */
-  --at-bg: #FFFFFF;               /* Main background */
-  --at-bg-subtle: #F8FAFC;        /* Subtle/secondary background */
-  --at-text: #1E293B;             /* Main text color */
-  --at-text-muted: #64748B;       /* Muted/secondary text */
-  --at-border: #E2E8F0;           /* Border color */
+  --at-bg: #ffffff; /* Main background */
+  --at-bg-subtle: #f8fafc; /* Subtle/secondary background */
+  --at-text: #1e293b; /* Main text color */
+  --at-text-muted: #64748b; /* Muted/secondary text */
+  --at-border: #e2e8f0; /* Border color */
 }
 ```
 
@@ -83,16 +85,16 @@ All variables use the `--at-` prefix (ARKAN Theme).
 
 ```css
 [data-theme="dark"] {
-  --at-bg: #0F172A;               /* Dark background (slate-900) */
-  --at-bg-subtle: #1E293B;        /* Dark secondary (slate-800) */
-  --at-text: #F1F5F9;             /* Light text (slate-100) */
-  --at-text-muted: #94A3B8;       /* Muted light text (slate-400) */
-  --at-border: #334155;           /* Dark border (slate-700) */
-  
+  --at-bg: #0f172a; /* Dark background (slate-900) */
+  --at-bg-subtle: #1e293b; /* Dark secondary (slate-800) */
+  --at-text: #f1f5f9; /* Light text (slate-100) */
+  --at-text-muted: #94a3b8; /* Muted light text (slate-400) */
+  --at-border: #334155; /* Dark border (slate-700) */
+
   /* Shadows adjusted for dark mode */
-  --at-shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
-  --at-shadow-md: 0 4px 6px rgba(0,0,0,0.4);
-  --at-shadow-lg: 0 10px 15px rgba(0,0,0,0.5);
+  --at-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --at-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --at-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
 }
 ```
 
@@ -100,11 +102,11 @@ All variables use the `--at-` prefix (ARKAN Theme).
 
 ```css
 :root {
-  --at-space-xs: 0.25rem;   /* 4px */
-  --at-space-sm: 0.5rem;    /* 8px */
-  --at-space-md: 1rem;      /* 16px */
-  --at-space-lg: 1.5rem;    /* 24px */
-  --at-space-xl: 2rem;      /* 32px */
+  --at-space-xs: 0.25rem; /* 4px */
+  --at-space-sm: 0.5rem; /* 8px */
+  --at-space-md: 1rem; /* 16px */
+  --at-space-lg: 1.5rem; /* 24px */
+  --at-space-xl: 2rem; /* 32px */
 }
 ```
 
@@ -112,10 +114,10 @@ All variables use the `--at-` prefix (ARKAN Theme).
 
 ```css
 :root {
-  --at-radius-sm: 0.375rem;  /* 6px - buttons, inputs */
-  --at-radius-md: 0.5rem;    /* 8px - cards */
-  --at-radius-lg: 0.75rem;   /* 12px - modals */
-  --at-radius-xl: 1rem;      /* 16px - large cards */
+  --at-radius-sm: 0.375rem; /* 6px - buttons, inputs */
+  --at-radius-md: 0.5rem; /* 8px - cards */
+  --at-radius-lg: 0.75rem; /* 12px - modals */
+  --at-radius-xl: 1rem; /* 16px - large cards */
 }
 ```
 
@@ -123,9 +125,9 @@ All variables use the `--at-` prefix (ARKAN Theme).
 
 ```css
 :root {
-  --at-shadow-sm: 0 1px 2px rgba(0,0,0,0.05);   /* Subtle */
-  --at-shadow-md: 0 4px 6px rgba(0,0,0,0.07);   /* Cards */
-  --at-shadow-lg: 0 10px 15px rgba(0,0,0,0.1);  /* Modals */
+  --at-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05); /* Subtle */
+  --at-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07); /* Cards */
+  --at-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1); /* Modals */
 }
 ```
 
@@ -136,7 +138,7 @@ All variables use the `--at-` prefix (ARKAN Theme).
   /* Font Families */
   --at-font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   --at-font-family-ar: "IBM Plex Sans Arabic", "Tajawal", sans-serif;
-  
+
   /* Font Sizes (using clamp for responsive) */
   --at-text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
   --at-text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
@@ -181,7 +183,7 @@ arkanTheme.toggleDarkMode();
 const isDark = arkanTheme.isDarkMode();
 
 // Set specific mode
-arkanTheme.setMode('dark'); // 'light' | 'dark' | 'auto'
+arkanTheme.setMode("dark"); // 'light' | 'dark' | 'auto'
 ```
 
 ### Neural Grid (Login Page)
@@ -189,10 +191,10 @@ arkanTheme.setMode('dark'); // 'light' | 'dark' | 'auto'
 ```javascript
 // Initialize neural grid animation
 arkanNeuralGrid.init({
-  container: '#login-page',
+  container: "#login-page",
   nodeCount: 50,
   connectionDistance: 150,
-  speed: 0.5
+  speed: 0.5,
 });
 ```
 
@@ -200,11 +202,11 @@ arkanNeuralGrid.init({
 
 ```javascript
 // Page entrance animation
-gsap.from('.page-content', {
+gsap.from(".page-content", {
   opacity: 0,
   y: 20,
   duration: 0.5,
-  ease: 'power2.out'
+  ease: "power2.out",
 });
 ```
 
@@ -227,8 +229,7 @@ text-align: start;
 ### RTL Detection
 
 ```javascript
-const isRTL = document.dir === 'rtl' || 
-  document.documentElement.lang === 'ar';
+const isRTL = document.dir === "rtl" || document.documentElement.lang === "ar";
 ```
 
 ---
@@ -239,37 +240,37 @@ const isRTL = document.dir === 'rtl' ||
 
 Main configuration DocType for theme customization.
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `dark_mode` | Select | light/dark/auto |
-| `primary_color` | Color | Brand primary color |
-| `logo_login` | Attach Image | Login page logo |
-| `logo_sidebar` | Attach Image | Sidebar logo |
-| `custom_css` | Code | Additional CSS |
-| `enable_neural_grid` | Check | Enable login animation |
+| Field                | Type         | Description            |
+| -------------------- | ------------ | ---------------------- |
+| `dark_mode`          | Select       | light/dark/auto        |
+| `primary_color`      | Color        | Brand primary color    |
+| `logo_login`         | Attach Image | Login page logo        |
+| `logo_sidebar`       | Attach Image | Sidebar logo           |
+| `custom_css`         | Code         | Additional CSS         |
+| `enable_neural_grid` | Check        | Enable login animation |
 
 ### AT App Media Override
 
 Child table for per-app branding overrides.
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `app` | Link | Target app |
-| `logo_url` | Data | Custom logo URL |
-| `icon_url` | Data | Custom icon URL |
-| `color` | Color | Custom brand color |
+| Field      | Type  | Description        |
+| ---------- | ----- | ------------------ |
+| `app`      | Link  | Target app         |
+| `logo_url` | Data  | Custom logo URL    |
+| `icon_url` | Data  | Custom icon URL    |
+| `color`    | Color | Custom brand color |
 
 ---
 
 ## Integration Points — نقاط التكامل
 
-| Integration | Purpose |
-|-------------|---------|
-| **Frappe Core** | Desk styling, login page |
-| **frappe_visual** | Component enhancement |
-| **arkan_help** | Help tooltip styling |
-| **CAPS** | Theme management permissions |
-| **All Arkan Apps** | Inherit theme styles |
+| Integration        | Purpose                      |
+| ------------------ | ---------------------------- |
+| **Frappe Core**    | Desk styling, login page     |
+| **frappe_visual**  | Component enhancement        |
+| **arkan_help**     | Help tooltip styling         |
+| **CAPS**           | Theme management permissions |
+| **All Arkan Apps** | Inherit theme styles         |
 
 ---
 
@@ -285,12 +286,12 @@ Child table for per-app branding overrides.
 
 ## Browser Support — دعم المتصفحات
 
-| Browser | Version | Notes |
-|---------|---------|-------|
-| Chrome | 90+ | Full support |
-| Firefox | 88+ | Full support |
-| Safari | 14+ | Full support |
-| Edge | 90+ | Full support |
+| Browser | Version | Notes        |
+| ------- | ------- | ------------ |
+| Chrome  | 90+     | Full support |
+| Firefox | 88+     | Full support |
+| Safari  | 14+     | Full support |
+| Edge    | 90+     | Full support |
 
 **Note:** `backdrop-filter` requires Safari 9+ with prefix.
 
@@ -298,8 +299,8 @@ Child table for per-app branding overrides.
 
 ## Changelog
 
-| Version | Changes |
-|---------|---------|
-| 18.0.0 | 3D effects, GSAP integration |
-| 17.0.0 | Neural grid login animation |
-| 16.0.0 | Initial v16 compatible release |
+| Version | Changes                        |
+| ------- | ------------------------------ |
+| 18.0.0  | 3D effects, GSAP integration   |
+| 17.0.0  | Neural grid login animation    |
+| 16.0.0  | Initial v16 compatible release |
