@@ -1,5 +1,5 @@
 [project]
-name = "arkan-theme"
+name = "arkan_theme"
 version = "1.0.0"
 description = "Futuristic cyber-tech AI theme for ERPNext 16 — dark-first, neon-accented"
 authors = [{name = "Arkan Lab", email = "dev@arkan.tech"}]
